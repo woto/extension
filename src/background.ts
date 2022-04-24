@@ -17,7 +17,7 @@ function onClickHandler(info: any, tab: any) {
       chrome.tabs.sendMessage(
         tab.id,
         {
-          selection: info.menuItemId,
+          selectionType: info.menuItemId,
         },
         (msg) => {
           console.log("result message:", msg);
