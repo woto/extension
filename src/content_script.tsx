@@ -1,39 +1,62 @@
-let rightclickedItem: EventTarget;
+const fgu = require('./fragment-generation-utils');
 
-chrome.runtime.onMessage.addListener(function (msg, sender, sendResponse) {
-  console.log(msg);
-  switch(msg.selectionType) {
-    case 'selection': {
-      break;
-    }
-    case 'link': {
+const copyToClipboard = async(url: string, selection: Selection) => {
+  // const type = "text/plain";
+  // const blob = new Blob([url], {type: type});
 
-      if (!rightclickedItem) return;
-
-      let selection = window.getSelection();
-      if (!selection) return;
-
-      if (rightclickedItem instanceof Node) {
-        selection.selectAllChildren(rightclickedItem);
-      }
-    
-      break;
-    }
-  }
-
-  // if (msg.color) {
-  //   console.log("Receive color = " + msg.color);
-  //   document.body.style.backgroundColor = msg.color;
-  //   sendResponse("Change color to " + msg.color);
-  // } else {
-  //   sendResponse("Color message is none.");
-  // }
+    /* global ClipboardItem */
+  // const clipboardData = [new ClipboardItem({[type]: blob} as unknown as Record<string, ClipboardItemData>)];
+  // const { ClipboardItem } = window;
+  // const clipboardData = [new ClipboardItem({[type]: blob} as unknown as Record<string, ClipboardItemData>)];
+  // await navigator.clipboard.write(clipboardData);
+  // await navigator.clipboard.writeText(url);
   
+  console.log(url);
+};
+
+const createTextFragment = () => {
+  const selection = window.getSelection();
+  // eslint-disable-next-line no-undef
+  const result = fgu.generateFragment(selection);
+  let url = `${location.origin}${location.pathname}${location.search}`;
+  if (result.status === 0) {
+    const fragment = result.fragment;
+    const prefix = fragment.prefix ?
+      `${encodeURIComponent(fragment.prefix)}-,` :
+      '';
+    const suffix = fragment.suffix ?
+      `,-${encodeURIComponent(fragment.suffix)}` :
+      '';
+    const textStart = encodeURIComponent(fragment.textStart);
+    const textEnd = fragment.textEnd ?
+      `,${encodeURIComponent(fragment.textEnd)}` :
+      '';
+    url = `${url}#:~:text=${prefix}${textStart}${textEnd}${suffix}`;
+    if (selection) copyToClipboard(url, selection);
+    return url;
+  } else {
+    return `Could not create URL ${result.status}`;
+  }
+};
+
+chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
+  // console.log(request);
+
+  const message = request.message;
+  if (message === 'create-text-fragment') {
+    return sendResponse(createTextFragment());
+  } else if (message === 'ping') {
+    return sendResponse('pong');
+  } else {
+    // foo
+  }
 });
 
-document.body.addEventListener("contextmenu", function(e) {
-  if (e.target) {
-    rightclickedItem = e.target;
-  }
-  // console.log("context menu in content script handler", rightclickedItem);
-});
+
+// if (msg.color) {
+//   console.log("Receive color = " + msg.color);
+//   document.body.style.backgroundColor = msg.color;
+//   sendResponse("Change color to " + msg.color);
+// } else {
+//   sendResponse("Color message is none.");
+// }
