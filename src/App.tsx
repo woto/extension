@@ -1,6 +1,5 @@
 // import logo from './logo.svg';
 import './App.css';
-import './tailwind.css'
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 
@@ -15,11 +14,11 @@ function getLogo() {
   
   function App() {
     return (
-      <div className="App rotate-90">
+      <div className="App rotate-220">
         <header className="App-header">
           <img src={getLogo()} className="App-logo" alt="logo" />
-          <p>Hello, World!</p>
-          <p>I'm a Content Script in a Chrome Extension!</p>
+          <p className="font-bold">I'm a Content Script in a Chrome Extension! I'm a Content Script in a Chrome Extension!</p>
+          <p>I'm a Content Script in a Chrome Extension! I'm a Content Script in a Chrome Extension!</p>
         </header>
       </div>
     );

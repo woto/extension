@@ -1,23 +1,62 @@
+import '@webcomponents/webcomponentsjs/webcomponents-bundle.js';
+import tailwind from './tailwind.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './App';
 
-const body = document.querySelector('body');
-const app = document.createElement('div');
 const fgu = require('./fragment-generation-utils');
 
-app.id = 'root';
+const body = document.querySelector('body');
+
+class PopupComponent extends HTMLElement {
+  constructor() {
+    super();
+    this.attachShadow({ mode: "open" });
+    const mountPoint = document.createElement("div");
+    mountPoint.style.zIndex = '2147483647';
+    mountPoint.style.position = 'fixed';
+    mountPoint.style.left = '50%';
+    mountPoint.style.top = '50%';
+    mountPoint.style.transform = 'translate(-50%, -50%)';
+    if (!this.shadowRoot) return;
+    this.shadowRoot.appendChild(mountPoint);
+    tailwind.use({ target: this.shadowRoot });
+
+    ReactDOM.render(
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>,
+      mountPoint
+      // document.getElementById('root')
+    );
+  }
+}
+customElements.define('popup-component', PopupComponent);
+
+// class XSearch extends HTMLElement {
+//   connectedCallback() {
+//     const mountPoint = document.createElement('span');
+//     this.attachShadow({ mode: 'open' }).appendChild(mountPoint);
+
+//     const name = this.getAttribute('name');
+//     const url = 'https://www.google.com/search?q=' + encodeURIComponent(name);
+//     const root = ReactDOM.createRoot(mountPoint);
+//     root.render(<a href={url}>{name}</a>);
+//   }
+// }
+// customElements.define('x-search', XSearch);
 
 if (body) {
-  body.prepend(app);
+  body.insertAdjacentHTML('afterbegin', "<popup-component></popup-component>");
 }
 
-ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
-);
+// declare global {
+//   namespace JSX {
+//     interface IntrinsicElements {
+//       'x-search': unknown
+//     }
+//   }
+// }
 
 
 const copyToClipboard = async(url: string, selection: Selection) => {
