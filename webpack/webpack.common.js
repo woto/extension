@@ -16,14 +16,14 @@ module.exports = {
         path: path.join(__dirname, "../dist/js"),
         filename: "[name].js",
     },
-    optimization: {
-        splitChunks: {
-            name: "vendor",
-            chunks(chunk) {
-              return chunk.name !== 'background';
-            }
-        },
-    },
+    // optimization: {
+    //     splitChunks: {
+    //         name: "vendor",
+    //         chunks(chunk) {
+    //           return chunk.name !== 'background';
+    //         }
+    //     },
+    // },
     module: {
         rules: [
             {
@@ -31,10 +31,14 @@ module.exports = {
                 use: "ts-loader",
                 exclude: /node_modules/,
             },
+            {
+                test: /\.css$/,
+                use: ['style-loader', 'css-loader', 'postcss-loader'],
+            },        
         ],
     },
     resolve: {
-        extensions: [".ts", ".tsx", ".js"],
+        extensions: [".ts", ".tsx", ".js", '.css'],
     },
     plugins: [
         new CopyPlugin({

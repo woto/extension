@@ -1,4 +1,24 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+import App from './App';
+
+const body = document.querySelector('body');
+const app = document.createElement('div');
 const fgu = require('./fragment-generation-utils');
+
+app.id = 'root';
+
+if (body) {
+  body.prepend(app);
+}
+
+ReactDOM.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>,
+  document.getElementById('root')
+);
+
 
 const copyToClipboard = async(url: string, selection: Selection) => {
   // const type = "text/plain";

@@ -23,6 +23,8 @@ const sendMessageToPage = (data: {}, info: chrome.contextMenus.OnClickData, tab?
 }
 
 async function onClickHandler(info: chrome.contextMenus.OnClickData, tab?: chrome.tabs.Tab | undefined) {
+  if (!tab || !tab.id) return;
+
   // console.log(info);
   // console.log(tab);
 
