@@ -7,6 +7,7 @@ function App() {
   const [fragmentUrl, setFragmentUrl] = useState('');
 
   const createTextFragment = () => {
+    // debugger
     const selection = window.getSelection();
     // eslint-disable-next-line no-undef
     const result = fgu.generateFragment(selection);

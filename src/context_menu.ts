@@ -22,7 +22,11 @@ chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
               if (!selection) return;
           
               if (rightclickedElement instanceof Node) {
-                selection.selectAllChildren(rightclickedElement);
+                // selection.selectAllChildren(rightclickedElement);
+                const text = rightclickedElement.childNodes[0];
+                selection.setBaseAndExtent(text, 0, text, text.textContent!.length);
+                // debugger
+                // selection.setBaseAndExtent(text,0,text,text.toString().length)
               }
             
               break;
