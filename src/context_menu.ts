@@ -6,6 +6,15 @@ document.body.addEventListener("contextmenu", function(e) {
     }
 });
 
+
+// function addScript( src: string ) {
+//   var s = document.createElement( 'script' );
+//   s.setAttribute( 'src', src );
+//   document.body.appendChild( s );
+// }
+
+// // addScript("http://localhost:8097");
+
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
     // console.log(request);
 

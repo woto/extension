@@ -1,3 +1,4 @@
+import 'react-devtools';
 import '@webcomponents/webcomponentsjs/webcomponents-bundle.js';
 import tailwind from './tailwind.css';
 import React from 'react';
@@ -14,7 +15,7 @@ class PopupComponent extends HTMLElement {
     mountPoint.style.left = '10px';
     mountPoint.style.top = '10px';
     // mountPoint.style.transform = 'translate(-10%, -10%)';
-    mountPoint.className = 'w-[300px]';
+    mountPoint.className = 'w-[320px]';
     if (!this.shadowRoot) return;
     this.shadowRoot.appendChild(mountPoint);
     tailwind.use({ target: this.shadowRoot });
