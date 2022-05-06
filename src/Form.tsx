@@ -1,4 +1,4 @@
-import React  from "react";
+import React, { useState }  from "react";
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
@@ -9,17 +9,20 @@ import {TrashIcon as TrashIconOutline} from "@heroicons/react/outline";
 const schema = yup.object().shape({
     title: yup.string().required(),
     description: yup.string().required(),
-    files: yup.mixed().test('required', 'Please select a file', value => {
-        return value && value.length;
-    })
+    // files: yup.mixed().test('required', 'Please select a file', value => {
+    //     return value && value.length;
+    // })
 })
 
 export default function Form(props: {fragmentUrl: string}) {
+    const [isDragging, setIsDragging] = useState(false);
+
     const {
         register,
         watch,
         handleSubmit,
-        formState: {errors}
+        formState: {errors},
+        setValue
     } = useForm({
         resolver: yupResolver(schema),
     });
@@ -28,12 +31,59 @@ export default function Form(props: {fragmentUrl: string}) {
         console.log(data);
     }
 
-    const preventDefault = (event: any) => { event.preventDefault; }
-    const handleDrop = (e: any) => { alert('drop') }
-    const handlePaste = (e: any) => { alert('paste') }
+    const preventDefault = (e: any) => { console.log(e); e.preventDefault(); }
+    const onDragEnter = (e: any) => { setIsDragging(true); e.preventDefault(); }
+    const onDragLeave = (e: any) => { setIsDragging(false); e.preventDefault(); }
+
+
+    const handlePaste = (e: any) => {
+        const items = (e.clipboardData || e.originalEvent.clipboardData).items;
+        for (const index in items) {
+            let item = items[index];
+            if (item.kind === 'file') {
+                uploadFile(item.getAsFile());
+            }
+        }
+    }
+
+    const handleDrop = (e: any) => {
+        e.preventDefault();
+        e.stopPropagation();
+        setIsDragging(false);
+
+        let data = e.dataTransfer,
+            files = data.files;
+
+        if (files.length > 0) {
+            Array.from(files).forEach(file => alert(file))
+        } else {
+            let originalUrl = e.dataTransfer.getData('url');
+            let finalUrl = `https://1cf0-78-106-236-170.ngrok.io/AfrOrF3gWeDA6VOlDG4TzxMv39O7MXnF4CXpKUwGqRM/background:FFF/rs:fit:400:400:1/ex:1/el:1/g:sm/plain/${originalUrl}`;
+
+            fetch(finalUrl)
+                .then(async (res) => {
+                    const blob = await res.blob()
+                    const file = new File([blob], "")
+                    uploadFile(file);
+                }).catch(reason => {
+                    alert(reason);
+            })
+        }
+    }
+
+    const uploadFile = (file: any) => {
+        // this.imagePreviewTarget.src = URL.createObjectURL(file);
+
+        let container = new DataTransfer();
+        container.items.add(file);
+        // this.inputFileTarget.files = ;
+        setValue('files', container.files)
+    }
+
     const files = watch('files');
 
     const removeImage = (image: any) => { console.log(image) }
+    const draggingClass = isDragging ? 'bg-yellow-50' : 'bg-white'
 
     return (
         <form onSubmit={handleSubmit(onSubmit)}>
@@ -63,8 +113,8 @@ export default function Form(props: {fragmentUrl: string}) {
                 { errors.description && <div className="text-red-400 mt-2">{errors.description.message}</div> }
 
 
-                <div className="mt-3 bg-white rounded-md relative">
-                    <textarea onDragEnter={preventDefault} onDragLeave={preventDefault} onDragOver={preventDefault} onDrop={handleDrop} onPaste={handlePaste} className="absolute inset-0 opacity-0" />
+                <div className={"mt-3 rounded-md relative " + draggingClass}>
+                    <textarea onDragEnter={onDragEnter} onDragLeave={onDragLeave} onDragOver={preventDefault} onDrop={handleDrop} onPaste={handlePaste} className="absolute inset-0 opacity-0" />
 
                     <div className="max-w-lg flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md">
                         <div className="space-y-1 text-center">
@@ -82,17 +132,17 @@ export default function Form(props: {fragmentUrl: string}) {
                                 strokeLinejoin="round"
                             />
                             </svg>
-                            <div className="flex text-sm text-gray-600">
+                            <div className="inline-block text-sm text-gray-600">
                             <label
                                 htmlFor="file-upload"
                                 className="relative cursor-pointer bg-white font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
                             >
-                                <span>Upload a file</span>
+                                <span>Загрузите</span>
                                 <input id="file-upload" {...register('files')} type="file" className="sr-only" multiple />
                             </label>
-                            <p className="pl-1">or drag and drop</p>
+                            <span className="pl-1">перетащите или вставьте</span>
                             </div>
-                            <p className="text-xs text-gray-500">PNG, JPG, GIF up to 10MB</p>
+                            <p className="text-xs text-gray-500">PNG, JPG, GIF размером до 10Мб</p>
                         </div>
                     </div>
                 </div>
@@ -107,7 +157,7 @@ export default function Form(props: {fragmentUrl: string}) {
                                     <button
                                         onClick={() => removeImage(file)}
                                         type="button"
-                                        className="backdrop-saturate-50 drop-shadow absolute top-1 right-1 items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-red-400/30 hover:bg-red-500/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-300/60"
+                                        className="backdrop-saturate-50 drop-shadow absolute top-1 right-1 items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-red-400/30 hover:bg-red-500/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-300/30"
                                     >
                                         <TrashIconSolid className="h-3 w-3" />
                                     </button>

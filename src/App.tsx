@@ -99,9 +99,28 @@ function App() {
           </div>
         </div>
 
-        { showForm && <Form fragmentUrl={fragmentUrl}></Form> }
+        <Transition
+            show={!showForm}
+            enter="transition-opacity duration-150"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="transition-opacity duration-150"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0">
+          { !showForm && <List fragmentUrl={fragmentUrl}></List> }
+        </Transition>
 
-        { !showForm && <List fragmentUrl={fragmentUrl}></List> }
+        <Transition
+            show={showForm}
+            enter="transition-opacity duration-150"
+            enterFrom="opacity-0"
+            enterTo="opacity-100"
+            leave="transition-opacity duration-150"
+            leaveFrom="opacity-100"
+            leaveTo="opacity-0"
+        >
+          { showForm && <Form fragmentUrl={fragmentUrl}></Form> }
+        </Transition>
 
         <div className="p-3 rounded-b-lg bg-slate-100">
           <div className="text-center">
