@@ -8,7 +8,6 @@ import List from './List';
 import { XIcon as XIconSolid, PlusSmIcon as PlusSmIconSolid } from '@heroicons/react/solid'
 import { PlusSmIcon as PlusSmIconOutline } from '@heroicons/react/outline'
 
-
 const fgu = require('./fragment-generation-utils');
 
   

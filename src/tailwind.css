@@ -4,8 +4,8 @@
 
 @layer base {
     :host {
-      font-family: Proxima Nova, system-ui, sans-serif;
-    }  
+        font-family: Proxima Nova, system-ui, sans-serif;
+    }
 }
 
 @tailwind base;
