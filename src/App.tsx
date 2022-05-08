@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import ReactDOM from "react-dom";
 import { Transition } from '@headlessui/react'
+import Draggable from 'react-draggable';
 
 import Form from './Form';
 import List from './List';
@@ -16,6 +17,7 @@ function App() {
   const [selectedText, setSelectedText] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [showWindow, setShowWindow] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   // const [selectedText, setSelectedText] = useState('');
 
@@ -73,9 +75,22 @@ function App() {
     setShowForm(!showForm);
   }
 
+  const handleStart = () => {
+    setIsDragging(true);
+  }
+
+  const handleStop = () => {
+    setIsDragging(false);
+  }
+
+  const stopPropagation = (e: any) => {
+    e.stopPropagation();
+  };
+
   return (
     <Transition
       show={showWindow}
+      appear={true}
       enter="transition-opacity duration-150"
       enterFrom="opacity-0"
       enterTo="opacity-100"
@@ -83,61 +98,69 @@ function App() {
       leaveFrom="opacity-100"
       leaveTo="opacity-0"
     >
-      <div className="drop-shadow rounded-lg border bg-gradient-to-r bg-slate-100 border-slate-300">
+      <Draggable
+          onStart={handleStart}
+          onStop={handleStop}
+          handle=".dragHandler"
+      >
+          <div className={`fixed top-3 left-3 w-[320px] min-h-[485px] drop-shadow rounded-lg border bg-gradient-to-r bg-slate-100 border-slate-300 ${isDragging ? 'opacity-50' : 'opacity-100'}`}>
 
-        <div className="p-3 flex rounded-t-lg border-b border-slate-300 bg-white ">
-          <span className="grow flex items-center">
-            {selectedText}
-          </span>
-          <div className="flex-none">
-            <button
-              onClick={() => setShowWindow(false)}
-              type="button"
-              className="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              <XIconSolid className="h-4 w-4" />
-            </button>
+          <div className="p-3 flex rounded-t-lg border-b border-slate-300 cursor-move dragHandler bg-white">
+            <span className="grow flex items-center">
+              {selectedText}
+            </span>
+            <div className="flex-none">
+              <button
+                onClick={() => setShowWindow(false)}
+                onMouseDown={stopPropagation}
+                onTouchStart={stopPropagation}
+                type="button"
+                className="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                <XIconSolid className="h-4 w-4" />
+              </button>
+            </div>
           </div>
-        </div>
 
-        <Transition
-            show={!showForm}
-            enter="transition-opacity duration-150"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="transition-opacity duration-150"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0">
-          { !showForm && <List fragmentUrl={fragmentUrl}></List> }
-        </Transition>
+          <Transition
+              show={!showForm}
+              enter="transition-opacity duration-150"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="transition-opacity duration-150"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0">
+            { !showForm && <List fragmentUrl={fragmentUrl}></List> }
+          </Transition>
 
-        <Transition
-            show={showForm}
-            enter="transition-opacity duration-150"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="transition-opacity duration-150"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-        >
-          { showForm && <Form fragmentUrl={fragmentUrl}></Form> }
-        </Transition>
+          <Transition
+              show={showForm}
+              enter="transition-opacity duration-150"
+              enterFrom="opacity-0"
+              enterTo="opacity-100"
+              leave="transition-opacity duration-150"
+              leaveFrom="opacity-100"
+              leaveTo="opacity-0"
+          >
+            { showForm && <Form fragmentUrl={fragmentUrl}></Form> }
+          </Transition>
 
-        <div className="p-3 rounded-b-lg bg-slate-100">
-          <div className="text-center">
-            { showForm 
-              ?
+          <div className="p-3 rounded-b-lg bg-slate-100">
+            <div className="text-center">
+              { showForm
+                ?
+                  <a href="#" onClick={handleClick} className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
+                    Выбрать имеющийся
+                  </a>
+                :
                 <a href="#" onClick={handleClick} className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
-                  Выбрать имеющийся
+                  Добавить новый объект
                 </a>
-              :
-              <a href="#" onClick={handleClick} className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
-                Добавить новый объект
-              </a>
-            }
+              }
+            </div>
           </div>
         </div>
-      </div>
+      </Draggable>
     </Transition>
   );
 }

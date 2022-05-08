@@ -27,6 +27,7 @@
     "react": "^17.0.1",
     "react-devtools": "^4.24.4",
     "react-dom": "^17.0.1",
+    "react-draggable": "^4.4.5",
     "react-hook-form": "^7.30.0",
     "tailwindcss-scrollbar": "^0.1.0",
     "yup": "^0.32.11"

@@ -144,7 +144,7 @@ export default function Form(props: {fragmentUrl: string}) {
                 { errors.description && <div className="text-red-400 mt-2">{errors.description.message}</div> }
 
 
-                <div className={"mt-3 rounded-md relative " + draggingClass}>
+                <div className={"mt-3 rounded-md relative transition-colors " + draggingClass}>
                     <textarea onDragEnter={onDragEnter} onDragLeave={onDragLeave} onDragOver={preventDefault} onDrop={handleDrop} onPaste={handlePaste}
                               className="peer absolute inset-3 opacity-0" tabIndex={-1} />
 

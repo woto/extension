@@ -7,7 +7,7 @@ export default function List(props: {fragmentUrl: string}) {
     useEffect(() => {
         const data = { url: props.fragmentUrl };
     
-        fetch("https://55f2-89-113-92-83.ngrok.io/entities/search", {
+        fetch("https://4fac-78-106-236-170.ngrok.io/entities/search", {
           method: "POST",
           body: JSON.stringify(data)
         })
