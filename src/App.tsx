@@ -55,6 +55,7 @@ function App() {
       const message = request.message;
       if (message === 'create-text-fragment') {
         setShowWindow(true);
+        setShowForm(false);
         return sendResponse(createTextFragment());
       } else if (message === 'ping') {
         return sendResponse('pong');
