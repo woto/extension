@@ -11,9 +11,11 @@ class PopupComponent extends HTMLElement {
     this.attachShadow({ mode: "open" });
     const mountPoint = document.createElement("div");
     mountPoint.style.zIndex = '2147483647';
-    mountPoint.style.position = 'absolute';
-    // mountPoint.style.left = '10px';
-    // mountPoint.style.top = '10px';
+    mountPoint.style.position = 'fixed';
+    mountPoint.style.left = '10px';
+    mountPoint.style.top = '10px';
+    mountPoint.style.width = '0';
+    mountPoint.style.height = '0';
     // mountPoint.style.transform = 'translate(-10%, -10%)';
     // mountPoint.className = 'w-[320px]';
     if (!this.shadowRoot) return;

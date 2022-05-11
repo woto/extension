@@ -1,21 +1,20 @@
-import React, { useState, useEffect }  from "react";
+import React, {useState, useEffect, useRef} from "react";
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import {XIcon as XIconSolid} from "@heroicons/react/solid";
+import {XIcon as XIconSolid, ArrowCircleLeftIcon as ArrowCircleLeftIconSolid} from "@heroicons/react/solid";
 import {TrashIcon as TrashIconOutline} from "@heroicons/react/outline";
 import Test from './Test'
 
-
 const schema = yup.object().shape({
     title: yup.string().required(),
-    description: yup.string().required(),
+    description: yup.string().required().max(250),
     // files: yup.mixed().test('required', 'Please select a file', value => {
     //     return value && value.length;
     // })
 })
 
-export default function Form(props: {fragmentUrl: string}) {
+export default function Form(props: {fragmentUrl: string, entity: any, onClick: any}) {
     const [isDragging, setIsDragging] = useState(false);
     const [allFiles, setAllFiles] = useState<any[]>([])
 
@@ -27,10 +26,16 @@ export default function Form(props: {fragmentUrl: string}) {
         setValue,
         getValues
     } = useForm({
+        defaultValues: {
+            title: props.entity.title,
+            description: props.entity.description,
+            files: null
+        },
         resolver: yupResolver(schema),
     });
 
     const files = watch('files');
+    const description = watch('description');
 
     const onSubmit = (data: any) => {
         console.log(data);
@@ -74,7 +79,7 @@ export default function Form(props: {fragmentUrl: string}) {
             let img = fragment.querySelector('img');
             // console.log(img!.src);
 
-            let finalUrl = `https://72ce-78-106-236-170.ngrok.io/AfrOrF3gWeDA6VOlDG4TzxMv39O7MXnF4CXpKUwGqRM/background:FFF/rs:fit:400:400:1/ex:1/el:1/g:sm/plain/${img!.src}`;
+            let finalUrl = `https://3a9b-78-106-236-170.ngrok.io/AfrOrF3gWeDA6VOlDG4TzxMv39O7MXnF4CXpKUwGqRM/background:FFF/rs:fit:400:400:1/ex:1/el:1/g:sm/plain/${img!.src}`;
 
             fetch(finalUrl)
                 .then(async (res) => {
@@ -120,33 +125,44 @@ export default function Form(props: {fragmentUrl: string}) {
         <form onSubmit={handleSubmit(onSubmit)}>
             <div className="p-3">
 
+                <button
+                    onClick={props.onClick}
+                    type="button"
+                    className="mb-3 inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                >
+                    <ArrowCircleLeftIconSolid className="mr-2 -ml-0.5 h-5 w-5 text-gray-400" aria-hidden="true" />
+                    Назад
+                </button>
+
                 <div className="mt-0">
                     <input
                         {...register('title')}
                         type="text"
-                        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full text-sm border-gray-300 rounded-md"
                         placeholder="Название"
                     />
                 </div>
 
-                { errors.title && <div className="text-red-400 mt-2">{errors.title.message}</div> }
+                { errors.title && <div className="text-red-400 mt-2 text-sm">{errors.title.message}</div> }
 
-
-                <div className="mt-3">
+                <div className="mt-3 relative">
                     <textarea
                         rows={4}
                         {...register('description')}
-                        className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 rounded-md"
+                        className="scrollbar-w-1 pb-7 scrollbar-thumb-neutral-400 scrollbar-track-neutral-100 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full text-sm border-gray-300 rounded-md"
                         placeholder='Описание'
                     />
+
+                    <div className="absolute bottom-1 right-2 p-1 text-sm text-slate-400 bg-white/90 rounded">
+                        { description?.length || 0 } / 250
+                    </div>
                 </div>
 
-                { errors.description && <div className="text-red-400 mt-2">{errors.description.message}</div> }
-
+                { errors.description && <div className="text-red-400 mt-2 text-sm">{errors.description.message}</div> }
 
                 <div className={"mt-3 rounded-md relative transition-colors " + draggingClass}>
                     <textarea onDragEnter={onDragEnter} onDragLeave={onDragLeave} onDragOver={preventDefault} onDrop={handleDrop} onPaste={handlePaste}
-                              className="peer absolute inset-3 opacity-0" tabIndex={-1} />
+                              className="cursor-default peer absolute inset-3 opacity-0" tabIndex={-1} />
 
                     <div className="shadow-sm peer-focus:ring-indigo-500 peer-focus:border-indigo-500 sm:text-sm max-w-lg flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md block w-full">
                         <div className="space-y-1 text-center">
@@ -183,15 +199,13 @@ export default function Form(props: {fragmentUrl: string}) {
                     { allFiles.map((file: any) => <Test key={file.name} file={file} removeImage={removeImage}></Test> ) }
                 </div>
 
-                { errors.files && <div className="text-red-400 mt-2">{errors.files.message}</div> }
-            </div>
+                { errors.files && <div className="text-red-400 mt-2 text-sm">{errors.files.message}</div> }
 
-            <div className="mt-3 mx-3">
                 <button
                     type="submit"
-                    className="w-full bg-indigo-600 border border-transparent rounded-md shadow-sm py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-indigo-500"
+                    className="mt-3 w-full bg-indigo-600 border border-transparent rounded-md shadow-sm py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-indigo-500"
                 >
-                Ок
+                    Ок
                 </button>
             </div>
         </form>
