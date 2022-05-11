@@ -5,12 +5,12 @@ import { CheckCircleIcon, ChevronRightIcon, MailIcon } from '@heroicons/react/so
 export default function FullListItem(props: {entity: any, onSelectItem: any}) {
 
   return (
-      <li>
-        <a onClick={(e) => props.onSelectItem(props.entity)} href={props.entity.href} className="block hover:bg-gray-50">
+      <li className="undraggable">
+        <a onClick={(e) => props.onSelectItem(props.entity)} href={props.entity.href} className="undraggable block hover:bg-gray-50">
           <div className="flex items-center px-4 py-4">
             <div className="min-w-0 flex-1 flex items-center">
               <div className="flex-shrink-0">
-                <img className="h-12 w-12 rounded-full" src={props.entity.images[0]} alt="" />
+                <img className="undraggable h-12 w-12 rounded-full" src={props.entity.images[0]} alt="" />
               </div>
               <div className="min-w-0 flex-1 px-4">
                 <div>

@@ -92,7 +92,7 @@ export default function List(props: {
             <div className="p-3 rounded-b-lg bg-slate-100 mt-auto">
                 <div className="text-center">
                     <a href="#" onClick={props.onClick}
-                       className="text-sm font-medium text-indigo-600 hover:text-indigo-500">
+                       className="undraggable text-sm font-medium text-indigo-600 hover:text-indigo-500">
                         Добавить новый объект
                     </a>
                 </div>
