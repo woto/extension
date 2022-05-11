@@ -81,7 +81,7 @@ export default function List(props: {
 
                 <div onScroll={handleScroll}
                      ref={scrollRef}
-                     className="h-[408px] overscroll-contain p-1 overflow-auto scrollbar-w-1 scrollbar-thumb-neutral-400 scrollbar-track-neutral-100">
+                     className="h-[408px] overscroll-contain p-1 overflow-auto scrollbar-w-2 scrollbar-thumb-neutral-400 scrollbar-track-neutral-200">
                     <DetermineList onSelectItem={props.onSelectItem} entities={props.entities}></DetermineList>
                 </div>
 

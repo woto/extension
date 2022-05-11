@@ -147,13 +147,13 @@ export default function Form(props: {fragmentUrl: string, entity: any, onClick: 
 
                 <div className="mt-3 relative">
                     <textarea
-                        rows={4}
+                        rows={2}
                         {...register('description')}
-                        className="scrollbar-w-1 pb-7 scrollbar-thumb-neutral-400 scrollbar-track-neutral-100 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full text-sm border-gray-300 rounded-md"
+                        className="hide-resize scrollbar-w-2 pb-7 scrollbar-thumb-neutral-400 scrollbar-track-neutral-200 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full text-sm border-gray-300 rounded-md"
                         placeholder='Описание'
                     />
 
-                    <div className="absolute bottom-1 right-2 p-1 text-sm text-slate-400 bg-white/90 rounded">
+                    <div className="absolute bottom-1 right-3 p-1 text-sm text-slate-400 bg-white/90 rounded">
                         { description?.length || 0 } / 250
                     </div>
                 </div>
