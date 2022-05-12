@@ -5,6 +5,8 @@ import EmptyList from './EmptyList';
 import FullList from './FullList';
 import NothingFound from './NothingFound';
 
+import AwesomeDebouncePromise from 'awesome-debounce-promise';
+
 function DetermineList(props: { entities: any, onSelectItem: any }) {
   if (props.entities === null) {
     return <Wrapper><EmptyList /></Wrapper>;
@@ -94,11 +96,16 @@ export default function List(props: {
     // , props.fragmentUrl, props.page
   }, [fragmentUrl, fetchData, page]);
 
+
+  const someFunc = (val: any) => {props.setScrollPosition(val)}
+
+  const asyncFunctionDebounced = AwesomeDebouncePromise(someFunc, 50)
+
   const handleScroll = (e: any) => {
     if (isFetching) return;
     if (page === 0) return;
 
-    props.setScrollPosition(e.target.scrollTop);
+    asyncFunctionDebounced(e.target.scrollTop);
 
     if (Math.floor(e.target.scrollHeight - e.target.scrollTop) <= Math.floor(e.target.clientHeight)) {
       console.log('fetching from handleScroll');
@@ -108,6 +115,7 @@ export default function List(props: {
 
   return (
     <>
+      { console.log('rendered') }
       <div className="relative">
 
         {/* <p className="text-white">{decodeURI(fragmentUrl)}</p> */}
