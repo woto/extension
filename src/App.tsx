@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
 import { Transition } from '@headlessui/react';
 import Draggable from 'react-draggable';
 
-import { XIcon as XIconSolid, PlusSmIcon as PlusSmIconSolid } from '@heroicons/react/solid';
-import { PlusSmIcon as PlusSmIconOutline } from '@heroicons/react/outline';
+import { XIcon as XIconSolid } from '@heroicons/react/solid';
 import Form from './Form';
 import List from './List';
 

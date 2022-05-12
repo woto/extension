@@ -36,11 +36,14 @@ export default function List(props: {
     setPage: React.Dispatch<React.SetStateAction<number>>
 }) {
   const [isFetching, setIsFetching] = useState<boolean>(false);
+  const [isError, setIsError] = useState<boolean>(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
+  const { scrollPosition } = props;
+
   useEffect(() => {
-    if (scrollRef.current) scrollRef.current.scrollTop = props.scrollPosition;
-  }, []);
+    if (scrollRef.current) scrollRef.current.scrollTop = scrollPosition;
+  }, [scrollPosition]);
 
   const {
     fragmentUrl, page, setPage, setEntities,
@@ -49,6 +52,7 @@ export default function List(props: {
   const fetchData = useCallback(
     () => {
       setIsFetching(true);
+      setIsError(false);
 
       console.log('%cFETCHING!', 'color: Orange');
 
@@ -68,7 +72,10 @@ export default function List(props: {
             setPage((page) => page + 1);
             setEntities((prevEntities) => [...(prevEntities || []), ...result]);
           },
-        );
+        ).catch((reason) => {
+          setIsFetching(false);
+          setIsError(true);
+        });
     },
     [fragmentUrl, page, setEntities, setPage],
   );
@@ -84,7 +91,7 @@ export default function List(props: {
 
     return () => {};
     // , props.fragmentUrl, props.page
-  }, [fetchData]);
+  }, [fragmentUrl, fetchData, page]);
 
   const handleScroll = (e: any) => {
     if (isFetching) return;
@@ -118,6 +125,10 @@ export default function List(props: {
 
         <div className="flex justify-center items-center overflow-hidden absolute inset-x-0 h-10 bottom-0">
           { isFetching && <div className="dot-falling" /> }
+        </div>
+
+        <div className="flex justify-center items-center overflow-hidden absolute inset-x-0 h-10 bottom-0">
+          { isError && <div className="">Ошибка</div> }
         </div>
 
       </div>
