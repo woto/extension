@@ -170,7 +170,7 @@ export default function Form(props: { fragmentUrl: string, entity: any, onClick:
             onKeyDown={stopPropagation}
             rows={2}
             {...register('description')}
-            className="hide-resize scrollbar-w-2 pb-7 scrollbar-thumb-neutral-400 scrollbar-track-neutral-200 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full text-sm border-gray-300 rounded-md"
+            className="hide-resize pb-7 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full text-sm border-gray-300 rounded-md"
             placeholder="Описание"
           />
 
