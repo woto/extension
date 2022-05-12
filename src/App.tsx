@@ -11,6 +11,31 @@ import {PlusSmIcon as PlusSmIconOutline} from '@heroicons/react/outline'
 
 const fgu = require('./fragment-generation-utils');
 
+const createTextFragment = () => {
+    const selection = window.getSelection();
+    // eslint-disable-next-line no-undef
+    const result = fgu.generateFragment(selection);
+    let url = `${location.origin}${location.pathname}${location.search}`;
+    if (result.status === 0) {
+        const fragment = result.fragment;
+        const prefix = fragment.prefix ?
+            `${encodeURIComponent(fragment.prefix)}-,` :
+            '';
+        const suffix = fragment.suffix ?
+            `,-${encodeURIComponent(fragment.suffix)}` :
+            '';
+        const textStart = encodeURIComponent(fragment.textStart);
+        const textEnd = fragment.textEnd ?
+            `,${encodeURIComponent(fragment.textEnd)}` :
+            '';
+        url = `${url}#:~:text=${prefix}${textStart}${textEnd}${suffix}`;
+    } else {
+        alert(`Could not create URL ${result.status}`);
+    }
+
+    return {selection: selection!, url: url!};
+}
+
 function App() {
     const nodeRef = React.useRef(null);
     const [fragmentUrl, setFragmentUrl] = useState('');
@@ -23,46 +48,21 @@ function App() {
     const [page, setPage] = useState<number>(0);
     const [scrollPosition, setScrollPosition] = useState(0)
 
-    // const [selectedText, setSelectedText] = useState('');
-
-    const createTextFragment = () => {
-        // debugger
-        const selection = window.getSelection();
-        // eslint-disable-next-line no-undef
-        const result = fgu.generateFragment(selection);
-        let url = `${location.origin}${location.pathname}${location.search}`;
-        if (result.status === 0) {
-            const fragment = result.fragment;
-            const prefix = fragment.prefix ?
-                `${encodeURIComponent(fragment.prefix)}-,` :
-                '';
-            const suffix = fragment.suffix ?
-                `,-${encodeURIComponent(fragment.suffix)}` :
-                '';
-            const textStart = encodeURIComponent(fragment.textStart);
-            const textEnd = fragment.textEnd ?
-                `,${encodeURIComponent(fragment.textEnd)}` :
-                '';
-            url = `${url}#:~:text=${prefix}${textStart}${textEnd}${suffix}`;
-            // if (selection) {
-            //   setSelectedText(selection.toString());
-            // }
-            // debugger
-            setSelectedText(selection!.toString());
-            setFragmentUrl(url);
-            return url;
-        } else {
-            return `Could not create URL ${result.status}`;
-        }
-    };
-
     useEffect(() => {
         chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
             const message = request.message;
             if (message === 'create-text-fragment') {
+                console.log('got create-text-fragment message')
+                const {url, selection} = createTextFragment();
+                setSelectedText(selection!.toString());
+                setFragmentUrl(url!);
                 setShowWindow(true);
                 setShowForm(false);
-                return sendResponse(createTextFragment());
+                setEntities(null);
+                setScrollPosition(0);
+                setPage(0);
+                setEntity({title: '', description: ''})
+                return sendResponse();
             } else if (message === 'ping') {
                 return sendResponse('pong');
             } else {

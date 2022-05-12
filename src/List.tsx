@@ -1,4 +1,4 @@
-import React, {useEffect, useRef} from "react";
+import React, {useState, useEffect, useRef, useCallback} from "react";
 import EmptyList from "./EmptyList";
 import FullList from "./FullList";
 import NothingFound from "./NothingFound";
@@ -33,42 +33,63 @@ export default function List(props: {
     page: number,
     setPage: React.Dispatch<React.SetStateAction<number>>
 }) {
+    const [isFetching, setIsFetching] = useState<boolean>(false);
     const scrollRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         if (scrollRef.current) scrollRef.current.scrollTop = props.scrollPosition;
-    })
-
-    useEffect(() => {
-        if (props.page == 0) fetchData();
     }, [])
 
-    const fetchData = () => {
-        const data = {
-            url: props.fragmentUrl,
-            page: props.page
-        };
+    const {fragmentUrl, page, setPage, setEntities} = props;
 
-        fetch("https://localhost/entities/search", {
-            method: "POST",
-            body: JSON.stringify(data)
-        })
-            .then(res => res.json())
-            .then(
-                (result) => {
-                    props.setPage((page) => page + 1);
-                    props.setEntities((prevEntities) => [...(prevEntities || []), ...result])
-                }
-            )
-    }
+    const fetchData = useCallback(
+        () => {
+            setIsFetching(true);
+
+            console.log("%cFETCHING!", "color: Orange");
+    
+            const data = {
+                url: fragmentUrl,
+                page: page
+            };
+    
+            fetch("https://localhost/entities/search", {
+                method: "POST",
+                body: JSON.stringify(data)
+            })
+                .then(res => res.json())
+                .then(
+                    (result) => {
+                        setIsFetching(false);
+                        setPage((page) => page + 1);
+                        setEntities((prevEntities) => [...(prevEntities || []), ...result])
+                    }
+                )
+        },
+        [fragmentUrl, page, setEntities, setPage],
+      );
+
+    useEffect(() => {
+        // console.log('requested props.fragmentUrl')
+        // console.log(props.fragmentUrl);
+
+        if (page == 0 && !!fragmentUrl) {
+            console.log('fetching from useEffect');
+            fetchData();
+        }
+
+        return () => {}
+        // , props.fragmentUrl, props.page
+    }, [fetchData])
 
     const handleScroll = (e: any) => {
+        if (isFetching) return;
+        if (page === 0) return;
+
         props.setScrollPosition(e.target.scrollTop);
 
-        // console.log(e.target.scrollHeight - e.target.scrollTop)
-        // console.log(e.target.clientHeight);
-
-        if (e.target.scrollHeight - e.target.scrollTop == e.target.clientHeight) {
+        if (Math.floor(e.target.scrollHeight - e.target.scrollTop) <= Math.floor(e.target.clientHeight)) {
+            console.log('fetching from handleScroll')
             fetchData()
         }
     }
@@ -86,7 +107,13 @@ export default function List(props: {
                 </div>
 
                 <div
-                    className="inset-x-0 bottom-0 flex justify-center bg-gradient-to-b from-transparent to-slate-100 pt-6 pb-10 pointer-events-none absolute"></div>
+                    className="inset-x-0 bottom-0 flex justify-center bg-gradient-to-b from-transparent to-slate-100 pt-6 pb-10 pointer-events-none absolute">
+                </div>
+
+                <div className="flex justify-center items-center overflow-hidden absolute inset-x-0 h-10 bottom-0">
+                    { isFetching && <div className="dot-falling"></div> }
+                </div>
+                    
             </div>
 
             <div className="p-3 rounded-b-lg bg-slate-100 mt-auto">
