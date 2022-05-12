@@ -75,6 +75,7 @@ export default function List(props: {
         ).catch((reason) => {
           setIsFetching(false);
           setIsError(true);
+          console.error(reason);
         });
     },
     [fragmentUrl, page, setEntities, setPage],
@@ -128,7 +129,7 @@ export default function List(props: {
         </div>
 
         <div className="flex justify-center items-center overflow-hidden absolute inset-x-0 h-10 bottom-0">
-          { isError && <div className="">Ошибка</div> }
+          { isError && <div className="text-red-400 text-sm">что-то пошло не так</div> }
         </div>
 
       </div>
