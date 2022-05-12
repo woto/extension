@@ -2,13 +2,11 @@ import React from 'react';
 import EmptyListItem from './EmptyListItem';
 
 export default function EmptyList() {
-    return (
-        <ul role="list" className="divide-y divide-gray-200">
-            {
-                Array.from({ length: 3 }).map((x, id) =>
-                        <EmptyListItem key={id}></EmptyListItem>
-                )
+  return (
+    <ul role="list" className="divide-y divide-gray-200">
+      {
+                Array.from({ length: 3 }).map((x, id) => <EmptyListItem key={id} />)
             }
-        </ul>
-    )
+    </ul>
+  );
 }

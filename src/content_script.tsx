@@ -1,15 +1,15 @@
 import 'react-devtools';
 import '@webcomponents/webcomponentsjs/webcomponents-bundle.js';
-import tailwind from './tailwind.css';
 import React from 'react';
 import ReactDOM from 'react-dom';
+import tailwind from './tailwind.css';
 import App from './App';
 
 class PopupComponent extends HTMLElement {
   constructor() {
     super();
-    this.attachShadow({ mode: "open" });
-    const mountPoint = document.createElement("div");
+    this.attachShadow({ mode: 'open' });
+    const mountPoint = document.createElement('div');
     mountPoint.style.zIndex = '2147483647';
     mountPoint.style.position = 'fixed';
     mountPoint.style.left = '10px';
@@ -26,10 +26,10 @@ class PopupComponent extends HTMLElement {
       <React.StrictMode>
         <App />
       </React.StrictMode>,
-      mountPoint
+      mountPoint,
     );
   }
 }
 customElements.define('popup-component', PopupComponent);
 
-document.body.insertAdjacentHTML('afterbegin', "<popup-component></popup-component>");
+document.body.insertAdjacentHTML('afterbegin', '<popup-component></popup-component>');
