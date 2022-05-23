@@ -1,17 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { TrashIcon as TrashIconSolid } from '@heroicons/react/outline';
 import { Transition } from '@headlessui/react';
+import { Image } from './Image'
 
-export default function Test(props: {file: any, removeImage: any}) {
-  const objectUrl = URL.createObjectURL(props.file);
+export default function Thumbnail(props: {image: Image, removeImage: any}) {
+  const objectUrl = props.image.url || URL.createObjectURL(props.image.file);
 
   const [showItem, setShowItem] = useState(true);
-
-  // useEffect(() => {
-  //     if (!showItem) {
-  //
-  //     }
-  // }, [showItem])
 
   const hideImage = (event: any) => {
     event.preventDefault();
@@ -19,7 +14,7 @@ export default function Test(props: {file: any, removeImage: any}) {
   };
 
   const removeImage = () => {
-    props.removeImage(props.file);
+    props.removeImage(props.image);
   };
 
   return (
@@ -28,9 +23,9 @@ export default function Test(props: {file: any, removeImage: any}) {
       appear
       enter="transition-opacity duration-100"
       enterFrom="opacity-0"
-      enterTo="opacity-100"
+      enterTo="opacity-80"
       leave="transition-opacity duration-300"
-      leaveFrom="opacity-100"
+      leaveFrom="opacity-80"
       leaveTo="opacity-0"
       afterLeave={removeImage}
     >
@@ -41,7 +36,7 @@ export default function Test(props: {file: any, removeImage: any}) {
         <div className="flex flex-col top-0 right-0 absolute opacity-0 group-hover:opacity-100 transition duration-500">
           <button
             onClick={hideImage}
-            className="backdrop-saturate-50 drop-shadow absolute top-1 right-1 items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-red-400/30 hover:bg-red-500/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-300/30"
+            className="backdrop-saturate-50 drop-shadow absolute top-1 right-1 items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-red-400/30 hover:bg-red-700/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-300/30"
           >
             <TrashIconSolid className="h-4 w-4 text-white" />
           </button>

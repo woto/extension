@@ -1,13 +1,13 @@
 import React, {
   useState, useEffect, useRef, useCallback,
 } from 'react';
+import AwesomeDebouncePromise from 'awesome-debounce-promise';
 import EmptyList from './EmptyList';
 import FullList from './FullList';
 import NothingFound from './NothingFound';
+import {Entity} from './Entity';
 
-import AwesomeDebouncePromise from 'awesome-debounce-promise';
-
-function DetermineList(props: { entities: any, onSelectItem: any }) {
+function DetermineList(props: { entities: Entity[] | null, onSelectItem: any }) {
   if (props.entities === null) {
     return <Wrapper><EmptyList /></Wrapper>;
   } if (props.entities && props.entities.length > 0) {
@@ -28,6 +28,7 @@ function Wrapper(props: any) {
 }
 export default function List(props: {
     fragmentUrl: string,
+    searchString: string,
     onSelectItem: any,
     onClick: any,
     entities: any[] | null,
@@ -44,11 +45,15 @@ export default function List(props: {
   const { scrollPosition } = props;
 
   useEffect(() => {
-    if (scrollRef.current) scrollRef.current.scrollTop = scrollPosition;
+    if (scrollRef.current) {
+      if (Math.floor(scrollRef.current.scrollTop) != Math.floor(scrollPosition)) {
+        scrollRef.current.scrollTop = scrollPosition;
+      }
+    }
   }, [scrollPosition]);
 
   const {
-    fragmentUrl, page, setPage, setEntities,
+    fragmentUrl, searchString, page, setPage, setEntities
   } = props;
 
   const fetchData = useCallback(
@@ -59,20 +64,31 @@ export default function List(props: {
       console.log('%cFETCHING!', 'color: Orange');
 
       const data = {
-        url: fragmentUrl,
+        fragment_url: fragmentUrl,
+        search_string: searchString,
+        link_url: 'https://foo.bar',
         page,
       };
 
       fetch('https://localhost/entities/search', {
         method: 'POST',
         body: JSON.stringify(data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
       })
-        .then((res) => res.json())
+        .then((res) => {
+          if (!res.ok) throw new Error(res.statusText);
+
+          return res.json();
+        })
         .then(
           (result) => {
             setIsFetching(false);
-            setPage((page) => page + 1);
             setEntities((prevEntities) => [...(prevEntities || []), ...result]);
+            if (result.length > 0) {
+              setPage((page) => page + 1);
+            }
           },
         ).catch((reason) => {
           setIsFetching(false);
@@ -80,30 +96,29 @@ export default function List(props: {
           console.error(reason);
         });
     },
-    [fragmentUrl, page, setEntities, setPage],
+    [fragmentUrl, searchString, page, setEntities, setPage],
   );
 
   useEffect(() => {
     // console.log('requested props.fragmentUrl')
     // console.log(props.fragmentUrl);
 
-    if (page == 0 && !!fragmentUrl) {
+    if (page == 1 && !!fragmentUrl) {
       console.log('fetching from useEffect');
       fetchData();
     }
 
     return () => {};
     // , props.fragmentUrl, props.page
-  }, [fragmentUrl, fetchData, page]);
+  }, [fragmentUrl, searchString, fetchData, page]);
 
+  const someFunc = (val: any) => { props.setScrollPosition(val); };
 
-  const someFunc = (val: any) => {props.setScrollPosition(val)}
-
-  const asyncFunctionDebounced = AwesomeDebouncePromise(someFunc, 50)
+  const asyncFunctionDebounced = AwesomeDebouncePromise(someFunc, 50);
 
   const handleScroll = (e: any) => {
     if (isFetching) return;
-    if (page === 0) return;
+    if (page === 1) return;
 
     asyncFunctionDebounced(e.target.scrollTop);
 
@@ -115,7 +130,10 @@ export default function List(props: {
 
   return (
     <>
-      { console.log('rendered') }
+      {/* <div className={`${isFetching ? 'background-animate' : ''} transition-all bg-gradient-to-r from-blue-500 via-indigo-500 to-yellow-500 h-3`}></div> */}
+
+      { console.log('render <List/>') }
+
       <div className="relative">
 
         {/* <p className="text-white">{decodeURI(fragmentUrl)}</p> */}

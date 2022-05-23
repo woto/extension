@@ -2,13 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { Transition } from '@headlessui/react';
 import Draggable from 'react-draggable';
 
+import {Entity} from './Entity';
 import { XIcon as XIconSolid } from '@heroicons/react/solid';
 import Form from './Form';
 import List from './List';
+import SearchInput from './SearchInput'
 
 const fgu = require('./fragment-generation-utils');
 
 const createTextFragment = () => {
+  debugger
   const selection = window.getSelection();
   // eslint-disable-next-line no-undef
   const result = fgu.generateFragment(selection);
@@ -36,13 +39,14 @@ const createTextFragment = () => {
 function App() {
   const nodeRef = React.useRef(null);
   const [fragmentUrl, setFragmentUrl] = useState('');
-  const [selectedText, setSelectedText] = useState('');
+  const [linkUrl, setLinkUrl] = useState('');
+  const [searchString, setSearchString] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [showWindow, setShowWindow] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const [entity, setEntity] = useState({ title: '', description: '' });
+  const [entity, setEntity] = useState<Entity>({ entity_id: '', title: '', intro: '', images: [] });
   const [entities, setEntities] = useState<any[] | null>(null);
-  const [page, setPage] = useState<number>(0);
+  const [page, setPage] = useState<number>(1);
   const [scrollPosition, setScrollPosition] = useState(0);
 
   useEffect(() => {
@@ -51,14 +55,16 @@ function App() {
       if (message === 'create-text-fragment') {
         console.log('got create-text-fragment message');
         const { url, selection } = createTextFragment();
-        setSelectedText(selection!.toString());
+        console.log(url);
+        setSearchString(selection!.toString());
         setFragmentUrl(url!);
+        setLinkUrl('https://foo.bar');
         setShowWindow(true);
         setShowForm(false);
         setEntities(null);
         setScrollPosition(0);
-        setPage(0);
-        setEntity({ title: '', description: '' });
+        setPage(1);
+        setEntity({ entity_id: '', title: '', intro: '', images: [] });
         return sendResponse();
       } if (message === 'ping') {
         return sendResponse('pong');
@@ -74,7 +80,7 @@ function App() {
   const handleClick = (event: any) => {
     event.preventDefault();
     setShowForm(!showForm);
-    setEntity({ title: '', description: '' });
+    setEntity({ entity_id: '', title: searchString, intro: '', images: []});
   };
 
   const handleStart = () => {
@@ -107,7 +113,7 @@ function App() {
       afterLeave={() => {
         setEntities(null);
         setScrollPosition(0);
-        setPage(0);
+        setPage(1);
       }}
     >
       <Draggable
@@ -115,19 +121,22 @@ function App() {
         onStop={handleStop}
         handle=".dragHandler"
         nodeRef={nodeRef}
+        defaultPosition={{x: 10, y: 10}}
+        bounds="html"
       >
         <div
           ref={nodeRef}
-          className={`select-none w-[320px] drop-shadow rounded-lg border bg-gradient-to-r bg-slate-100 border-slate-300 ${isDragging ? 'opacity-50' : 'opacity-100'}`}
+          className={`shadow rounded-lg select-none w-[320px] ${isDragging ? 'opacity-50' : 'opacity-100'}`}
         >
 
-          <div className="flex flex-col h-full">
-
             <div
-              className="p-3 flex rounded-t-lg border-b border-slate-300 cursor-move dragHandler bg-white"
+              className="p-3 border-b-0 border-t border-r border-l border-slate-500 rounded-b-none rounded-lg flex cursor-move dragHandler svg-pattern"
             >
               <span className="grow flex items-center">
-                {selectedText}
+                <a href="https://roastme.ru"
+                   onMouseDown={stopPropagation}
+                   onTouchStart={stopPropagation}
+                   target="_blank" className="font-extrabold tracking-wide text-xl text-slate-50">Roastme.ru</a>
               </span>
 
               <div className="flex-none">
@@ -145,7 +154,9 @@ function App() {
               </div>
             </div>
 
-            <div className="min-h-[408px] content-center flex flex-col">
+            <div className="border border-slate-300 rounded-t-none rounded-lg overflow-hidden flex flex-col h-full">
+
+            <div className="bg-slate-100 min-h-[408px] content-center flex flex-col">
               <div className="grow">
                 <Transition
                   show={!showForm}
@@ -157,17 +168,22 @@ function App() {
                   leaveTo="opacity-0 -translate-x-1"
                 >
                   {!showForm && (
-                  <List
-                    entities={entities}
-                    page={page}
-                    setPage={setPage}
-                    setEntities={setEntities}
-                    onClick={handleClick}
-                    onSelectItem={selectItemHandler}
-                    fragmentUrl={fragmentUrl}
-                    scrollPosition={scrollPosition}
-                    setScrollPosition={setScrollPosition}
-                  />
+                    <>
+                      <SearchInput searchString={searchString} setSearchString={setSearchString}></SearchInput>
+
+                      <List
+                        entities={entities}
+                        page={page}
+                        setPage={setPage}
+                        setEntities={setEntities}
+                        onClick={handleClick}
+                        onSelectItem={selectItemHandler}
+                        fragmentUrl={fragmentUrl}
+                        searchString={searchString}
+                        scrollPosition={scrollPosition}
+                        setScrollPosition={setScrollPosition}
+                      />
+                    </>
                   )}
                 </Transition>
 
@@ -182,9 +198,11 @@ function App() {
                 >
                   {showForm && (
                   <Form
+                    setShowWindow={setShowWindow}
                     onClick={handleClick}
                     entity={entity}
                     fragmentUrl={fragmentUrl}
+                    linkUrl={linkUrl}
                   />
                   )}
                 </Transition>
