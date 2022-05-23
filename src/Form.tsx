@@ -6,6 +6,8 @@ import { ArrowCircleLeftIcon as ArrowCircleLeftIconSolid } from '@heroicons/reac
 import Thumbnail from './Thumbnail';
 import { Image } from './Image';
 import { Entity } from './Entity'
+import Example from './Example';
+import Example2 from './Example2'
 
 declare global {
   interface Crypto {
@@ -21,7 +23,15 @@ const schema = yup.object().shape({
   // })
 });
 
-export default function Form(props: { fragmentUrl: string, linkUrl: string, entity: Entity, onClick: any, setShowWindow: any }) {
+export default function Form(props: {
+  isBusy: boolean,
+  setIsBusy: React.Dispatch<React.SetStateAction<boolean>>,
+  fragmentUrl: string, 
+  linkUrl: string, 
+  entity: Entity, 
+  onClick: any, 
+  setShowWindow: any 
+}) {
   const [isDragging, setIsDragging] = useState(false);
   const [images, setImages] = useState<Image[]>([]);
   const [filesError, setFilesError] = useState<string>('');
@@ -209,6 +219,10 @@ export default function Form(props: { fragmentUrl: string, linkUrl: string, enti
 
   return (
     <>
+      <Example2></Example2>
+
+      <Example></Example>
+
       { console.log('render <Form/>') }
 
       <form onSubmit={handleSubmit(onSubmit)}>

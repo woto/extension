@@ -27,6 +27,8 @@ function Wrapper(props: any) {
   );
 }
 export default function List(props: {
+    isBusy: boolean,
+    setIsBusy: React.Dispatch<React.SetStateAction<boolean>>,
     fragmentUrl: string,
     searchString: string,
     onSelectItem: any,
@@ -38,7 +40,6 @@ export default function List(props: {
     page: number,
     setPage: React.Dispatch<React.SetStateAction<number>>
 }) {
-  const [isFetching, setIsFetching] = useState<boolean>(false);
   const [isError, setIsError] = useState<boolean>(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -58,7 +59,7 @@ export default function List(props: {
 
   const fetchData = useCallback(
     () => {
-      setIsFetching(true);
+      props.setIsBusy(true);
       setIsError(false);
 
       console.log('%cFETCHING!', 'color: Orange');
@@ -84,14 +85,14 @@ export default function List(props: {
         })
         .then(
           (result) => {
-            setIsFetching(false);
+            props.setIsBusy(false);
             setEntities((prevEntities) => [...(prevEntities || []), ...result]);
             if (result.length > 0) {
               setPage((page) => page + 1);
             }
           },
         ).catch((reason) => {
-          setIsFetching(false);
+          props.setIsBusy(false);
           setIsError(true);
           console.error(reason);
         });
@@ -117,7 +118,7 @@ export default function List(props: {
   const asyncFunctionDebounced = AwesomeDebouncePromise(someFunc, 50);
 
   const handleScroll = (e: any) => {
-    if (isFetching) return;
+    if (props.isBusy) return;
     if (page === 1) return;
 
     asyncFunctionDebounced(e.target.scrollTop);
@@ -130,8 +131,6 @@ export default function List(props: {
 
   return (
     <>
-      {/* <div className={`${isFetching ? 'background-animate' : ''} transition-all bg-gradient-to-r from-blue-500 via-indigo-500 to-yellow-500 h-3`}></div> */}
-
       { console.log('render <List/>') }
 
       <div className="relative">
@@ -151,7 +150,7 @@ export default function List(props: {
         />
 
         <div className="flex justify-center items-center overflow-hidden absolute inset-x-0 h-10 bottom-0">
-          { isFetching && <div className="dot-falling" /> }
+          { props.isBusy && <div className="dot-falling" /> }
         </div>
 
         <div className="flex justify-center items-center overflow-hidden absolute inset-x-0 h-10 bottom-0">

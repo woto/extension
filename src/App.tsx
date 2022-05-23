@@ -44,6 +44,7 @@ function App() {
   const [showForm, setShowForm] = useState(false);
   const [showWindow, setShowWindow] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
+  const [isBusy, setIsBusy] = useState(false);
   const [entity, setEntity] = useState<Entity>({ entity_id: '', title: '', intro: '', images: [] });
   const [entities, setEntities] = useState<any[] | null>(null);
   const [page, setPage] = useState<number>(1);
@@ -101,6 +102,9 @@ function App() {
   };
 
   return (
+    <>
+
+    { true &&        
     <Transition
       show={showWindow}
       appear
@@ -130,7 +134,7 @@ function App() {
         >
 
             <div
-              className="p-3 border-b-0 border-t border-r border-l border-slate-500 rounded-b-none rounded-lg flex cursor-move dragHandler svg-pattern"
+              className="p-3 border-slate-600 border-t border-r border-l rounded-b-none rounded-lg flex cursor-move dragHandler svg-pattern"
             >
               <span className="grow flex items-center">
                 <a href="https://roastme.ru"
@@ -154,7 +158,9 @@ function App() {
               </div>
             </div>
 
-            <div className="border border-slate-300 rounded-t-none rounded-lg overflow-hidden flex flex-col h-full">
+            <div className={`${isBusy ? 'background-animate' : ''} transition-all bg-gradient-to-r from-blue-500 via-indigo-500 to-yellow-500 h-3`}></div>
+
+            <div className="border border-t-0 border-slate-300 rounded-t-none rounded-lg overflow-hidden flex flex-col h-full">
 
             <div className="bg-slate-100 min-h-[408px] content-center flex flex-col">
               <div className="grow">
@@ -172,6 +178,8 @@ function App() {
                       <SearchInput searchString={searchString} setSearchString={setSearchString}></SearchInput>
 
                       <List
+                        isBusy={isBusy}
+                        setIsBusy={setIsBusy}
                         entities={entities}
                         page={page}
                         setPage={setPage}
@@ -198,6 +206,8 @@ function App() {
                 >
                   {showForm && (
                   <Form
+                    isBusy={isBusy}
+                    setIsBusy={setIsBusy}
                     setShowWindow={setShowWindow}
                     onClick={handleClick}
                     entity={entity}
@@ -212,6 +222,8 @@ function App() {
         </div>
       </Draggable>
     </Transition>
+    }
+    </>
   );
 }
 

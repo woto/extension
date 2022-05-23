@@ -1,5 +1,3 @@
-@import "three-dots/dist/three-dots.css";
-
 :host {
     all: initial;
 }
@@ -110,9 +108,6 @@
 
 .background-animate {
     background-size: 200%;
-
-    -webkit-animation: AnimationName 3s ease infinite;
-    -moz-animation: AnimationName 3s ease infinite;
     animation: AnimationName 3s ease infinite;
   }
 
@@ -127,11 +122,11 @@
   }
 
 
-.border-colorfull {
+/* .border-colorfull {
   border: double 4px transparent;
   @apply rounded-lg;
   background-image: linear-gradient(white, white), 
                     linear-gradient(to right, rgb(0, 89, 255), gold);
   background-origin: border-box;
   background-clip: content-box, border-box;
-}
+} */
