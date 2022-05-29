@@ -17,10 +17,10 @@ export default function SentimentInput(props: {
     <div className={`relative priority-${props.priority * 10}`}>
       <Transition
         show={props.show}
-        enter="transition-all duration-1000"
+        enter="transition-all duration-300"
         enterFrom="max-h-0 opacity-0 mt-0"
         enterTo="max-h-60 opacity-100 mt-3"
-        leave="transition-all duration-1000"
+        leave="transition-all duration-300"
         leaveFrom="max-h-60 opacity-100 mt-3"
         leaveTo="max-h-0 opacity-0 mt-0"
       >
