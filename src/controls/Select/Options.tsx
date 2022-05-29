@@ -1,6 +1,5 @@
 import { Transition } from '@headlessui/react';
 import React, { Fragment } from 'react';
-import Option from './Option';
 
 export default function Options(props: {children: any, isOpen: any, setIsOpen: any}) {
   const hideList = () => {

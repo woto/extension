@@ -4,12 +4,12 @@ module.exports = {
     es2021: true,
   },
   extends: [
-    "eslint:recommended",
-    "plugin:react/recommended",
-    "plugin:@typescript-eslint/recommended",
-    "plugin:react/jsx-runtime",
+    'eslint:recommended',
+    'plugin:react/recommended',
+    'plugin:@typescript-eslint/recommended',
+    'plugin:react/jsx-runtime',
     'airbnb',
-    "plugin:react-hooks/recommended"
+    'plugin:react-hooks/recommended',
   ],
   parser: '@typescript-eslint/parser',
   parserOptions: {
@@ -22,10 +22,25 @@ module.exports = {
   plugins: [
     'react',
     '@typescript-eslint',
-    'react-hooks'
+    'react-hooks',
   ],
-  "rules": {
-    "react-hooks/rules-of-hooks": 'error',
-    "react-hooks/exhaustive-deps": 'warn' // <--- THIS IS THE NEW RULE
-  }
+  rules: {
+    'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'warn', // <--- THIS IS THE NEW RULE
+    // MY RULES
+    'react/jsx-filename-extension': [1, { extensions: ['.tsx', '.jsx'] }],
+    'react/destructuring-assignment': [0, 'always', { ignoreClassFields: true, destructureInSignature: 'ignore' }],
+  },
+  globals: {
+    // React: true,
+    // google: true,
+    // mount: true,
+    // mountWithRouter: true,
+    // shallow: true,
+    // shallowWithRouter: true,
+    // context: true,
+    // expect: true,
+    // jsdom: true,
+    JSX: true,
+  },
 };

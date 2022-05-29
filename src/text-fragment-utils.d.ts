@@ -1,1 +1,1 @@
-declare module '*';
+declare module 'text-fragment-utils';

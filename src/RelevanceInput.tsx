@@ -1,23 +1,28 @@
 import { Transition } from '@headlessui/react';
-import React, { Fragment } from 'react';
+import React from 'react';
 import Select from './controls/Select';
-import SelectOption from './controls/Select/Option.tsx';
+import Option from './controls/Select/Option';
 
 export default function RelevanceInput(props: {
     priority: number,
-    relevance: string,
-    setRelevance: React.Dispatch<React.SetStateAction<string | null>>,
+    relevance: Relevance | null,
+    setRelevance: React.Dispatch<React.SetStateAction<Relevance | null>>,
     show: boolean,
-    options: any
+    options: Relevance[]
 }) {
-  const changeRelevance = (value: string | null) => {
-    const { setRelevance } = props;
-    setRelevance(value);
+  const handleChangeSelection = (fn: {value: string, label: string}) => {
+    console.log('change selection');
+    const { relevance, setRelevance } = props;
+    if (relevance?.value === fn.value) {
+      setRelevance(null);
+    } else {
+      setRelevance(fn);
+    }
   };
 
   const labelForRelevance = () => {
     const { options } = props;
-    const found = options.find((row: any) => row.value === props.relevance);
+    const found = options.find((row) => props?.relevance?.value === row.value);
     if (found) return found.label;
     return null;
   };
@@ -34,7 +39,14 @@ export default function RelevanceInput(props: {
         leaveTo="max-h-0 opacity-0 mt-0"
       >
         <Select label={labelForRelevance()}>
-          { props.options.map((row: any) => <SelectOption key={row.value} changeSelection={changeRelevance} isSelected={row.value == props.relevance} value={row.value} label={row.label} />)}
+          { props.options.map((option) => (
+            <Option
+              key={option.value}
+              changeSelection={() => handleChangeSelection(option)}
+              isSelected={props?.relevance?.value === option.value}
+              option={option}
+            />
+          ))}
         </Select>
       </Transition>
     </div>

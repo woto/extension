@@ -5,7 +5,6 @@ import AwesomeDebouncePromise from 'awesome-debounce-promise';
 import EmptyList from './EmptyList';
 import FullList from './FullList';
 import NothingFound from './NothingFound';
-import { Entity } from './Entity';
 
 function DetermineList(props: { entities: Entity[] | null, onSelectItem: any }) {
   if (props.entities === null) {

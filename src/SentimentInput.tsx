@@ -28,7 +28,7 @@ export default function SentimentInput(props: {
           { props.options.map((row) => (
             <button
               key={row.value}
-              onClick={() => changeSentiment(props.sentiment != row.value ? row.value : '')}
+              onClick={() => changeSentiment(props.sentiment !== row.value ? row.value : '')}
               type="button"
               className={`${props.sentiment === row.value ? 'bg-indigo-600 border-transparent text-white hover:bg-indigo-700' : 'bg-white border-gray-300 text-gray-900 hover:bg-gray-50'} inline-flex items-center px-3 py-2 border text-sm leading-4 font-medium rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`}
             >

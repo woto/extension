@@ -1,7 +1,6 @@
 import React from 'react';
 /* This example requires Tailwind CSS v2.0+ */
-import { CheckCircleIcon, ChevronRightIcon, MailIcon } from '@heroicons/react/solid';
-import { Entity } from './Entity';
+import { ChevronRightIcon } from '@heroicons/react/solid';
 
 export default function FullListItem(props: {entity: Entity, onSelectItem: any}) {
   return (

@@ -3,7 +3,6 @@ import { Transition } from '@headlessui/react';
 import Draggable from 'react-draggable';
 
 import { XIcon } from '@heroicons/react/solid';
-import { Entity } from './Entity';
 import Form from './Form';
 import List from './List';
 import SearchInput from './controls/SearchInput';

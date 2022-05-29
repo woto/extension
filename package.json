@@ -31,7 +31,6 @@
     "react-dom": "^17.0.1",
     "react-draggable": "^4.4.5",
     "react-hook-form": "^7.30.0",
-    "react-onclickoutside": "^6.12.1",
     "yup": "^0.32.11"
   },
   "devDependencies": {

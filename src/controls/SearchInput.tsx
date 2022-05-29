@@ -13,7 +13,7 @@ export default function SearchInput(props: { searchString: string, setSearchStri
         type="text"
         name="name"
         id="name"
-        className="pr-9 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full sm:text-sm border-gray-300 px-4 rounded-full"
+        className="pr-9 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full text-sm border-gray-300 px-4 rounded-full"
         placeholder="Поиск..."
         onChange={handleChange}
       />

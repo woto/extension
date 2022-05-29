@@ -1,17 +1,14 @@
 import React, {
-  useState, useEffect, Fragment, useReducer,
+  useState, useEffect, Fragment,
 } from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import {
-  ArrowCircleLeftIcon, BookmarkIcon, CogIcon, XIcon, ThumbUpIcon, ThumbDownIcon,
+  ArrowCircleLeftIcon, CogIcon, ThumbUpIcon, ThumbDownIcon,
 } from '@heroicons/react/solid';
 
-import { Transition } from '@headlessui/react';
-import Thumbnail from './Thumbnail';
-import { Image } from './Image';
-import { Entity } from './Entity';
+import Thumbnail from './Thumbnail.tsx';
 
 import SentimentInput from './SentimentInput';
 import KindsInput from './KindsInput';
@@ -45,11 +42,10 @@ export default function Form(props: {
   const [images, setImages] = useState<Image[]>([]);
   const [filesError, setFilesError] = useState<string>('');
   const [sentiment, setSentiment] = useState<string | null>(null);
-  const [kinds, setKinds] = useState<Kind[]>([]);
-  const [relevance, setRelevance] = useState<string | null>(null);
-  const [kind, setKind] = useState<string | null>(null);
+  const [kinds, setKinds] = useState<Kind[]>([{ value: '1', label: 'Серия книг' }, { value: '999', label: 'Новый элемент' }]);
+  const [relevance, setRelevance] = useState<Relevance | null>(null);
 
-  const relevanceOptions = [
+  const relevanceOptions: Relevance[] = [
     { value: '0', label: 'Основной объект' },
     { value: '1', label: 'Второстепенный объект' },
     { value: '2', label: 'Один из равнозначных' },
@@ -113,9 +109,12 @@ export default function Form(props: {
     const formData = new FormData();
     formData.append('cite[fragment_url]', props.fragmentUrl);
     formData.append('cite[link_url]', props.linkUrl);
-    formData.append('unknown[relevance]', relevance || '');
+    formData.append('unknown[relevance]', relevance?.value || '');
     formData.append('unknown[sentiment]', sentiment || '');
-    formData.append('unknown[kind]', kind || '');
+    for (const kind of kinds) {
+      formData.append('unknown[kinds][1][value]', kind.value || '');
+      formData.append('unknown[kinds][1][label]', kind.label);
+    }
     formData.append('entity[entity_id]', props.entity.entity_id);
     formData.append('entity[title]', data.title);
     formData.append('entity[intro]', data.intro);
@@ -275,8 +274,8 @@ export default function Form(props: {
 
   const [showDebug, setShowDebug] = useState(false);
 
-  console.log('value of sentiment in <Form /> component');
-  console.log(sentiment);
+  // console.log('value of sentiment in <Form /> component');
+  // console.log(sentiment);
 
   // const [tmp, setTmp] = useState(1)
   // const update = () => setTmp((prevVal) => prevVal + 1);
@@ -297,7 +296,7 @@ export default function Form(props: {
     const isShow = (prevState: any, key: string) => prevState.find((obj: any) => obj.key === key)?.show || false;
 
     setOptionalComponents((prevState) => {
-      const types = [
+      const types: OptionalComponent[] = [
         {
           key: 'sentiment',
           show: isShow(prevState, 'sentiment'),
@@ -338,11 +337,15 @@ export default function Form(props: {
 
       if (prevState && prevState.length > 0) {
         const order = prevState.map((obj) => obj.key);
-        return order.map((key: string) => types.find((obj) => obj.key === key)) as OptionalComponentsItem[];
+        return order.map(
+          (key: string) => types.find((obj) => obj.key === key),
+        ) as OptionalComponentsItem[];
       }
-      return defaultOrder.map((key: string) => types.find((obj) => obj.key === key)) as OptionalComponentsItem[];
+      return defaultOrder.map(
+        (key: string) => types.find((obj) => obj.key === key),
+      ) as OptionalComponentsItem[];
     });
-  }, [sentiment, relevance]);
+  }, [sentiment, relevance, kinds]);
 
   const toggleVisibility = (e: any, key: string) => {
     e.preventDefault();
@@ -367,10 +370,15 @@ export default function Form(props: {
     });
   };
 
+  function isOptionalComponentVisible(key: string) {
+    // debugger
+    return !!optionalComponents.find((object) => object.key === key && object.show === true);
+  }
+
   return (
     <>
 
-      { console.log('render <Form />') }
+      {/* { console.log('render <Form />') } */}
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="p-3">
@@ -405,15 +413,15 @@ export default function Form(props: {
           <div className="text-sm">
             Вы можете так же указать
             {' '}
-            <a onClick={(e) => { toggleVisibility(e, 'sentiment'); }} href="#" className="undraggable font-medium text-indigo-600 hover:text-indigo-500">настроение</a>
+            <a onClick={(e) => { toggleVisibility(e, 'sentiment'); }} href="#" className={`${isOptionalComponentVisible('sentiment') ? 'text-slate-600 hover:text-slate-500' : 'text-indigo-600 hover:text-indigo-500'} undraggable font-medium`}>настроение</a>
             {' '}
             с которым упоминается объект,
             {' '}
-            <a onClick={(e) => { toggleVisibility(e, 'relevance'); }} href="#" className="undraggable font-medium text-indigo-600 hover:text-indigo-500">важность</a>
+            <a onClick={(e) => { toggleVisibility(e, 'relevance'); }} href="#" className={`${isOptionalComponentVisible('relevance') ? 'text-slate-600 hover:text-slate-500' : 'text-indigo-600 hover:text-indigo-500'} undraggable font-medium`}>важность</a>
             {' '}
             упоминаемого объекта в статье, а так же
             {' '}
-            <a onClick={(e) => { toggleVisibility(e, 'kinds'); }} href="#" className="undraggable font-medium text-indigo-600 hover:text-indigo-500">тип</a>
+            <a onClick={(e) => { toggleVisibility(e, 'kinds'); }} href="#" className={`${isOptionalComponentVisible('kinds') ? 'text-slate-600 hover:text-slate-500' : 'text-indigo-600 hover:text-indigo-500'} undraggable font-medium`}>тип</a>
             {' '}
             объекта.
           </div>
@@ -470,7 +478,7 @@ export default function Form(props: {
             />
 
             <div
-              className="shadow-sm peer-focus:ring-indigo-500 peer-focus:border-indigo-500 sm:text-sm max-w-lg flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md block w-full"
+              className="shadow-sm peer-focus:ring-indigo-500 peer-focus:border-indigo-500 text-sm max-w-lg flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md block w-full"
             >
               <div className="space-y-1 text-center">
                 <svg
