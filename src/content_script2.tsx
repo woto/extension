@@ -3,9 +3,9 @@ import '@webcomponents/webcomponentsjs/webcomponents-bundle.js';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import tailwind from './tailwind.css';
-import AppAdd from './AppAdd';
+import AppList from './AppList';
 
-class AddPopupComponent extends HTMLElement {
+class ListPopupComponent extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: 'open' });
@@ -25,12 +25,12 @@ class AddPopupComponent extends HTMLElement {
 
     ReactDOM.render(
       <React.StrictMode>
-        <AppAdd />
+        <AppList />
       </React.StrictMode>,
       mountPoint,
     );
   }
 }
-customElements.define('add-popup-component', AddPopupComponent);
+customElements.define('list-popup-component', ListPopupComponent);
 
-document.body.insertAdjacentHTML('afterbegin', '<add-popup-component></add-popup-component>');
+document.body.insertAdjacentHTML('afterbegin', '<list-popup-component></list-popup-component>');

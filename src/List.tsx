@@ -5,7 +5,7 @@ import AwesomeDebouncePromise from 'awesome-debounce-promise';
 import EmptyList from './EmptyList';
 import FullList from './FullList';
 import NothingFound from './NothingFound';
-import {Entity} from './Entity';
+import { Entity } from './Entity';
 
 function DetermineList(props: { entities: Entity[] | null, onSelectItem: any }) {
   if (props.entities === null) {
@@ -54,7 +54,7 @@ export default function List(props: {
   }, [scrollPosition]);
 
   const {
-    fragmentUrl, searchString, page, setPage, setEntities
+    fragmentUrl, searchString, page, setPage, setEntities,
   } = props;
 
   const fetchData = useCallback(
@@ -75,8 +75,8 @@ export default function List(props: {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
-          'Content-Type': 'application/json'
-        }
+          'Content-Type': 'application/json',
+        },
       })
         .then((res) => {
           if (!res.ok) throw new Error(res.statusText);
@@ -105,7 +105,7 @@ export default function List(props: {
     // console.log(props.fragmentUrl);
 
     if (page == 1 && !!fragmentUrl) {
-      console.log('fetching from useEffect');
+      // console.log('fetching from useEffect');
       fetchData();
     }
 
@@ -124,14 +124,14 @@ export default function List(props: {
     asyncFunctionDebounced(e.target.scrollTop);
 
     if (Math.floor(e.target.scrollHeight - e.target.scrollTop) <= Math.floor(e.target.clientHeight)) {
-      console.log('fetching from handleScroll');
+      // console.log('fetching from handleScroll');
       fetchData();
     }
   };
 
   return (
     <>
-      { console.log('render <List/>') }
+      {/* { console.log('render <List/>') } */}
 
       <div className="relative">
 
@@ -154,7 +154,7 @@ export default function List(props: {
         </div>
 
         <div className="flex justify-center items-center overflow-hidden absolute inset-x-0 h-10 bottom-0">
-          { isError && <div className="text-red-400 text-sm">что-то пошло не так</div> }
+          { isError && <div className="text-red-400 text-sm font-medium">что-то пошло не так</div> }
         </div>
 
       </div>

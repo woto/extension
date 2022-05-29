@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import { TrashIcon as TrashIconSolid } from '@heroicons/react/outline';
+import { TrashIcon } from '@heroicons/react/outline';
 import { Transition } from '@headlessui/react';
-import { Image } from './Image'
+import { Image } from './Image';
 
 export default function Thumbnail(props: {image: Image, removeImage: any}) {
   const objectUrl = props.image.url || URL.createObjectURL(props.image.file);
@@ -38,7 +38,7 @@ export default function Thumbnail(props: {image: Image, removeImage: any}) {
             onClick={hideImage}
             className="backdrop-saturate-50 drop-shadow absolute top-1 right-1 items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-red-400/30 hover:bg-red-700/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-300/30"
           >
-            <TrashIconSolid className="h-4 w-4 text-white" />
+            <TrashIcon className="h-4 w-4 text-white" />
           </button>
         </div>
       </div>

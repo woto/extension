@@ -1,4 +1,4 @@
-import {Image} from './Image';
+import { Image } from './Image';
 
 export type Entity = {
   entity_id: string,

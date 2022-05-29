@@ -1,13 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, {
+  useState, useEffect, Fragment, useReducer,
+} from 'react';
 import { useForm } from 'react-hook-form';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { ArrowCircleLeftIcon as ArrowCircleLeftIconSolid } from '@heroicons/react/solid';
+import {
+  ArrowCircleLeftIcon, BookmarkIcon, CogIcon, XIcon, ThumbUpIcon, ThumbDownIcon,
+} from '@heroicons/react/solid';
+
+import { Transition } from '@headlessui/react';
 import Thumbnail from './Thumbnail';
 import { Image } from './Image';
-import { Entity } from './Entity'
-import Example from './Example';
-import Example2 from './Example2'
+import { Entity } from './Entity';
+
+import SentimentInput from './SentimentInput';
+import KindsInput from './KindsInput';
+import RelevanceInput from './RelevanceInput';
+// import type { SentimentItem } from './controls/SentimentItem';
 
 declare global {
   interface Crypto {
@@ -26,15 +35,58 @@ const schema = yup.object().shape({
 export default function Form(props: {
   isBusy: boolean,
   setIsBusy: React.Dispatch<React.SetStateAction<boolean>>,
-  fragmentUrl: string, 
-  linkUrl: string, 
-  entity: Entity, 
-  onClick: any, 
-  setShowWindow: any 
+  fragmentUrl: string,
+  linkUrl: string,
+  entity: Entity,
+  onClick: any,
+  setShowWindow: any
 }) {
   const [isDragging, setIsDragging] = useState(false);
   const [images, setImages] = useState<Image[]>([]);
   const [filesError, setFilesError] = useState<string>('');
+  const [sentiment, setSentiment] = useState<string | null>(null);
+  const [kinds, setKinds] = useState<Kind[]>([]);
+  const [relevance, setRelevance] = useState<string | null>(null);
+  const [kind, setKind] = useState<string | null>(null);
+
+  const relevanceOptions = [
+    { value: '0', label: 'Основной объект' },
+    { value: '1', label: 'Второстепенный объект' },
+    { value: '2', label: 'Один из равнозначных' },
+    { value: '3', label: 'Ссылающееся издание' },
+  ];
+
+  const sentimentOptions: SentimentItem[] = [
+    { value: '0', label: <ThumbUpIcon className="h-5 w-5" /> },
+    { value: '1', label: <ThumbDownIcon className="h-5 w-5" /> },
+  ];
+
+  const kindsOptions: Kind[] = [
+    { value: '0', label: 'Книга' },
+    { value: '1', label: 'Серия книг' },
+    { value: '2', label: 'Образовательное учереждение' },
+    { value: '3', label: 'Событие' },
+    { value: '4', label: 'Правительственная организация' },
+    { value: '5', label: 'Компания' },
+    { value: '6', label: 'Фильм' },
+    { value: '7', label: 'Серия фильмов' },
+    { value: '8', label: 'Музыкальная коллекция' },
+    { value: '9', label: 'Музыкальная группа' },
+    { value: '10', label: 'Песня' },
+    { value: '11', label: 'Организация' },
+    { value: '12', label: 'Периодическое издание' },
+    { value: '13', label: 'Персона' },
+    { value: '14', label: 'Место' },
+    { value: '15', label: 'Спортивная команда' },
+    { value: '16', label: 'ТВ эпизод' },
+    { value: '17', label: 'ТВ серия' },
+    { value: '18', label: 'Видеоигра' },
+    { value: '19', label: 'Серия видеоигр' },
+    { value: '20', label: 'Вебсайт' },
+    { value: '21', label: 'Термин' },
+    { value: '22', label: 'Тема' },
+    { value: '23', label: 'Предмет' },
+  ];
 
   const {
     register,
@@ -51,25 +103,28 @@ export default function Form(props: {
   });
 
   useEffect(() => {
-    setImages(props.entity.images)
-  }, [])
+    setImages(props.entity.images);
+  }, []);
 
   const intro = watch('intro');
 
   const onSubmit = (data: any) => {
-    console.log(data);
-    let formData = new FormData();
-    formData.append('cite[fragment_url]', props.fragmentUrl)
-    formData.append('cite[link_url]', props.linkUrl)
-    formData.append('entity[entity_id]', props.entity.entity_id)
-    formData.append('entity[title]', data.title)
-    formData.append('entity[intro]', data.intro)
+    // console.log(data);
+    const formData = new FormData();
+    formData.append('cite[fragment_url]', props.fragmentUrl);
+    formData.append('cite[link_url]', props.linkUrl);
+    formData.append('unknown[relevance]', relevance || '');
+    formData.append('unknown[sentiment]', sentiment || '');
+    formData.append('unknown[kind]', kind || '');
+    formData.append('entity[entity_id]', props.entity.entity_id);
+    formData.append('entity[title]', data.title);
+    formData.append('entity[intro]', data.intro);
     for (const image of images) {
       if (image.file) {
-        formData.append(`entity[images_attributes][${image.id}][image]`, image.file)
+        formData.append(`entity[images_attributes][${image.id}][image]`, image.file);
       } else {
-        formData.append(`entity[images_attributes][${image.id}][id]`, image.id.toString())
-        formData.append(`entity[images_attributes][${image.id}][_destroy]`, image.destroy ? "1" : "0")
+        formData.append(`entity[images_attributes][${image.id}][id]`, image.id.toString());
+        formData.append(`entity[images_attributes][${image.id}][_destroy]`, image.destroy ? '1' : '0');
       }
     }
 
@@ -77,36 +132,37 @@ export default function Form(props: {
     //   formData.append(key, data[key])
     // })
 
-    fetch(`https://localhost/entities/modify`, {
+    fetch('https://localhost/entities/modify', {
       method: 'POST',
       body: formData,
       // headers: {
       //   'Content-Type': 'multipart/form-data'
       // }
-    }).then(res => {
+    }).then((res) => {
       props.setShowWindow(false);
-      console.log(res)
-  })};
+      // console.log(res)
+    });
+  };
 
   const removeImage = (image: any) => {
     setImages((prevState: any) => {
-      console.log('prevState');
-      console.log(prevState);
+      // console.log('prevState');
+      // console.log(prevState);
       let newState;
       // debugger
       if (image.url) {
         newState = prevState.map((val: Image) => {
           if (val == image) {
-            return {...val, ...{destroy: true}}
-          } else {
-            return val
-          }})
+            return { ...val, ...{ destroy: true } };
+          }
+          return val;
+        });
       } else {
         newState = prevState.filter((val: Image) => val !== image);
       }
       // setValue('files', newState);
-      console.log('newState');
-      console.log(newState);
+      // console.log('newState');
+      // console.log(newState);
       return newState;
     });
   };
@@ -130,7 +186,7 @@ export default function Form(props: {
     for (const index in items) {
       const item = items[index];
       if (item.kind === 'file') {
-        console.log(item);
+        // console.log(item);
         uploadFile(item.getAsFile());
         errorMessage = '';
       }
@@ -186,18 +242,18 @@ export default function Form(props: {
 
   const uploadFile = (file: any) => {
     setImages((prevState: Image[]) => {
-      console.log('prevState');
-      console.log(prevState);
+      // console.log('prevState');
+      // console.log(prevState);
       // const newState = [...new Map([...prevState, file].map((file) => [file.name, file])).values()];
       // Array.from(newState)
       const newState = [...prevState, {
         id: crypto.randomUUID(),
-        file: file,
+        file,
         url: null,
-        destroy: false
-      }]
-      console.log('newState');
-      console.log(newState);
+        destroy: false,
+      }];
+      // console.log('newState');
+      // console.log(newState);
       // setValue('files', newState);
       return newState;
     });
@@ -217,54 +273,160 @@ export default function Form(props: {
 
   const draggingClass = isDragging ? 'bg-yellow-50' : 'bg-white';
 
+  const [showDebug, setShowDebug] = useState(false);
+
+  console.log('value of sentiment in <Form /> component');
+  console.log(sentiment);
+
+  // const [tmp, setTmp] = useState(1)
+  // const update = () => setTmp((prevVal) => prevVal + 1);
+  // useEffect(() => { setInterval(update, 1000) }, [])
+
+  // console.log('tmp 1')
+  // console.log(tmp);
+
+  type OptionalComponentsItem = {show: boolean, key: string, component: any};
+
+  const [optionalComponents, setOptionalComponents] = useState<OptionalComponentsItem[]>([]);
+
+  useEffect(() => {
+    // console.log('tmp 2')
+    // console.log(tmp);
+
+    const defaultOrder = ['sentiment', 'kinds', 'relevance'];
+    const isShow = (prevState: any, key: string) => prevState.find((obj: any) => obj.key === key)?.show || false;
+
+    setOptionalComponents((prevState) => {
+      const types = [
+        {
+          key: 'sentiment',
+          show: isShow(prevState, 'sentiment'),
+          component: (props: any) => (
+            <SentimentInput
+              setSentiment={setSentiment}
+              sentiment={sentiment}
+              options={sentimentOptions}
+              {...props}
+            />
+          ),
+        },
+        {
+          key: 'kinds',
+          show: isShow(prevState, 'kinds'),
+          component: (props: any) => (
+            <KindsInput
+              setKinds={setKinds}
+              kinds={kinds}
+              options={kindsOptions}
+              {...props}
+            />
+          ),
+        },
+        {
+          key: 'relevance',
+          show: isShow(prevState, 'relevance'),
+          component: (props: any) => (
+            <RelevanceInput
+              setRelevance={setRelevance}
+              relevance={relevance}
+              options={relevanceOptions}
+              {...props}
+            />
+          ),
+        },
+      ];
+
+      if (prevState && prevState.length > 0) {
+        const order = prevState.map((obj) => obj.key);
+        return order.map((key: string) => types.find((obj) => obj.key === key)) as OptionalComponentsItem[];
+      }
+      return defaultOrder.map((key: string) => types.find((obj) => obj.key === key)) as OptionalComponentsItem[];
+    });
+  }, [sentiment, relevance]);
+
+  const toggleVisibility = (e: any, key: string) => {
+    e.preventDefault();
+
+    setOptionalComponents((prevValues) => {
+      const row = prevValues.find((row) => row.key === key);
+      if (!row) throw new Error('Optional component is not found.');
+
+      const idx = prevValues.indexOf(row);
+      if (row.show) {
+        return [
+          ...prevValues.slice(0, idx),
+          { ...row, ...{ show: false } },
+          ...prevValues.slice(idx + 1),
+        ];
+      }
+      return [
+        { ...row, ...{ show: true } },
+        ...prevValues.slice(0, idx),
+        ...prevValues.slice(idx + 1),
+      ];
+    });
+  };
+
   return (
     <>
-      <Example2></Example2>
 
-      <Example></Example>
-
-      { console.log('render <Form/>') }
+      { console.log('render <Form />') }
 
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="p-3">
 
-          <button
-            onClick={props.onClick}
-            type="button"
-            className="mb-3 inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-          >
-            <ArrowCircleLeftIconSolid className="mr-2 -ml-0.5 h-5 w-5 text-gray-400" aria-hidden="true" />
-            Назад
-          </button>
+          <div className="flex">
+            <button
+              onClick={props.onClick}
+              type="button"
+              className="mb-3 inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              <ArrowCircleLeftIcon className="mr-2 -ml-0.5 h-5 w-5 text-gray-400" aria-hidden="true" />
+              Назад
+            </button>
 
-          <div className="mt-0">
-            <input
-              value={props.fragmentUrl}
-              disabled
-              type="text"
-              className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full text-sm border-gray-300 rounded-md"
-            />
+            <button
+              onClick={() => setShowDebug(!showDebug)}
+              className="ml-auto mb-3 inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+            >
+              <CogIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+            </button>
           </div>
 
-          <div className="mt-3">
-            <input
-              value={props.linkUrl}
-              disabled
-              type="text"
-              className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full text-sm border-gray-300 rounded-md"
-            />
+          { showDebug
+            && (
+            <>
+              <p className="break-normal text-sm mb-3">{props.fragmentUrl}</p>
+              <p className="break-normal text-sm mb-3">{props.linkUrl}</p>
+              <p className="break-normal text-sm mb-3">{props.entity.entity_id}</p>
+            </>
+            )}
+
+          <div className="text-sm">
+            Вы можете так же указать
+            {' '}
+            <a onClick={(e) => { toggleVisibility(e, 'sentiment'); }} href="#" className="undraggable font-medium text-indigo-600 hover:text-indigo-500">настроение</a>
+            {' '}
+            с которым упоминается объект,
+            {' '}
+            <a onClick={(e) => { toggleVisibility(e, 'relevance'); }} href="#" className="undraggable font-medium text-indigo-600 hover:text-indigo-500">важность</a>
+            {' '}
+            упоминаемого объекта в статье, а так же
+            {' '}
+            <a onClick={(e) => { toggleVisibility(e, 'kinds'); }} href="#" className="undraggable font-medium text-indigo-600 hover:text-indigo-500">тип</a>
+            {' '}
+            объекта.
           </div>
 
-          <div className="mt-3">
-            <input
-              value={props.entity.entity_id}
-              disabled
-              type="text"
-              className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full text-sm border-gray-300 rounded-md"
-            />
-          </div>
+          {optionalComponents.map(({ key, show, component }, index) => {
+            const priority = optionalComponents.length - index;
+            return (
+              // component({key: key, show: show, priority: priority})
+              component({ key, show, priority })
+            );
+          })}
 
-          <div className="mt-3">
+          <div className="relative mt-3">
             <input
               onKeyDown={stopPropagation}
               {...register('title')}
@@ -274,11 +436,11 @@ export default function Form(props: {
             />
           </div>
 
-          {/*<input className="hidden" {...register('files')} />*/}
+          {/* <input className="hidden" {...register('files')} /> */}
 
           {errors.title && <div className="text-red-400 mt-2 text-sm">{errors.title.message}</div>}
 
-          <div className="mt-3 relative">
+          <div className="relative mt-3">
             <textarea
               onKeyDown={stopPropagation}
               rows={2}
@@ -296,7 +458,7 @@ export default function Form(props: {
 
           {errors.intro && <div className="text-red-400 mt-2 text-sm">{errors.intro.message}</div>}
 
-          <div className={`mt-3 rounded-md relative transition-colors ${draggingClass}`}>
+          <div className={`relative mt-3 rounded-md transition-colors ${draggingClass}`}>
             <textarea
               onDragEnter={onDragEnter}
               onDragLeave={onDragLeave}
@@ -346,11 +508,11 @@ export default function Form(props: {
             </div>
           </div>
 
-          {/*{errors.files && <div className="text-red-400 mt-2 text-sm">{errors.files.message}</div>}*/}
+          {/* {errors.files && <div className="text-red-400 mt-2 text-sm">{errors.files.message}</div>} */}
 
           {filesError && <div className="text-red-400 mt-2 text-sm">{filesError}</div>}
 
-          <div className="mt-3 grid grid-cols-3 gap-3">
+          <div className="relative mt-3 grid grid-cols-3 gap-3">
             { images.map((image) => <Thumbnail key={image.id} image={image} removeImage={removeImage} />) }
           </div>
 

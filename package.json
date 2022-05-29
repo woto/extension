@@ -31,7 +31,7 @@
     "react-dom": "^17.0.1",
     "react-draggable": "^4.4.5",
     "react-hook-form": "^7.30.0",
-    "react-select": "^5.3.2",
+    "react-onclickoutside": "^6.12.1",
     "yup": "^0.32.11"
   },
   "devDependencies": {
@@ -39,6 +39,7 @@
     "@types/jest": "^27.0.2",
     "@types/react": "^17.0.0",
     "@types/react-dom": "^17.0.0",
+    "@types/stylis": "^4.0.2",
     "@typescript-eslint/eslint-plugin": "^5.23.0",
     "@typescript-eslint/parser": "^5.23.0",
     "autoprefixer": "^10.4.5",

@@ -1,3 +1,5 @@
+type Feature = 'list' | 'add';
+
 const sendMessageToPage = (data: {}, info: chrome.contextMenus.OnClickData, tab?: chrome.tabs.Tab | undefined) => new Promise((resolve, reject) => {
   if (!tab || !tab.id) return;
 
@@ -12,21 +14,23 @@ const sendMessageToPage = (data: {}, info: chrome.contextMenus.OnClickData, tab?
 });
 
 async function onClickHandler(info: chrome.contextMenus.OnClickData, tab?: chrome.tabs.Tab | undefined) {
-  if(!['test 1'].includes(info.menuItemId.toString())) {
-    if (!tab || !tab.id) return;
+  // if (!tab || !tab.id) return;
 
-    await injectContentScripts('js/content_script.js', info, tab);
-    await sendMessageToPage({message: 'select-element', selectionType: info.menuItemId}, info, tab);
-    await sendMessageToPage({message: 'create-text-fragment'}, info, tab);
-  } else {
-    await injectContentScripts('js/content_script2.js', info, tab);
+  if (['link', 'selection'].includes(info.menuItemId.toString())) {
+    await injectContentScripts('add', 'js/content_script.js', info, tab);
+    await sendMessageToPage({ message: 'select-element', selectionType: info.menuItemId }, info, tab);
+    await sendMessageToPage({ message: 'create-fragment' }, info, tab);
+  } else if (['list'].includes(info.menuItemId.toString())) {
+    // debugger
+    await injectContentScripts('list', 'js/content_script2.js', info, tab);
+    await sendMessageToPage({ message: 'list-fragments' }, info, tab);
   }
 }
 
-const injectContentScripts = async (contentScriptName: string, info: chrome.contextMenus.OnClickData, tab?: chrome.tabs.Tab | undefined) => {
+const injectContentScripts = async (feature: Feature, contentScriptName: string, info: chrome.contextMenus.OnClickData, tab?: chrome.tabs.Tab | undefined) => {
   // If there's a reply, the content script already was injected.
   try {
-    return await sendMessageToPage({ message: 'ping' }, info, tab);
+    return await sendMessageToPage({ message: 'ping', feature }, info, tab);
   } catch (err) {
     if (!tab || !tab.id) return;
 
@@ -37,8 +41,8 @@ const injectContentScripts = async (contentScriptName: string, info: chrome.cont
   }
 };
 
-chrome.contextMenus.create({ id: 'selection', title: 'selection', contexts: ['selection'] });
-chrome.contextMenus.create({ id: 'link', title: 'link', contexts: ['link'] });
-chrome.contextMenus.create({ id: 'test 1', title: 'test 1', contexts: ['all'] });
+chrome.contextMenus.create({ id: 'selection', title: 'Добавить выделение', contexts: ['selection'] });
+chrome.contextMenus.create({ id: 'link', title: 'Добавить ссылку', contexts: ['link'] });
+chrome.contextMenus.create({ id: 'list', title: 'Список объектов', contexts: ['page'] });
 
 chrome.contextMenus.onClicked.addListener(onClickHandler);

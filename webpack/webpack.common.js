@@ -9,7 +9,7 @@ module.exports = {
       options: path.join(srcDir, 'options.tsx'),
       background: path.join(srcDir, 'background.ts'),
       content_script: path.join(srcDir, 'content_script.tsx'),
-      content_script2: path.join(srcDir, 'content_script2.js'),
+      content_script2: path.join(srcDir, 'content_script2.tsx'),
       context_menu: path.join(srcDir, 'context_menu.ts'),
       // "fragment-generation-utils": path.join(srcDir, 'fragment-generation-utils.js'),
     },
@@ -38,7 +38,7 @@ module.exports = {
                     {
                         loader: "style-loader",
                         options: {
-                          injectType: "lazyStyleTag",
+                          injectType: "lazySingletonStyleTag",
                           // Do not forget that this code will be used in the browser and
                           // not all browsers support latest ECMA features like `let`, `const`, `arrow function expression` and etc,
                           // we recommend use only ECMA 5 features,

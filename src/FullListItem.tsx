@@ -1,7 +1,7 @@
 import React from 'react';
 /* This example requires Tailwind CSS v2.0+ */
 import { CheckCircleIcon, ChevronRightIcon, MailIcon } from '@heroicons/react/solid';
-import {Entity} from './Entity'
+import { Entity } from './Entity';
 
 export default function FullListItem(props: {entity: Entity, onSelectItem: any}) {
   return (
@@ -14,9 +14,9 @@ export default function FullListItem(props: {entity: Entity, onSelectItem: any})
           <div className="min-w-0 flex-1 flex items-center">
             <div className="flex-shrink-0">
               {
-                props.entity.images?.length > 0 &&
-                props.entity.images[0].url &&
-                <img className="undraggable h-12 w-12 rounded-full" src={props.entity.images[0].url} alt={props.entity.title}/>
+                props.entity.images?.length > 0
+                && props.entity.images[0].url
+                && <img className="undraggable h-12 w-12 rounded-full" src={props.entity.images[0].url} alt={props.entity.title} />
               }
             </div>
             <div className="min-w-0 flex-1 px-4">
