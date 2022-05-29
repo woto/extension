@@ -20,19 +20,19 @@ export default function Thumbnail(props: {image: Image, removeImage: any}) {
     <Transition
       show={showItem}
       appear
-      enter="transition-opacity duration-100"
+      enter="transition-opacity"
       enterFrom="opacity-0"
       enterTo="opacity-80"
-      leave="transition-opacity duration-300"
+      leave="transition-opacity"
       leaveFrom="opacity-80"
       leaveTo="opacity-0"
       afterLeave={removeImage}
     >
       <div className="border border-slate-200 group transition relative bg-gray-50 flex justify-center items-center">
-        <div className="absolute inset-0 duration-300 group-hover:backdrop-brightness-[0.8] group-hover:bg-white/10" />
+        <div className="absolute inset-0 group-hover:backdrop-brightness-[0.8] group-hover:bg-white/10" />
         <img className="object-contain h-20" src={objectUrl} alt="" />
 
-        <div className="flex flex-col top-0 right-0 absolute opacity-0 group-hover:opacity-100 transition duration-500">
+        <div className="flex flex-col top-0 right-0 absolute opacity-0 group-hover:opacity-100 transition">
           <button
             type="button"
             onClick={hideImage}

@@ -1,10 +1,12 @@
 import { SelectorIcon } from '@heroicons/react/solid';
-import React, { ChangeEvent, useState } from 'react';
-import Options from './Options.tsx';
+import React, { ChangeEvent, useRef, useState } from 'react';
+import useOutsideClick from '../../useOutsideClick';
+import Options from './Options';
 
 export default function Combobox(props: { children: React.ReactNode }) {
   const [isOpen, setIsOpen] = useState(false);
-  const toggle = () => setIsOpen(!isOpen);
+  const menuRef = useRef<HTMLDivElement>(null);
+  useOutsideClick(menuRef, setIsOpen);
 
   const [searchString, setSearchString] = useState('');
 
@@ -24,14 +26,42 @@ export default function Combobox(props: { children: React.ReactNode }) {
     }
   })?.filter((val: any) => val);
 
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    console.log(e.key);
+
+    if (['Enter'].includes(e.key)) {
+      console.log('Enter prevented');
+      e.preventDefault();
+    } else if (['ArrowDown', 'ArrowUp'].includes((e.key))) {
+      e.preventDefault();
+      setIsOpen(true);
+    } else if (['Tab'].includes(e.key)) {
+      setIsOpen(false);
+    } else {
+      setIsOpen(true);
+    }
+  };
+
+  const handleFocus = () => {
+    // setIsOpen(true)
+  };
+
+  const handleClick = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
-    <div className="relative mt-1">
+    <div ref={menuRef} className="relative">
 
-      <input onChange={handleChange} id="combobox" type="text" className="w-full rounded-md border border-gray-300 bg-white py-2 pl-3 pr-12 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 text-sm" role="combobox" aria-controls="options" aria-expanded="false" />
+      <input placeholder="Выберите тип..." onKeyDown={handleKeyDown} onClick={handleClick} onFocus={handleFocus} onChange={handleChange} id="combobox" type="text" className="w-full rounded-md border border-gray-300 bg-white py-2 pl-3 pr-12 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 text-sm" role="combobox" aria-controls="options" aria-expanded="false" />
 
-      <button type="button" className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+      {/* <button type="button" tabIndex={-1} className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
         <SelectorIcon className="h-5 w-5 text-gray-400" />
-      </button>
+      </button> */}
+
+      <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">
+        <SelectorIcon className="h-5 w-5 text-gray-400" />
+      </span>
 
       { filteredOptions && filteredOptions.length > 0
             && (
@@ -39,6 +69,7 @@ export default function Combobox(props: { children: React.ReactNode }) {
                 { filteredOptions }
               </Options>
             )}
+
     </div>
   );
 }

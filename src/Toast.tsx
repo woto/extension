@@ -20,10 +20,10 @@ export default function Example() {
           <Transition
             show={show}
             as={Fragment}
-            enter="transform ease-out duration-300 transition"
+            enter="transform ease-out transition"
             enterFrom="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
             enterTo="translate-y-0 opacity-100 sm:translate-x-0"
-            leave="transition ease-in duration-100"
+            leave="transition ease-in"
             leaveFrom="opacity-100"
             leaveTo="opacity-0"
           >

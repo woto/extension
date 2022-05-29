@@ -4,7 +4,6 @@ export default function useOutsideClick(
   menuRef: React.RefObject<HTMLDivElement>,
   setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
-  
   const listener1 = (evt: any) => {
     if ((evt.target as Node).nodeName === 'ADD-POPUP-COMPONENT') return;
     console.log('clicked outside 1');
@@ -19,7 +18,7 @@ export default function useOutsideClick(
 
   const popup = document.querySelector('add-popup-component');
 
-  useEffect( () => {
+  useEffect(() => {
     console.log('before');
 
     ['click', 'touchstart'].forEach((type) => {

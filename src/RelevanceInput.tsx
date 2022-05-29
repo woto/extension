@@ -31,10 +31,10 @@ export default function RelevanceInput(props: {
     <div className={`relative priority-${props.priority * 10}`}>
       <Transition
         show={props.show}
-        enter="transition-all duration-300"
+        enter="transition-all"
         enterFrom="max-h-0 opacity-0 mt-0"
         enterTo="max-h-60 opacity-100 mt-3"
-        leave="transition-all duration-300"
+        leave="transition-all"
         leaveFrom="max-h-60 opacity-100 mt-3"
         leaveTo="max-h-0 opacity-0 mt-0"
       >

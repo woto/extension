@@ -10,10 +10,10 @@ export default function Options(props: {children: any, isOpen: any, setIsOpen: a
     <Transition
       as={Fragment}
       show={props.isOpen}
-      enter="transition ease-in duration-100"
+      enter="transition ease-in"
       enterFrom="opacity-0 -translate-y-1"
-      enterTo="opacity-100  translate-y-0"
-      leave="transition ease-in duration-100"
+      enterTo="opacity-100 translate-y-0"
+      leave="transition ease-in"
       leaveFrom="opacity-100 translate-y-0"
       leaveTo="opacity-0 -translate-y-1"
     >

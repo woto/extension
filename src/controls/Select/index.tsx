@@ -4,24 +4,22 @@ import Options from './Options';
 import useOutsideClick from '../../useOutsideClick';
 
 export default function Select(props: {children: React.ReactNode, label: string | null}) {
-  const menuRef = useRef<HTMLDivElement>(null);
   const [isOpen, setIsOpen] = useState<boolean>(false);
-
+  const menuRef = useRef<HTMLDivElement>(null);
   useOutsideClick(menuRef, setIsOpen);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
     console.log(e.key);
-    if (['ArrowDown', 'ArrowUp'].includes((e.key))) {
-      setIsOpen(true);
-    }
 
-    if (['Tab'].includes(e.key)) {
+    if (['ArrowDown', 'ArrowUp'].includes((e.key))) {
+      e.preventDefault();
+      setIsOpen(true);
+    } else if (['Tab'].includes(e.key)) {
       setIsOpen(false);
     }
   };
 
   const handleClick = () => {
-    console.log('click');
     setIsOpen(!isOpen);
   };
 

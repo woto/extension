@@ -1,8 +1,8 @@
 import React from 'react';
 import { Transition } from '@headlessui/react';
 import { XIcon } from '@heroicons/react/solid';
-import Combobox from './controls/Combobox/index.tsx';
-import ComboboxOption from './controls/Combobox/Option.tsx';
+import Combobox from './controls/Combobox';
+import ComboboxOption from './controls/Combobox/Option';
 
 export default function KindsInput(props: {
   priority: number,
@@ -42,10 +42,10 @@ export default function KindsInput(props: {
     <div className={`relative priority-${props.priority * 10}`}>
       <Transition
         show={props.show}
-        enter="transition-all duration-300"
+        enter="transition-all"
         enterFrom="max-h-0 opacity-0 mt-0"
         enterTo="max-h-60 opacity-100 mt-3"
-        leave="transition-all duration-300"
+        leave="transition-all"
         leaveFrom="max-h-60 opacity-100 mt-3"
         leaveTo="max-h-0 opacity-0 mt-0"
       >

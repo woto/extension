@@ -10,11 +10,11 @@ export default function Option(props: {
   const [isHighlight, setIsHighlight] = useState(false);
   const inputEl = useRef<HTMLLIElement>(null);
 
-  useEffect(() => {
-    if (props.isSelected) {
-      setIsHighlight(true);
-    }
-  }, [props.isSelected]);
+  // useEffect(() => {
+  //   if (props.isSelected) {
+  //     setIsHighlight(false);
+  //   }
+  // }, [props.isSelected]);
 
   return (
     <li
