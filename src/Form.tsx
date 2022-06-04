@@ -438,11 +438,11 @@ export default function Form(props: {
 
           { showDebug
             && (
-            <>
-              <p className="break-normal text-sm mb-3">{props.fragmentUrl}</p>
+            <div className="select-text">
+              <p className="break-normal text-sm mb-3">{decodeURI(props.fragmentUrl)}</p>
               <p className="break-normal text-sm mb-3">{props.linkUrl}</p>
               <p className="break-normal text-sm mb-3">{props.entity.entity_id}</p>
-            </>
+            </div>
             )}
 
           <div className="text-sm">
