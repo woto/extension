@@ -733,7 +733,7 @@
 
 "@types/debounce-promise@^3.1.1":
   "integrity" "sha512-9SEVY3nsz+uMN2DwDocftB5TAgZe7D0cOzxxRhpotWs6T4QFqRaTXpXbOSzbk31/7iYcfCkJJPwWGzTxyuGhCg=="
-  "resolved" "https://registry.npmjs.org/@types/debounce-promise/-/debounce-promise-3.1.4.tgz"
+  "resolved" "https://registry.npmmirror.com/@types/debounce-promise/-/debounce-promise-3.1.4.tgz"
   "version" "3.1.4"
 
 "@types/eslint-scope@^3.7.0":
@@ -823,7 +823,7 @@
   "resolved" "https://registry.npmjs.org/@types/lodash/-/lodash-4.14.182.tgz"
   "version" "4.14.182"
 
-"@types/node@*":
+"@types/node@*", "@types/node@^17.0.36":
   "integrity" "sha512-V3orv+ggDsWVHP99K3JlwtH20R7J4IhI1Kksgc+64q5VxgfRkQG8Ws3MFm/FZOKDYGy9feGFlZ70/HpCNe9QaA=="
   "resolved" "https://registry.npmmirror.com/@types/node/-/node-17.0.36.tgz"
   "version" "17.0.36"
@@ -878,6 +878,11 @@
   "integrity" "sha512-wtckGuk1eXUlUz0Qb1eXHG37Z7HWT2GfMdqRf8F/ifddTwadSS9Jwsqi4qtXk7cP7MtoyGVIHPElFCLc6HItbg=="
   "resolved" "https://registry.npmmirror.com/@types/stylis/-/stylis-4.0.2.tgz"
   "version" "4.0.2"
+
+"@types/uuid@^8.3.4":
+  "integrity" "sha512-c/I8ZRb51j+pYGAu5CrFMRxqZ2ke4y2grEBO5AUjgSkSk+qT2Ea+OdWElz/OiMf5MNpn2b17kuVBwZLQJXzihw=="
+  "resolved" "https://registry.npmmirror.com/@types/uuid/-/uuid-8.3.4.tgz"
+  "version" "8.3.4"
 
 "@types/yargs-parser@*":
   "integrity" "sha512-7tFImggNeNBVMsn0vLrpn1H1uPrUBdnARPTpZoitY37ZrdJREzf7I16tMrlK3hen349gr1NYh8CmZQa7CTG6Aw=="
@@ -1334,7 +1339,7 @@
 
 "awesome-debounce-promise@^2.1.0":
   "integrity" "sha512-0Dv4j2wKk5BrNZh4jgV2HUdznaeVgEK/WTvcHhZWUElhmQ1RR+iURRoLEwICFyR0S/5VtxfcvY6gR+qSe95jNg=="
-  "resolved" "https://registry.npmjs.org/awesome-debounce-promise/-/awesome-debounce-promise-2.1.0.tgz"
+  "resolved" "https://registry.npmmirror.com/awesome-debounce-promise/-/awesome-debounce-promise-2.1.0.tgz"
   "version" "2.1.0"
   dependencies:
     "@types/debounce-promise" "^3.1.1"
@@ -1344,12 +1349,12 @@
 
 "awesome-imperative-promise@^1.0.1":
   "integrity" "sha512-EmPr3FqbQGqlNh+WxMNcF9pO9uDQJnOC4/3rLBQNH9m4E9qI+8lbfHCmHpVAsmGqPJPKhCjJLHUQzQW/RBHRdQ=="
-  "resolved" "https://registry.npmjs.org/awesome-imperative-promise/-/awesome-imperative-promise-1.0.1.tgz"
+  "resolved" "https://registry.npmmirror.com/awesome-imperative-promise/-/awesome-imperative-promise-1.0.1.tgz"
   "version" "1.0.1"
 
 "awesome-only-resolves-last-promise@^1.0.3":
   "integrity" "sha512-7q4WPsYiD8Omvi/yHL314DkvsD/lM//Z2/KcU1vWk0xJotiV0GMJTgHTpWl3n90HJqpXKg7qX+VVNs5YbQyPRQ=="
-  "resolved" "https://registry.npmjs.org/awesome-only-resolves-last-promise/-/awesome-only-resolves-last-promise-1.0.3.tgz"
+  "resolved" "https://registry.npmmirror.com/awesome-only-resolves-last-promise/-/awesome-only-resolves-last-promise-1.0.3.tgz"
   "version" "1.0.3"
   dependencies:
     "awesome-imperative-promise" "^1.0.1"
@@ -1894,7 +1899,7 @@
 
 "debounce-promise@^3.1.0":
   "integrity" "sha512-rZHcgBkbYavBeD9ej6sP56XfG53d51CD4dnaw989YX/nZ/ZJfgRx/9ePKmTNiUiyQvh4mtrMoS3OAWW+yoYtpg=="
-  "resolved" "https://registry.npmjs.org/debounce-promise/-/debounce-promise-3.1.2.tgz"
+  "resolved" "https://registry.npmmirror.com/debounce-promise/-/debounce-promise-3.1.2.tgz"
   "version" "3.1.2"
 
 "debug@^2.6.9":
@@ -2041,6 +2046,25 @@
   "version" "4.2.1"
   dependencies:
     "is-obj" "^1.0.0"
+
+"dotenv-defaults@^2.0.2":
+  "integrity" "sha512-iOIzovWfsUHU91L5i8bJce3NYK5JXeAwH50Jh6+ARUdLiiGlYWfGw6UkzsYqaXZH/hjE/eCd/PlfM/qqyK0AMg=="
+  "resolved" "https://registry.npmmirror.com/dotenv-defaults/-/dotenv-defaults-2.0.2.tgz"
+  "version" "2.0.2"
+  dependencies:
+    "dotenv" "^8.2.0"
+
+"dotenv-webpack@^7.1.0":
+  "integrity" "sha512-+aUOe+nqgLerA/n611oyC15fY79BIkGm2fOxJAcHDonMZ7AtDpnzv/Oe591eHAenIE0t6w03UyxDnLs/YUxx5Q=="
+  "resolved" "https://registry.npmmirror.com/dotenv-webpack/-/dotenv-webpack-7.1.0.tgz"
+  "version" "7.1.0"
+  dependencies:
+    "dotenv-defaults" "^2.0.2"
+
+"dotenv@^8.2.0":
+  "integrity" "sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g=="
+  "resolved" "https://registry.npmmirror.com/dotenv/-/dotenv-8.6.0.tgz"
+  "version" "8.6.0"
 
 "duplexer3@^0.1.4":
   "integrity" "sha1-7gHdHKwO08vH/b6jfcCo8c4ALOI="
@@ -5559,6 +5583,11 @@
   "resolved" "https://registry.npmjs.org/util-deprecate/-/util-deprecate-1.0.2.tgz"
   "version" "1.0.2"
 
+"uuid@^8.3.2":
+  "integrity" "sha512-+NYs2QeMWy+GWFOEm9xnn6HCDp0l7QBD7ml8zLUmJ+93Q5NF0NocErnwkTkXVFNiX3/fpC6afS8Dhb/gz7R7eg=="
+  "resolved" "https://registry.npmmirror.com/uuid/-/uuid-8.3.2.tgz"
+  "version" "8.3.2"
+
 "v8-compile-cache@^2.0.3", "v8-compile-cache@^2.2.0":
   "integrity" "sha512-l8lCEmLcLYZh4nbunNZvQCJc5pv7+RCwa8q/LdUx8u7lsWvPDKmpodJAJNwkAhJC//dFY48KuIEmjtd4RViDrA=="
   "resolved" "https://registry.npmjs.org/v8-compile-cache/-/v8-compile-cache-2.3.0.tgz"
@@ -5644,7 +5673,7 @@
   "resolved" "https://registry.npmjs.org/webpack-sources/-/webpack-sources-3.2.1.tgz"
   "version" "3.2.1"
 
-"webpack@^5.0.0":
+"webpack@^4 || ^5", "webpack@^5.0.0":
   "integrity" "sha512-RZ1Z3z3ni44snoWjfWeHFyzvd9HMVYDYC5VXmlYUT6NWgEOWdCNpad5Fve2CzzHoRED7WtsKe+FCyP5Vk4pWiQ=="
   "resolved" "https://registry.npmjs.org/webpack/-/webpack-5.53.0.tgz"
   "version" "5.53.0"

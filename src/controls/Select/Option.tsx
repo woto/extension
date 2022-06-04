@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { CheckIcon } from '@heroicons/react/solid';
 
-type Item = {value: string, label: string}
+type Item = {id: string, label: string}
 
 export default function Option(props: {
     option: Item,

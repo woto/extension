@@ -5,6 +5,11 @@
   "description": "Chrome Extension, TypeScript, Visual Studio Code",
   "version": "1.0.1",
 
+  "web_accessible_resources": [{
+    "resources": [ "logo.png" ],
+    "matches": ["<all_urls>"]
+  }],
+
   "options_ui": {
     "page": "options.html"
   },

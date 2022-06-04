@@ -4,8 +4,8 @@ import FullListItem from './FullListItem';
 export default function FullList(props: {entities: any[], onSelectItem: any}) {
   return (
     <ul className="divide-y divide-gray-200">
-      { props.entities.map((entity: any) => (
-        <FullListItem onSelectItem={props.onSelectItem} key={entity.id} entity={entity} />))}
+      { props.entities.map((entity: Entity) => (
+        <FullListItem key={entity.entity_id} onSelectItem={props.onSelectItem} entity={entity} />))}
     </ul>
   );
 }

@@ -7,23 +7,19 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import {
   ArrowCircleLeftIcon, CogIcon, ThumbUpIcon, ThumbDownIcon,
 } from '@heroicons/react/solid';
+import { v4 as uuidv4 } from 'uuid';
 
-import Thumbnail from './Thumbnail.tsx';
+import { appUrl } from './Utils';
 
+import Thumbnail from './Thumbnail';
 import SentimentInput from './SentimentInput';
 import KindsInput from './KindsInput';
 import RelevanceInput from './RelevanceInput';
 // import type { SentimentItem } from './controls/SentimentItem';
 
-declare global {
-  interface Crypto {
-    randomUUID: () => string;
-  }
-}
-
 const schema = yup.object().shape({
   title: yup.string().required('должно быть заполнено').max(150, 'должно быть короче 150 символов'),
-  intro: yup.string().required('должно быть заполнено').max(250, 'должно быть короче 250 символов'),
+  // intro: yup.string().required('должно быть заполнено').max(350, 'должно быть короче 350 символов'),
   // files: yup.mixed().test('required', 'изображение не загружено', value => {
   //   return value && value.length;
   // })
@@ -37,19 +33,21 @@ export default function Form(props: {
   entity: Entity,
   onClick: any,
   setShowWindow: any
+  setKindsOptions: React.Dispatch<React.SetStateAction<Kind[]>>
+  kindsOptions: Kind[]
 }) {
   const [isDragging, setIsDragging] = useState(false);
   const [images, setImages] = useState<Image[]>([]);
   const [filesError, setFilesError] = useState<string>('');
   const [sentiment, setSentiment] = useState<string | null>(null);
-  const [kinds, setKinds] = useState<Kind[]>([{ value: '1', label: 'Серия книг' }, { value: '999', label: 'Новый элемент' }]);
+  const [kinds, setKinds] = useState<Kind[]>([]);
   const [relevance, setRelevance] = useState<Relevance | null>(null);
 
   const relevanceOptions: Relevance[] = [
-    { value: '0', label: 'Основной объект' },
-    { value: '1', label: 'Второстепенный объект' },
-    { value: '2', label: 'Один из равнозначных' },
-    { value: '3', label: 'Ссылающееся издание' },
+    { id: '0', label: 'Основной объект' },
+    { id: '1', label: 'Второстепенный объект' },
+    { id: '2', label: 'Один из равнозначных' },
+    { id: '3', label: 'Ссылающееся издание или автор' },
   ];
 
   const sentimentOptions: SentimentItem[] = [
@@ -57,32 +55,41 @@ export default function Form(props: {
     { value: '1', label: <ThumbDownIcon className="h-5 w-5" /> },
   ];
 
-  const kindsOptions: Kind[] = [
-    { value: '0', label: 'Книга' },
-    { value: '1', label: 'Серия книг' },
-    { value: '2', label: 'Образовательное учереждение' },
-    { value: '3', label: 'Событие' },
-    { value: '4', label: 'Правительственная организация' },
-    { value: '5', label: 'Компания' },
-    { value: '6', label: 'Фильм' },
-    { value: '7', label: 'Серия фильмов' },
-    { value: '8', label: 'Музыкальная коллекция' },
-    { value: '9', label: 'Музыкальная группа' },
-    { value: '10', label: 'Песня' },
-    { value: '11', label: 'Организация' },
-    { value: '12', label: 'Периодическое издание' },
-    { value: '13', label: 'Персона' },
-    { value: '14', label: 'Место' },
-    { value: '15', label: 'Спортивная команда' },
-    { value: '16', label: 'ТВ эпизод' },
-    { value: '17', label: 'ТВ серия' },
-    { value: '18', label: 'Видеоигра' },
-    { value: '19', label: 'Серия видеоигр' },
-    { value: '20', label: 'Вебсайт' },
-    { value: '21', label: 'Термин' },
-    { value: '22', label: 'Тема' },
-    { value: '23', label: 'Предмет' },
-  ];
+  useEffect(() => {
+    props.setIsBusy(true);
+
+    fetch(`${appUrl}/api/kinds/search`, {
+      method: 'POST',
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error(res.statusText);
+
+        return res.json();
+      })
+      .then((res) => {
+        res.forEach((row: Kind) => {
+          row.destroy = false;
+        });
+
+        return res;
+      })
+      .then((res: Kind[]) => {
+        res.forEach((res: Kind) => {
+          res.index = res.id!.toString();
+        });
+        return res;
+      })
+      .then(
+        (result) => {
+          props.setIsBusy(false);
+          props.setKindsOptions(result);
+        },
+      )
+      .catch((reason) => {
+        props.setIsBusy(false);
+        console.error(reason);
+      });
+  }, []);
 
   const {
     register,
@@ -104,36 +111,61 @@ export default function Form(props: {
 
   const intro = watch('intro');
 
-  const onSubmit = (data: any) => {
+  // const meth = (str: any) => fetch(str).then(response => { debugger; return response.text() })
+  // let [res1, res2] = await Promise.all(['http://example.com', 'http://example.com'].map((str: string) => meth(str)))
+
+  const onSubmit = async (data: any) => {
     // console.log(data);
-    const formData = new FormData();
-    formData.append('cite[fragment_url]', props.fragmentUrl);
-    formData.append('cite[link_url]', props.linkUrl);
-    formData.append('unknown[relevance]', relevance?.value || '');
-    formData.append('unknown[sentiment]', sentiment || '');
-    for (const kind of kinds) {
-      formData.append('unknown[kinds][1][value]', kind.value || '');
-      formData.append('unknown[kinds][1][label]', kind.label);
-    }
-    formData.append('entity[entity_id]', props.entity.entity_id);
-    formData.append('entity[title]', data.title);
-    formData.append('entity[intro]', data.intro);
-    for (const image of images) {
-      if (image.file) {
-        formData.append(`entity[images_attributes][${image.id}][image]`, image.file);
-      } else {
-        formData.append(`entity[images_attributes][${image.id}][id]`, image.id.toString());
-        formData.append(`entity[images_attributes][${image.id}][_destroy]`, image.destroy ? '1' : '0');
-      }
-    }
 
-    // Object.keys(data).forEach((key) => {
-    //   formData.append(key, data[key])
-    // })
+    const upload = (file: File) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      return fetch(`${appUrl}/images/upload`, {
+        method: 'POST',
+        body: formData,
+      }).then((res) => {
+        if (!res.ok) throw new Error(res.statusText);
 
-    fetch('https://localhost/entities/modify', {
+        return res.json();
+      });
+    };
+
+    const uploadedImages = await Promise.all(
+      images.map(
+        async (image: Image) => {
+          let file = null;
+
+          if (image.file) {
+            file = await upload(image.file);
+          }
+
+          return {
+            id: image.id,
+            destroy: image.destroy,
+            file,
+          };
+        },
+      ),
+    );
+
+    data = {
+      fragment_url: props.fragmentUrl,
+      link_url: props.linkUrl,
+      relevance: relevance?.id || '',
+      sentiment: sentiment || '',
+      kinds: kinds.map((kind: Kind) => kind.label),
+      entity_id: props.entity.entity_id,
+      title: data.title,
+      intro: data.intro,
+      images: uploadedImages,
+    };
+
+    fetch(`${appUrl}/api/mentions/register`, {
       method: 'POST',
-      body: formData,
+      body: JSON.stringify(data),
+      headers: {
+        'Content-Type': 'application/json',
+      },
       // headers: {
       //   'Content-Type': 'multipart/form-data'
       // }
@@ -246,7 +278,8 @@ export default function Form(props: {
       // const newState = [...new Map([...prevState, file].map((file) => [file.name, file])).values()];
       // Array.from(newState)
       const newState = [...prevState, {
-        id: crypto.randomUUID(),
+        index: uuidv4(),
+        id: null,
         file,
         url: null,
         destroy: false,
@@ -287,6 +320,8 @@ export default function Form(props: {
   type OptionalComponentsItem = {show: boolean, key: string, component: any};
 
   const [optionalComponents, setOptionalComponents] = useState<OptionalComponentsItem[]>([]);
+
+  const { kindsOptions } = props;
 
   useEffect(() => {
     // console.log('tmp 2')
@@ -345,7 +380,7 @@ export default function Form(props: {
         (key: string) => types.find((obj) => obj.key === key),
       ) as OptionalComponentsItem[];
     });
-  }, [sentiment, relevance, kinds]);
+  }, [sentiment, relevance, kinds, kindsOptions]);
 
   const toggleVisibility = (e: any, key: string) => {
     e.preventDefault();
@@ -394,7 +429,7 @@ export default function Form(props: {
             </button>
 
             <button
-              onClick={() => setShowDebug(!showDebug)}
+              onClick={(e) => { e.preventDefault(); setShowDebug(!showDebug); }}
               className="ml-auto mb-3 inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
               <CogIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
@@ -413,15 +448,15 @@ export default function Form(props: {
           <div className="text-sm">
             Вы можете так же указать
             {' '}
-            <a onClick={(e) => { toggleVisibility(e, 'sentiment'); }} href="#" className={`${isOptionalComponentVisible('sentiment') ? 'text-slate-600 hover:text-slate-500' : 'text-indigo-600 hover:text-indigo-500'} undraggable font-medium`}>настроение</a>
+            <a onClick={(e) => { toggleVisibility(e, 'sentiment'); }} href="#" className={`${isOptionalComponentVisible('sentiment') ? 'text-gray-700 hover:text-gray-600' : 'text-indigo-600 hover:text-indigo-500'} undraggable font-medium`}>настроение</a>
             {' '}
             с которым упоминается объект,
             {' '}
-            <a onClick={(e) => { toggleVisibility(e, 'relevance'); }} href="#" className={`${isOptionalComponentVisible('relevance') ? 'text-slate-600 hover:text-slate-500' : 'text-indigo-600 hover:text-indigo-500'} undraggable font-medium`}>важность</a>
+            <a onClick={(e) => { toggleVisibility(e, 'relevance'); }} href="#" className={`${isOptionalComponentVisible('relevance') ? 'text-gray-700 hover:text-gray-600' : 'text-indigo-600 hover:text-indigo-500'} undraggable font-medium`}>важность</a>
             {' '}
             упоминаемого объекта в статье, а так же
             {' '}
-            <a onClick={(e) => { toggleVisibility(e, 'kinds'); }} href="#" className={`${isOptionalComponentVisible('kinds') ? 'text-slate-600 hover:text-slate-500' : 'text-indigo-600 hover:text-indigo-500'} undraggable font-medium`}>тип</a>
+            <a onClick={(e) => { toggleVisibility(e, 'kinds'); }} href="#" className={`${isOptionalComponentVisible('kinds') ? 'text-gray-700 hover:text-gray-600' : 'text-indigo-600 hover:text-indigo-500'} undraggable font-medium`}>тип</a>
             {' '}
             объекта.
           </div>
@@ -460,7 +495,7 @@ export default function Form(props: {
             <div className="absolute bottom-1 right-3 p-1 text-sm text-slate-400 bg-white/90 rounded">
               {intro?.length || 0}
               {' '}
-              / 250
+              / 350
             </div>
           </div>
 
@@ -521,7 +556,7 @@ export default function Form(props: {
           {filesError && <div className="text-red-400 mt-2 text-sm">{filesError}</div>}
 
           <div className="relative mt-3 grid grid-cols-3 gap-3">
-            { images.map((image) => <Thumbnail key={image.id} image={image} removeImage={removeImage} />) }
+            { images.map((image) => <Thumbnail key={image.index} image={image} removeImage={removeImage} />) }
           </div>
 
           <button

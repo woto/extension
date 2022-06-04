@@ -9,13 +9,18 @@ export default function Select(props: {children: React.ReactNode, label: string 
   useOutsideClick(menuRef, setIsOpen);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLButtonElement>) => {
-    console.log(e.key);
+    // console.log(e.key);
 
-    if (['ArrowDown', 'ArrowUp'].includes((e.key))) {
+    if (['Enter'].includes(e.key)) {
       e.preventDefault();
       setIsOpen(true);
-    } else if (['Tab'].includes(e.key)) {
+    } else if (['ArrowDown', 'ArrowUp'].includes((e.key))) {
+      e.preventDefault();
+      setIsOpen(true);
+    } else if (['Tab', 'Escape'].includes(e.key)) {
       setIsOpen(false);
+    } else {
+      // setIsOpen(true);
     }
   };
 
@@ -26,7 +31,12 @@ export default function Select(props: {children: React.ReactNode, label: string 
   return (
     <div ref={menuRef} className="relative">
 
-      <button onKeyDown={handleKeyDown} onClick={handleClick} type="button" className="bg-white relative w-full border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm" aria-haspopup="listbox" aria-expanded="true" aria-labelledby="listbox-label">
+      <button
+        onKeyDown={handleKeyDown}
+        onClick={handleClick}
+        type="button"
+        className="bg-white relative w-full border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+      >
 
         <span className={`block truncate ${props.label ? '' : 'text-slate-500'}`}>
           {props.label ? props.label : 'Выберите важность...'}

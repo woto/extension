@@ -9,5 +9,5 @@
             "url": "http://json.schemastore.org/chrome-manifest"
         }
     ],
-    "workbench.colorTheme": "Quiet Light"
+    "workbench.colorTheme": "Default Light+"
 }

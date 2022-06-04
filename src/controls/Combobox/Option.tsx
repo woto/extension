@@ -3,28 +3,39 @@ import React, { useState } from 'react';
 
 export default function Option(
   props: {
-    value: string | null,
-    label: string,
-    changeSelection: (fn: Kind) => void,
+    // IT IS REQUIRED! TODO. Adds with React.cloneElement
+    index?: number,
+    // IT IS REQUIRED! TODO. Adds with React.cloneElement
+    isHighlighted?: boolean,
+    highlightedIndex: number | null,
+    setHighlightedIndex: React.Dispatch<React.SetStateAction<number | null>>,
+    option: Kind
+    changeSelection: () => void,
     isSelected: boolean},
 ) {
-  const [isHighlight, setIsHighlight] = useState(false);
+  const preventDefault = (e: any) => {
+    e.preventDefault();
+    // console.log('preventDefault')
+  };
+
+  // const isHighlighted = props.index === props.highlightedIndex;
 
   return (
     <li
-      onMouseEnter={() => setIsHighlight(true)}
-      onMouseLeave={() => setIsHighlight(false)}
-      className={`${isHighlight ? 'text-white bg-indigo-600' : 'text-gray-900'} relative cursor-default select-none py-2 pl-3 pr-9`}
+      onClick={props.changeSelection}
+      onMouseMove={() => props.setHighlightedIndex(props.index as number)}
+      onMouseLeave={() => props.setHighlightedIndex(null)}
+      className={`${props.isHighlighted ? 'text-white bg-indigo-600' : 'text-gray-900'} relative cursor-default select-none py-2 pl-3 pr-9`}
       tabIndex={-1}
     >
 
-      <span className={`${props.isSelected ? 'font-semibold' : 'font-normal'} block truncate`}>
+      <span onMouseDown={preventDefault} className={`${props.isSelected ? 'font-semibold' : 'font-normal'} block truncate`}>
         {' '}
-        {props.label}
+        {props.option.label}
         {' '}
       </span>
 
-      <span className={`${isHighlight ? 'text-white' : 'text-indigo-600'} absolute inset-y-0 right-0 flex items-center pr-4`}>
+      <span onMouseDown={preventDefault} className={`${props.isHighlighted ? 'text-white' : 'text-indigo-600'} absolute inset-y-0 right-0 flex items-center pr-4`}>
         {
           props.isSelected
           && <CheckIcon className="h-5 w-5" />

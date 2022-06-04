@@ -79,8 +79,14 @@
 
 /* SCROLLBARS */
 
+/* https://stackoverflow.com/a/59244343/237090 */
+
+textarea {
+    cursor: auto;
+}
+
 ::-webkit-scrollbar {
-    width: 10px
+    width: 10px;
 }
 
 ::-webkit-scrollbar-track {

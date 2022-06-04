@@ -15,7 +15,7 @@ export default function FullListItem(props: {entity: Entity, onSelectItem: any})
               {
                 props.entity.images?.length > 0
                 && props.entity.images[0].url
-                && <img className="undraggable h-12 w-12 rounded-full" src={props.entity.images[0].url} alt={props.entity.title} />
+                && <img className="undraggable h-12 w-12 object-contain" src={props.entity.images[0].url} alt={props.entity.title} />
               }
             </div>
             <div className="min-w-0 flex-1 px-4">

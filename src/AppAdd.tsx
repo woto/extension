@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Transition } from '@headlessui/react';
 import Draggable from 'react-draggable';
 
@@ -48,16 +48,44 @@ function AppAdd() {
   const [entity, setEntity] = useState<Entity>({
     entity_id: '', title: '', intro: '', images: [],
   });
-  const [entities, setEntities] = useState<any[] | null>(null);
+  const [entities, setEntities] = useState<Entity[] | null>(null);
   const [page, setPage] = useState<number>(1);
   const [scrollPosition, setScrollPosition] = useState(0);
+  const [kindsOptions, setKindsOptions] = useState<Kind[]>([]);
+
+  function usePrevious(value: string) {
+    const ref = useRef<string>(window.location.toString());
+
+    useEffect(() => {
+      ref.current = value;
+    });
+    return ref.current;
+  }
+
+  let previousLocation = usePrevious(window.location.toString());
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      if (previousLocation != window.location.toString()) {
+        console.log('location changed');
+        console.log(previousLocation);
+        console.log(window.location.toString());
+        previousLocation = window.location.toString();
+      }
+    }, 1000);
+
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   useEffect(() => {
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       const { message, feature } = request;
       if (message === 'create-fragment') {
         const { url, selection } = createTextFragment();
-        // console.log(url);
+        console.log(url);
+        console.log(selection!.toString());
         setSearchString(selection!.toString());
         setFragmentUrl(url!);
         setLinkUrl('https://foo.bar');
@@ -101,7 +129,7 @@ function AppAdd() {
     e.stopPropagation();
   };
 
-  const selectItemHandler = (entity: any) => {
+  const selectItemHandler = (entity: Entity) => {
     setShowForm(true);
     setEntity(entity);
   };
@@ -154,7 +182,7 @@ function AppAdd() {
                 className="font-extrabold tracking-wide text-xl text-slate-50 undraggable"
                 rel="noreferrer"
               >
-                Roastme.ru
+                <img className="h-4" src={chrome.runtime.getURL('logo.png')} />
               </a>
             </span>
 
@@ -174,9 +202,10 @@ function AppAdd() {
           </div>
 
           {/* <div className={`${isBusy ? 'background-animate from-indigo-500 via-lime-400 to-indigo-500 bg-gradient-to-r bg-orange-400' : 'from-lime-400 to-indigo-500 bg-gradient-to-r bg-orange-400'} transition-all h-1`}></div> */}
-          <div className={`${isBusy ? 'background-animate from-indigo-500 via-lime-400 to-indigo-500 bg-gradient-to-r bg-orange-400' : 'bg-slate-400'} transition-all h-1`} />
+          <div className={`${isBusy ? 'background-animate from-indigo-500 via-lime-400 to-indigo-500 bg-gradient-to-r bg-orange-400' : 'bg-slate-400'} transition-all h-2`} />
 
-          <div className="border border-t-0 border-slate-300 rounded-t-none rounded-lg overflow-hidden flex flex-col h-full">
+          {/* <div className="border border-t-0 border-slate-300 rounded-t-none rounded-lg overflow-hidden flex flex-col h-full"> */}
+          <div className="border border-t-0 border-slate-300 rounded-t-none rounded-lg flex flex-col h-full">
 
             <div className="bg-slate-100 min-h-[408px] content-center flex flex-col">
               <div className="grow">
@@ -191,7 +220,13 @@ function AppAdd() {
                 >
                   {!showForm && (
                   <>
-                    <SearchInput searchString={searchString} setSearchString={setSearchString} />
+                    <SearchInput 
+                      searchString={searchString} 
+                      setSearchString={setSearchString} 
+                      setPage={setPage}
+                      setEntities={setEntities} 
+                      setScrollPosition={setScrollPosition}
+                    />
 
                     <List
                       isBusy={isBusy}
@@ -222,6 +257,8 @@ function AppAdd() {
                 >
                   {showForm && (
                   <Form
+                    kindsOptions={kindsOptions}
+                    setKindsOptions={setKindsOptions}
                     isBusy={isBusy}
                     setIsBusy={setIsBusy}
                     setShowWindow={setShowWindow}

@@ -10,10 +10,10 @@ export default function RelevanceInput(props: {
     show: boolean,
     options: Relevance[]
 }) {
-  const handleChangeSelection = (fn: {value: string, label: string}) => {
-    console.log('change selection');
+  const handleChangeSelection = (fn: {id: string, label: string}) => {
+    // console.log('change selection');
     const { relevance, setRelevance } = props;
-    if (relevance?.value === fn.value) {
+    if (relevance?.id === fn.id) {
       setRelevance(null);
     } else {
       setRelevance(fn);
@@ -22,7 +22,7 @@ export default function RelevanceInput(props: {
 
   const labelForRelevance = () => {
     const { options } = props;
-    const found = options.find((row) => props?.relevance?.value === row.value);
+    const found = options.find((row) => props?.relevance?.id === row.id);
     if (found) return found.label;
     return null;
   };
@@ -41,9 +41,9 @@ export default function RelevanceInput(props: {
         <Select label={labelForRelevance()}>
           { props.options.map((option) => (
             <Option
-              key={option.value}
+              key={option.id}
               changeSelection={() => handleChangeSelection(option)}
-              isSelected={props?.relevance?.value === option.value}
+              isSelected={props?.relevance?.id === option.id}
               option={option}
             />
           ))}

@@ -6,6 +6,9 @@ import EmptyList from './EmptyList';
 import FullList from './FullList';
 import NothingFound from './NothingFound';
 
+import { appUrl } from './Utils';
+import { abort } from 'process';
+
 function DetermineList(props: { entities: Entity[] | null, onSelectItem: any }) {
   if (props.entities === null) {
     return <Wrapper><EmptyList /></Wrapper>;
@@ -46,7 +49,8 @@ export default function List(props: {
 
   useEffect(() => {
     if (scrollRef.current) {
-      if (Math.floor(scrollRef.current.scrollTop) != Math.floor(scrollPosition)) {
+      const diff = Math.abs(scrollRef.current.scrollTop - scrollPosition);
+      if (diff > 1) {
         scrollRef.current.scrollTop = scrollPosition;
       }
     }
@@ -55,6 +59,8 @@ export default function List(props: {
   const {
     fragmentUrl, searchString, page, setPage, setEntities,
   } = props;
+
+  let abortController = useRef<AbortController>();
 
   const fetchData = useCallback(
     () => {
@@ -70,36 +76,75 @@ export default function List(props: {
         page,
       };
 
-      fetch('https://localhost/entities/search', {
+      let params: RequestInit = {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
           'Content-Type': 'application/json',
         },
-      })
+      }
+
+      if (abortController.current) {
+        params.signal = abortController.current.signal
+      } else {
+        alert('a')
+      }
+
+      console.log('fetching');
+
+      fetch(`${appUrl}/api/mentions/seek`, params)
         .then((res) => {
           if (!res.ok) throw new Error(res.statusText);
 
           return res.json();
         })
-        .then(
-          (result) => {
-            props.setIsBusy(false);
-            setEntities((prevEntities) => [...(prevEntities || []), ...result]);
-            if (result.length > 0) {
-              setPage((page) => page + 1);
-            }
-          },
-        ).catch((reason) => {
+        .then((res: Entity[]) => {
+          res.forEach((entity: Entity) => {
+            entity.images.forEach((image: Image) => {
+              image.index = image.id!.toString();
+              image.id = image.id;
+              image.destroy = false;
+              image.url = `${appUrl}${image.url}`;
+            });
+          });
+
+          return res;
+        })
+        .then((res: Entity[]) => {
+          props.setIsBusy(false);
+          setEntities((prevEntities) => [...(prevEntities || []), ...res]);
+          if (res.length > 0) {
+            setPage((page) => page + 1);
+          }
+        })
+        .catch((reason) => {
+          console.log(reason);
+          
+          if (reason.name === 'AbortError') return;
+
           props.setIsBusy(false);
           setIsError(true);
-          console.error(reason);
         });
     },
     [fragmentUrl, searchString, page, setEntities, setPage],
   );
 
   useEffect(() => {
+    abortController.current = new AbortController();
+    console.log('created');
+
+    return () => {
+      if (abortController.current) {
+        abortController.current.abort();
+        console.log('aborted');
+      } else {
+        alert('b')
+      }
+    }
+  }, [fragmentUrl, searchString, page, fetchData]);
+
+  useEffect(() => {
+    // debugger
     // console.log('requested props.fragmentUrl')
     // console.log(props.fragmentUrl);
 
@@ -110,10 +155,9 @@ export default function List(props: {
 
     return () => {};
     // , props.fragmentUrl, props.page
-  }, [fragmentUrl, searchString, fetchData, page]);
+  }, [fragmentUrl, searchString, page, fetchData]);
 
   const someFunc = (val: any) => { props.setScrollPosition(val); };
-
   const asyncFunctionDebounced = AwesomeDebouncePromise(someFunc, 50);
 
   const handleScroll = (e: any) => {

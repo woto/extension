@@ -1,15 +1,27 @@
-import React, { SetStateAction, Dispatch } from 'react';
+import React, { SetStateAction, Dispatch, useState, useEffect } from 'react';
 import { SearchIcon } from '@heroicons/react/solid';
 
-export default function SearchInput(props: { searchString: string, setSearchString: Dispatch<SetStateAction<string>> }) {
-  function handleChange(event: any) {
-    props.setSearchString(event.target.value);
+export default function SearchInput(props: {
+  searchString: string,
+  setSearchString: Dispatch<SetStateAction<string>>,
+  setPage: Dispatch<SetStateAction<number>>,
+  setEntities: Dispatch<SetStateAction<Entity[] | null>>,
+  setScrollPosition: React.Dispatch<React.SetStateAction<number>>,
+ }) {
+
+  const { searchString } = props;
+
+  const handleChange = (event: any) => {
+    props.setEntities(null);
+    props.setScrollPosition(0);
+    props.setPage(1);
+    props.setSearchString(event.target.value)
   }
 
   return (
     <div className="m-3 relative">
       <input
-        defaultValue={props.searchString}
+        value={searchString}
         type="text"
         name="name"
         id="name"

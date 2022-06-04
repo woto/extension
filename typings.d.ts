@@ -1,7 +1,8 @@
 declare module '*.css';
 
 type Image = {
-    id: string | number,
+    index: string,
+    id: number | null,
     file: File | null
     url: string | null,
     destroy: boolean
@@ -22,5 +23,14 @@ type OptionalComponent = {
   component: (props: any) => JSX.Element
 }
 
-type Kind = {value: string | null, label: string}
-type Relevance = {value: string, label: string}
+type Kind = {
+  index: string,
+  id: string | null, 
+  label: string,
+  destroy: boolean | null
+}
+
+type Relevance = {
+  id: string, 
+  label: string
+}
