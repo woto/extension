@@ -57,7 +57,7 @@ export default function KindsInput(props: {
     return result;
   };
 
-  const mergedOptions: any = mergeByProperty(props.options || [], props.kinds || [], 'id');
+  const mergedOptions: any = mergeByProperty(props.options || [], props.kinds || [], 'index');
 
   const isSelected = (option: Kind) => props.kinds.some((row) => row.id === option.id && row.label === option.label);
 

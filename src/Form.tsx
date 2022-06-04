@@ -19,7 +19,7 @@ import RelevanceInput from './RelevanceInput';
 
 const schema = yup.object().shape({
   title: yup.string().required('должно быть заполнено').max(150, 'должно быть короче 150 символов'),
-  // intro: yup.string().required('должно быть заполнено').max(350, 'должно быть короче 350 символов'),
+  intro: yup.string().max(350, 'должно быть короче 350 символов'),
   // files: yup.mixed().test('required', 'изображение не загружено', value => {
   //   return value && value.length;
   // })
@@ -29,6 +29,7 @@ export default function Form(props: {
   isBusy: boolean,
   setIsBusy: React.Dispatch<React.SetStateAction<boolean>>,
   fragmentUrl: string,
+  fragmentHash: FragmentHash,
   linkUrl: string,
   entity: Entity,
   onClick: any,
@@ -110,6 +111,7 @@ export default function Form(props: {
   }, []);
 
   const intro = watch('intro');
+  // const title = watch('title');
 
   // const meth = (str: any) => fetch(str).then(response => { debugger; return response.text() })
   // let [res1, res2] = await Promise.all(['http://example.com', 'http://example.com'].map((str: string) => meth(str)))
@@ -248,7 +250,7 @@ export default function Form(props: {
       // console.log(img!.src);
 
       if (img) {
-        const finalUrl = `https://0e7b-78-106-236-170.ngrok.io/AfrOrF3gWeDA6VOlDG4TzxMv39O7MXnF4CXpKUwGqRM/background:FFF/rs:fit:400:400:1/ex:1/el:1/g:sm/plain/${img.src}`;
+        const finalUrl = `http://localhost:8080/AfrOrF3gWeDA6VOlDG4TzxMv39O7MXnF4CXpKUwGqRM/background:FFF/rs:fit:400:400:1/ex:1/el:1/g:sm/plain/${img.src}`;
 
         fetch(finalUrl)
           .then(async (res) => {
@@ -435,6 +437,16 @@ export default function Form(props: {
               <CogIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
             </button>
           </div>
+
+          <p className="shadow-inner mb-3 text-xs text-orange-200 bg-slate-700 p-2 rounded-lg">Вы привязываете синоним:{" "}
+            <span className="text-orange-50">{props.fragmentHash.textStart}</span>
+            { props.linkUrl && 
+              <>
+              , имеющий ссылку:{" "}
+              <span className="text-red-50 break-all">{props.linkUrl}</span>
+              </>
+            }
+          </p>
 
           { showDebug
             && (

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { Fragment, useEffect, useRef, useState } from 'react';
 import { Transition } from '@headlessui/react';
 import Draggable from 'react-draggable';
 
@@ -15,32 +15,42 @@ const createTextFragment = () => {
   const selection = window.getSelection();
   // eslint-disable-next-line no-undef
   const result = fgu.generateFragment(selection);
-  let url = `${location.origin}${location.pathname}${location.search}`;
-  if (result.status === 0) {
-    const { fragment } = result;
-    const prefix = fragment.prefix
-      ? `${encodeURIComponent(fragment.prefix)}-,`
-      : '';
-    const suffix = fragment.suffix
-      ? `,-${encodeURIComponent(fragment.suffix)}`
-      : '';
-    const textStart = encodeURIComponent(fragment.textStart)
-      .replace('-', '%2D');
-    const textEnd = fragment.textEnd
-      ? `,${encodeURIComponent(fragment.textEnd)}`
-      : '';
-    url = `${url}#:~:text=${prefix}${textStart}${textEnd}${suffix}`;
-  } else {
-    alert(`Could not create URL ${result.status}`);
-  }
+  let fragmentHash: FragmentHash;
 
-  return { selection: selection!, url: url! };
+  let url = `${location.origin}${location.pathname}${location.search}`;
+
+  if (result.status === 0) {
+    fragmentHash = result.fragment;
+
+    const prefix = fragmentHash.prefix
+      ? `${encodeURIComponent(fragmentHash.prefix)}-,`
+      : '';
+
+    const suffix = fragmentHash.suffix
+      ? `,-${encodeURIComponent(fragmentHash.suffix)}`
+      : '';
+
+    const textStart = encodeURIComponent(fragmentHash.textStart)
+      .replace('-', '%2D');
+
+    const textEnd = fragmentHash.textEnd
+      ? `,${encodeURIComponent(fragmentHash.textEnd)}`
+      : '';
+
+    url = `${url}#:~:text=${prefix}${textStart}${textEnd}${suffix}`;
+
+    return { selection: selection!, url: url!, fragmentHash: fragmentHash! };
+
+  } else {
+    throw new Error(`Не удалось сформировать ссылку с выделением. Код ошибки: ${result.status}`);
+  }
 };
 
 function AppAdd() {
   const nodeRef = React.useRef(null);
   const [fragmentUrl, setFragmentUrl] = useState('');
   const [linkUrl, setLinkUrl] = useState('');
+  const [fragmentHash, setFragmentHash] = useState<FragmentHash>();
   const [searchString, setSearchString] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [showWindow, setShowWindow] = useState(false);
@@ -84,11 +94,12 @@ function AppAdd() {
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       const { message, feature } = request;
       if (message === 'create-fragment') {
-        const { url, selection } = createTextFragment();
+        const { url, selection, fragmentHash } = createTextFragment();
         console.log(url);
         console.log(selection!.toString());
         setSearchString(selection!.toString());
         setFragmentUrl(url!);
+        setFragmentHash(fragmentHash!);
         setLinkUrl(request.linkUrl);
         setShowWindow(true);
         setShowForm(false);
@@ -266,6 +277,7 @@ function AppAdd() {
                             onClick={handleClick}
                             entity={entity}
                             fragmentUrl={fragmentUrl}
+                            fragmentHash={fragmentHash!}
                             linkUrl={linkUrl}
                           />
                         )}

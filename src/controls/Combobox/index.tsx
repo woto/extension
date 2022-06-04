@@ -36,6 +36,7 @@ export default function Combobox(props: {
   })?.filter((val: any) => val);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    e.stopPropagation();
     // console.log(e.key);
 
     if (['Enter'].includes(e.key)) {

@@ -34,3 +34,10 @@ type Relevance = {
   id: string, 
   label: string
 }
+
+type FragmentHash = {
+  prefix: string,
+  suffix: string
+  textStart: string,
+  textEnd: string
+}
