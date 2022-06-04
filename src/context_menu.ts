@@ -18,6 +18,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   // console.log(request);
 
   const { message } = request;
+  let linkUrl = '';
+
   if (message === 'select-element') {
     switch (request.selectionType) {
       case 'selection': {
@@ -32,6 +34,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         if (rightclickedElement instanceof Node) {
           // selection.selectAllChildren(rightclickedElement);
           const text = rightclickedElement.childNodes[0];
+          linkUrl = (rightclickedElement as HTMLElement).getAttribute('href')!;
           selection.setBaseAndExtent(text, 0, text, text.textContent!.length);
           // debugger
           // selection.setBaseAndExtent(text,0,text,text.toString().length)
@@ -41,7 +44,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       }
     }
 
-    return sendResponse('element-selected-successfully');
+    return sendResponse({message: 'element-selected-successfully', linkUrl: linkUrl});
   }
   // foo
 });

@@ -89,7 +89,7 @@ function AppAdd() {
         console.log(selection!.toString());
         setSearchString(selection!.toString());
         setFragmentUrl(url!);
-        setLinkUrl('https://foo.bar');
+        setLinkUrl(request.linkUrl);
         setShowWindow(true);
         setShowForm(false);
         setEntities(null);
