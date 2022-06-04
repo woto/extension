@@ -930,7 +930,6 @@
        .normalize('NFKD')
        .replace(/\s+/g, ' ')
        .replace(/[\u0300-\u036f]/g, '')
-       .toLowerCase();
  };
  
  /**

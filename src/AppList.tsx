@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import * as utils from './text-fragment-utils.js';
 
 // // const hash = ':~:text=This%20domain,examples&text=in%20literature&text=More%20information...';
-const hash = '#:~:text=Яндекса';
+const hash = '#:~:text=Яндекс';
 
 const init = () => {
   // debugger
