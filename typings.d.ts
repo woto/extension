@@ -1,5 +1,10 @@
 declare module '*.css';
 
+declare module "*.svg" {
+  const content: any;
+  export default content;
+}
+
 type Image = {
     index: string,
     id: number | null,

@@ -9,6 +9,9 @@ import {
 } from '@heroicons/react/solid';
 import { v4 as uuidv4 } from 'uuid';
 
+import yandex from './icons/yandex.svg'
+import google from './icons/google.svg'
+
 import { appUrl } from './Utils';
 
 import Thumbnail from './Thumbnail';
@@ -430,12 +433,29 @@ export default function Form(props: {
               Назад
             </button>
 
-            <button
-              onClick={(e) => { e.preventDefault(); setShowDebug(!showDebug); }}
-              className="ml-auto mb-3 inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              <CogIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
-            </button>
+            <div className="flex ml-auto flex-grow justify-end">
+
+              <button
+                onClick={(e) => { e.preventDefault(); setShowDebug(!showDebug); }}
+                className="mb-3 ml-1 inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                {<div className="h-5 w-5" dangerouslySetInnerHTML={{__html: google}} />}
+              </button>
+              
+              <button
+                onClick={(e) => { e.preventDefault(); setShowDebug(!showDebug); }}
+                className="mb-3 ml-1 inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                {<div className="h-5 w-5" dangerouslySetInnerHTML={{__html: yandex}} />}
+              </button>
+
+              <button
+                onClick={(e) => { e.preventDefault(); setShowDebug(!showDebug); }}
+                className="mb-3 ml-1 inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              >
+                <CogIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+              </button>
+            </div>
           </div>
 
           <p className="shadow-inner mb-3 text-xs text-orange-200 bg-slate-700 p-2 rounded-lg">Вы привязываете синоним:{" "}
