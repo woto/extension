@@ -1,6 +1,8 @@
 import { CheckIcon } from '@heroicons/react/solid';
 import React, { useState } from 'react';
 
+import { Kind } from '../../../main';
+
 export default function Option(
   props: {
     // IT IS REQUIRED! TODO. Adds with React.cloneElement
@@ -25,7 +27,7 @@ export default function Option(
       onClick={props.changeSelection}
       onMouseMove={() => props.setHighlightedIndex(props.index as number)}
       onMouseLeave={() => props.setHighlightedIndex(null)}
-      className={`${props.isHighlighted ? 'text-white bg-indigo-600' : 'text-gray-900'} relative cursor-default select-none py-2 pl-3 pr-9`}
+      className={`${props.isHighlighted ? 'text-white bg-indigo-600' : 'text-gray-900'} relative cursor-default py-2 pl-3 pr-9`}
       tabIndex={-1}
     >
 

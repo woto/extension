@@ -22,7 +22,7 @@ export default function Option(props: {
       onClick={props.changeSelection}
       onMouseEnter={() => setIsHighlight(true)}
       onMouseLeave={() => setIsHighlight(false)}
-      className={`${isHighlight ? 'text-white bg-indigo-600' : 'text-gray-900'} text-sm cursor-default select-none relative py-2 pl-3 pr-9`}
+      className={`${isHighlight ? 'text-white bg-indigo-600' : 'text-gray-900'} text-sm cursor-default relative py-2 pl-3 pr-9`}
     >
 
       <span className={`${props.isSelected ? 'font-semibold' : 'font-normal'} block truncate`}>

@@ -2,6 +2,8 @@ import React, { Fragment, useState } from 'react';
 import { Transition } from '@headlessui/react';
 // import type { SentimentItem } from './SentimentItem';
 
+import { SentimentItem } from '../main';
+
 export default function SentimentInput(props: {
     priority: number,
     show: boolean,

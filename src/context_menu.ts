@@ -21,11 +21,15 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   let linkUrl = '';
 
   if (message === 'select-element') {
+    debugger
+
     switch (request.selectionType) {
       case 'selection': {
         break;
       }
       case 'link': {
+        debugger
+
         if (!rightclickedElement) return;
 
         const selection = window.getSelection();
@@ -44,7 +48,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       }
     }
 
-    return sendResponse({message: 'element-selected-successfully', linkUrl: linkUrl});
+    return sendResponse({ message: 'element-selected-successfully', linkUrl });
   }
   // foo
 });

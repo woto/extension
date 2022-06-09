@@ -8,6 +8,8 @@ import Option from './controls/Combobox/Option';
 import Tags from './controls/Tags';
 import Item from './controls/Tags/Item';
 
+import { Kind } from '../main';
+
 export default function KindsInput(props: {
   priority: number,
   show: boolean

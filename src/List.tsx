@@ -2,12 +2,14 @@ import React, {
   useState, useEffect, useRef, useCallback,
 } from 'react';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
+import { abort } from 'process';
 import EmptyList from './EmptyList';
 import FullList from './FullList';
 import NothingFound from './NothingFound';
 
 import { appUrl } from './Utils';
-import { abort } from 'process';
+
+import { Entity, Image } from '../main';
 
 function DetermineList(props: { entities: Entity[] | null, onSelectItem: any }) {
   if (props.entities === null) {
@@ -33,6 +35,7 @@ export default function List(props: {
     setIsBusy: React.Dispatch<React.SetStateAction<boolean>>,
     fragmentUrl: string,
     searchString: string,
+    linkUrl: string,
     onSelectItem: any,
     onClick: any,
     entities: any[] | null,
@@ -57,10 +60,10 @@ export default function List(props: {
   }, [scrollPosition]);
 
   const {
-    fragmentUrl, searchString, page, setPage, setEntities,
+    fragmentUrl, searchString, page, linkUrl, setPage, setEntities,
   } = props;
 
-  let abortController = useRef<AbortController>();
+  const abortController = useRef<AbortController>();
 
   const fetchData = useCallback(
     () => {
@@ -72,22 +75,22 @@ export default function List(props: {
       const data = {
         fragment_url: fragmentUrl,
         search_string: searchString,
-        link_url: 'https://foo.bar',
+        link_url: linkUrl,
         page,
       };
 
-      let params: RequestInit = {
+      const params: RequestInit = {
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
           'Content-Type': 'application/json',
         },
-      }
+      };
 
       if (abortController.current) {
-        params.signal = abortController.current.signal
+        params.signal = abortController.current.signal;
       } else {
-        alert('a')
+        alert('a');
       }
 
       console.log('fetching');
@@ -119,14 +122,14 @@ export default function List(props: {
         })
         .catch((reason) => {
           console.log(reason);
-          
+
           if (reason.name === 'AbortError') return;
 
           props.setIsBusy(false);
           setIsError(true);
         });
     },
-    [fragmentUrl, searchString, page, setEntities, setPage],
+    [fragmentUrl, searchString, page, linkUrl, setEntities, setPage],
   );
 
   useEffect(() => {
@@ -138,10 +141,10 @@ export default function List(props: {
         abortController.current.abort();
         console.log('aborted');
       } else {
-        alert('b')
+        alert('b');
       }
-    }
-  }, [fragmentUrl, searchString, page, fetchData]);
+    };
+  }, [fragmentUrl, searchString, page, linkUrl, fetchData]);
 
   useEffect(() => {
     // debugger
@@ -155,7 +158,7 @@ export default function List(props: {
 
     return () => {};
     // , props.fragmentUrl, props.page
-  }, [fragmentUrl, searchString, page, fetchData]);
+  }, [fragmentUrl, searchString, page, linkUrl, fetchData]);
 
   const someFunc = (val: any) => { props.setScrollPosition(val); };
   const asyncFunctionDebounced = AwesomeDebouncePromise(someFunc, 50);
@@ -207,7 +210,7 @@ export default function List(props: {
           <a
             href="#"
             onClick={props.onClick}
-            className="undraggable text-sm font-medium text-indigo-600 hover:text-indigo-500"
+            className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
           >
             Добавить новый объект
           </a>

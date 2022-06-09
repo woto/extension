@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { Kind } from '../../../main';
+
 export default function Item(props: {item: Kind, handleClick: any}) {
   return (
     <li onClick={props.handleClick} key={props.item.id} className="inline">

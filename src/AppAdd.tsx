@@ -1,4 +1,6 @@
-import React, { Fragment, useEffect, useRef, useState } from 'react';
+import React, {
+  Fragment, useCallback, useEffect, useRef, useState,
+} from 'react';
 import { Transition } from '@headlessui/react';
 import Draggable from 'react-draggable';
 
@@ -7,6 +9,8 @@ import Form from './Form';
 import List from './List';
 import SearchInput from './controls/SearchInput';
 import Toast from './Toast';
+
+import { FragmentHash, Entity, Kind } from '../main';
 
 const fgu = require('./fragment-generation-utils');
 
@@ -40,10 +44,8 @@ const createTextFragment = () => {
     url = `${url}#:~:text=${prefix}${textStart}${textEnd}${suffix}`;
 
     return { selection: selection!, url: url!, fragmentHash: fragmentHash! };
-
-  } else {
-    throw new Error(`Не удалось сформировать ссылку с выделением. Код ошибки: ${result.status}`);
   }
+  throw new Error(`Не удалось сформировать ссылку с выделением. Код ошибки: ${result.status}`);
 };
 
 function AppAdd() {
@@ -55,10 +57,11 @@ function AppAdd() {
   const [showForm, setShowForm] = useState(false);
   const [showWindow, setShowWindow] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
-  const [isBusy, setIsBusy] = useState(false);
+  const [isBusy, _setIsBusy] = useState(false);
   const [entity, setEntity] = useState<Entity>({
     entity_id: '', title: '', intro: '', images: [],
   });
+  const setIsBusy = useCallback((num) => _setIsBusy(num), [])
   const [entities, setEntities] = useState<Entity[] | null>(null);
   const [page, setPage] = useState<number>(1);
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -82,6 +85,7 @@ function AppAdd() {
         console.log(previousLocation);
         console.log(window.location.toString());
         previousLocation = window.location.toString();
+        setShowWindow(false);
       }
     }, 1000);
 
@@ -179,11 +183,12 @@ function AppAdd() {
             >
               <div
                 ref={nodeRef}
-                className={`shadow rounded-lg select-none w-[320px] ${isDragging ? 'opacity-50' : 'opacity-100'}`}
+                className={`min-h-[570px] bg-slate-100 rounded-lg w-[320px] ${isDragging ? 'opacity-50' : 'opacity-100'}`}
               >
 
                 <div
-                  className="p-3 border-slate-600 border-t border-r border-l rounded-b-none rounded-lg flex cursor-move dragHandler svg-pattern"
+                  className="p-3 border-slate-600 border-t border-r border-l rounded-b-none rounded-lg flex cursor-move
+                  dragHandler bg-gradient-to-b to-stone-800 from-zinc-700"
                 >
                   <span className="grow flex items-center">
                     <a
@@ -191,10 +196,10 @@ function AppAdd() {
                       onMouseDown={stopPropagation}
                       onTouchStart={stopPropagation}
                       target="_blank"
-                      className="font-extrabold tracking-wide text-xl text-slate-50 undraggable"
+                      className="font-extrabold tracking-wide text-xl text-slate-50"
                       rel="noreferrer"
                     >
-                      <img className="h-4" src={chrome.runtime.getURL('logo.png')} />
+                      <img className="h-6" src={chrome.runtime.getURL('logo.png')} />
                     </a>
                   </span>
 
@@ -205,8 +210,8 @@ function AppAdd() {
                       onTouchStart={stopPropagation}
                       type="button"
                       className="inline-flex items-center p-1 border border-transparent rounded-full
-                                               shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none
-                                               focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                                               shadow-sm text-white bg-stone-900 hover:bg-stone-800 focus:outline-none
+                                               focus:ring-2 focus:ring-offset-2 focus:ring-stone-900 focus:ring-offset-stone-500"
                     >
                       <XIcon className="h-4 w-4" />
                     </button>
@@ -217,72 +222,71 @@ function AppAdd() {
                 <div className={`${isBusy ? 'background-animate from-indigo-500 via-lime-400 to-indigo-500 bg-gradient-to-r bg-orange-400' : 'bg-slate-400'} transition-all h-2`} />
 
                 {/* <div className="border border-t-0 border-slate-300 rounded-t-none rounded-lg overflow-hidden flex flex-col h-full"> */}
-                <div className="border border-t-0 border-slate-300 rounded-t-none rounded-lg flex flex-col h-full">
+                <div className="flex flex-col h-full">
 
-                  <div className="bg-slate-100 min-h-[408px] content-center flex flex-col">
-                    <div className="grow">
-                      <Transition
-                        show={!showForm}
-                        enter="transition"
-                        enterFrom="opacity-0 -translate-x-1"
-                        enterTo="opacity-100  translate-x-0"
-                        leave="transition"
-                        leaveFrom="opacity-100 translate-x-0"
-                        leaveTo="opacity-0 -translate-x-1"
-                      >
-                        {!showForm && (
-                          <>
-                            <SearchInput
-                              searchString={searchString}
-                              setSearchString={setSearchString}
-                              setPage={setPage}
-                              setEntities={setEntities}
-                              setScrollPosition={setScrollPosition}
-                            />
+                  <div className="content-center flex flex-col">
+                    <Transition
+                      show={!showForm}
+                      enter="transition"
+                      enterFrom="opacity-0 -translate-x-1"
+                      enterTo="opacity-100  translate-x-0"
+                      leave="transition"
+                      leaveFrom="opacity-100 translate-x-0"
+                      leaveTo="opacity-0 -translate-x-1"
+                    >
+                      {!showForm && (
+                        <div className="svg-pattern border border-t-0 border-slate-300 rounded-t-none rounded-lg">
+                          <SearchInput
+                            searchString={searchString}
+                            setSearchString={setSearchString}
+                            setPage={setPage}
+                            setEntities={setEntities}
+                            setScrollPosition={setScrollPosition}
+                          />
 
-                            <List
-                              isBusy={isBusy}
-                              setIsBusy={setIsBusy}
-                              entities={entities}
-                              page={page}
-                              setPage={setPage}
-                              setEntities={setEntities}
-                              onClick={handleClick}
-                              onSelectItem={selectItemHandler}
-                              fragmentUrl={fragmentUrl}
-                              searchString={searchString}
-                              scrollPosition={scrollPosition}
-                              setScrollPosition={setScrollPosition}
-                            />
-                          </>
-                        )}
-                      </Transition>
-
-                      <Transition
-                        show={showForm}
-                        enter="transition"
-                        enterFrom="opacity-0 translate-x-1"
-                        enterTo="opacity-100 translate-x-0"
-                        leave="transition"
-                        leaveFrom="opacity-100 translate-x-0"
-                        leaveTo="opacity-0 translate-x-1"
-                      >
-                        {showForm && (
-                          <Form
-                            kindsOptions={kindsOptions}
-                            setKindsOptions={setKindsOptions}
+                          <List
                             isBusy={isBusy}
                             setIsBusy={setIsBusy}
-                            setShowWindow={setShowWindow}
+                            entities={entities}
+                            page={page}
+                            setPage={setPage}
+                            setEntities={setEntities}
                             onClick={handleClick}
-                            entity={entity}
+                            onSelectItem={selectItemHandler}
                             fragmentUrl={fragmentUrl}
-                            fragmentHash={fragmentHash!}
                             linkUrl={linkUrl}
+                            searchString={searchString}
+                            scrollPosition={scrollPosition}
+                            setScrollPosition={setScrollPosition}
                           />
-                        )}
-                      </Transition>
-                    </div>
+                        </div>
+                      )}
+                    </Transition>
+
+                    <Transition
+                      show={showForm}
+                      enter="transition"
+                      enterFrom="opacity-0 translate-x-1"
+                      enterTo="opacity-100 translate-x-0"
+                      leave="transition"
+                      leaveFrom="opacity-100 translate-x-0"
+                      leaveTo="opacity-0 translate-x-1"
+                    >
+                      {showForm && (
+                        <Form
+                          kindsOptions={kindsOptions}
+                          setKindsOptions={setKindsOptions}
+                          isBusy={isBusy}
+                          setIsBusy={setIsBusy}
+                          setShowWindow={setShowWindow}
+                          onClick={handleClick}
+                          entity={entity}
+                          fragmentUrl={fragmentUrl}
+                          fragmentHash={fragmentHash!}
+                          linkUrl={linkUrl}
+                        />
+                      )}
+                    </Transition>
                   </div>
                 </div>
               </div>

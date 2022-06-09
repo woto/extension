@@ -3,6 +3,8 @@ import React from 'react';
 import Select from './controls/Select';
 import Option from './controls/Select/Option';
 
+import { Relevance } from '../main';
+
 export default function RelevanceInput(props: {
     priority: number,
     relevance: Relevance | null,

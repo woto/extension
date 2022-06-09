@@ -2,12 +2,14 @@ import React from 'react';
 /* This example requires Tailwind CSS v2.0+ */
 import { ChevronRightIcon } from '@heroicons/react/solid';
 
+import { Entity } from '../main';
+
 export default function FullListItem(props: {entity: Entity, onSelectItem: any}) {
   return (
-    <li className="undraggable">
+    <li className="">
       <a
         onClick={(e) => { e.preventDefault(); props.onSelectItem(props.entity); }}
-        className="undraggable block hover:bg-gray-50 cursor-pointer"
+        className="block hover:bg-gray-50 cursor-pointer"
       >
         <div className="flex items-center px-4 py-4">
           <div className="min-w-0 flex-1 flex items-center">
@@ -15,7 +17,7 @@ export default function FullListItem(props: {entity: Entity, onSelectItem: any})
               {
                 props.entity.images?.length > 0
                 && props.entity.images[0].url
-                && <img className="undraggable h-12 w-12 object-contain" src={props.entity.images[0].url} alt={props.entity.title} />
+                && <img className="h-12 w-12 object-contain" src={props.entity.images[0].url} alt={props.entity.title} />
               }
             </div>
             <div className="min-w-0 flex-1 px-4">

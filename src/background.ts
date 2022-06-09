@@ -18,7 +18,7 @@ async function onClickHandler(info: chrome.contextMenus.OnClickData, tab?: chrom
 
   if (['link', 'selection'].includes(info.menuItemId.toString())) {
     await injectContentScripts('add', 'js/content_script.js', info, tab);
-    let result = await sendMessageToPage({ message: 'select-element', selectionType: info.menuItemId }, info, tab);
+    const result = await sendMessageToPage({ message: 'select-element', selectionType: info.menuItemId }, info, tab);
     await sendMessageToPage({ message: 'create-fragment', linkUrl: (result as Record<'linkUrl', string>).linkUrl }, info, tab);
   } else if (['list'].includes(info.menuItemId.toString())) {
     // debugger

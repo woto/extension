@@ -1,6 +1,8 @@
 import React, { useEffect, useRef } from 'react';
 import FullListItem from './FullListItem';
 
+import { Entity } from '../main';
+
 export default function FullList(props: {entities: any[], onSelectItem: any}) {
   return (
     <ul className="divide-y divide-gray-200">

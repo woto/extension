@@ -9,16 +9,18 @@ import {
 } from '@heroicons/react/solid';
 import { v4 as uuidv4 } from 'uuid';
 
-import yandex from './icons/yandex.svg'
-import google from './icons/google.svg'
-
 import { appUrl } from './Utils';
 
 import Thumbnail from './Thumbnail';
 import SentimentInput from './SentimentInput';
 import KindsInput from './KindsInput';
 import RelevanceInput from './RelevanceInput';
+import Sidebar from './controls/Sidebar';
 // import type { SentimentItem } from './controls/SentimentItem';
+
+import {
+  Kind, FragmentHash, Entity, Image, Relevance, SentimentItem, OptionalComponent,
+} from '../main';
 
 const schema = yup.object().shape({
   title: yup.string().required('должно быть заполнено').max(150, 'должно быть короче 150 символов'),
@@ -114,7 +116,7 @@ export default function Form(props: {
   }, []);
 
   const intro = watch('intro');
-  // const title = watch('title');
+  const title = watch('title');
 
   // const meth = (str: any) => fetch(str).then(response => { debugger; return response.text() })
   // let [res1, res2] = await Promise.all(['http://example.com', 'http://example.com'].map((str: string) => meth(str)))
@@ -176,7 +178,7 @@ export default function Form(props: {
       // }
     }).then((res) => {
       props.setShowWindow(false);
-      // console.log(res)
+      console.error(res);
     });
   };
 
@@ -322,7 +324,7 @@ export default function Form(props: {
   // console.log('tmp 1')
   // console.log(tmp);
 
-  type OptionalComponentsItem = {show: boolean, key: string, component: any};
+  type OptionalComponentsItem = { show: boolean, key: string, component: any };
 
   const [optionalComponents, setOptionalComponents] = useState<OptionalComponentsItem[]>([]);
 
@@ -421,7 +423,15 @@ export default function Form(props: {
       {/* { console.log('render <Form />') } */}
 
       <form onSubmit={handleSubmit(onSubmit)}>
-        <div className="p-3">
+        {/* <div className="flex"> */}
+
+        <Sidebar
+          searchString={title}
+          linkUrl={props.linkUrl}
+          setIsBusy={props.setIsBusy}
+        />
+
+        <div className="p-3 relative svg-pattern border border-t-0 border-slate-300 rounded-t-none rounded-lg">
 
           <div className="flex">
             <button
@@ -439,56 +449,46 @@ export default function Form(props: {
                 onClick={(e) => { e.preventDefault(); setShowDebug(!showDebug); }}
                 className="mb-3 ml-1 inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
-                {<div className="h-5 w-5" dangerouslySetInnerHTML={{__html: google}} />}
-              </button>
-              
-              <button
-                onClick={(e) => { e.preventDefault(); setShowDebug(!showDebug); }}
-                className="mb-3 ml-1 inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
-                {<div className="h-5 w-5" dangerouslySetInnerHTML={{__html: yandex}} />}
-              </button>
-
-              <button
-                onClick={(e) => { e.preventDefault(); setShowDebug(!showDebug); }}
-                className="mb-3 ml-1 inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-              >
                 <CogIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
               </button>
             </div>
           </div>
 
-          <p className="shadow-inner mb-3 text-xs text-orange-200 bg-slate-700 p-2 rounded-lg">Вы привязываете синоним:{" "}
+          <p className="shadow-inner mb-3 text-xs text-orange-200 bg-slate-700 p-2 rounded-lg">
+            Вы привязываете синоним:
+            {' '}
             <span className="text-orange-50">{props.fragmentHash.textStart}</span>
-            { props.linkUrl && 
+            {props.linkUrl
+              && (
               <>
-              , имеющий ссылку:{" "}
-              <span className="text-red-50 break-all">{props.linkUrl}</span>
+                , имеющий ссылку:
+                {' '}
+                <span className="text-red-50 break-all">{props.linkUrl}</span>
               </>
-            }
+              )}
           </p>
 
-          { showDebug
+          {/* {showDebug
             && (
-            <div className="select-text">
-              <p className="break-normal text-sm mb-3">{props.fragmentUrl}</p>
-              <p className="break-normal text-sm mb-3">{props.linkUrl}</p>
-              <p className="break-normal text-sm mb-3">{props.entity.entity_id}</p>
-            </div>
-            )}
+              <div className="select-text">
+                <p className="break-normal text-sm mb-3">{props.fragmentUrl}</p>
+                <p className="break-normal text-sm mb-3">{props.linkUrl}</p>
+                <p className="break-normal text-sm mb-3">{props.entity.entity_id}</p>
+              </div>
+            )} */}
 
           <div className="text-sm">
             Вы можете так же указать
             {' '}
-            <a onClick={(e) => { toggleVisibility(e, 'sentiment'); }} href="#" className={`${isOptionalComponentVisible('sentiment') ? 'text-gray-700 hover:text-gray-600' : 'text-indigo-600 hover:text-indigo-500'} undraggable font-medium`}>настроение</a>
+            <a onClick={(e) => { toggleVisibility(e, 'sentiment'); }} href="#" className={`${isOptionalComponentVisible('sentiment') ? 'text-gray-700 hover:text-gray-600' : 'text-indigo-600 hover:text-indigo-500'} font-medium`}>настроение</a>
             {' '}
             с которым упоминается объект,
             {' '}
-            <a onClick={(e) => { toggleVisibility(e, 'relevance'); }} href="#" className={`${isOptionalComponentVisible('relevance') ? 'text-gray-700 hover:text-gray-600' : 'text-indigo-600 hover:text-indigo-500'} undraggable font-medium`}>важность</a>
+            <a onClick={(e) => { toggleVisibility(e, 'relevance'); }} href="#" className={`${isOptionalComponentVisible('relevance') ? 'text-gray-700 hover:text-gray-600' : 'text-indigo-600 hover:text-indigo-500'} font-medium`}>важность</a>
             {' '}
             упоминаемого объекта в статье, а так же
             {' '}
-            <a onClick={(e) => { toggleVisibility(e, 'kinds'); }} href="#" className={`${isOptionalComponentVisible('kinds') ? 'text-gray-700 hover:text-gray-600' : 'text-indigo-600 hover:text-indigo-500'} undraggable font-medium`}>тип</a>
+            <a onClick={(e) => { toggleVisibility(e, 'kinds'); }} href="#" className={`${isOptionalComponentVisible('kinds') ? 'text-gray-700 hover:text-gray-600' : 'text-indigo-600 hover:text-indigo-500'} font-medium`}>тип</a>
             {' '}
             объекта.
           </div>
@@ -588,7 +588,7 @@ export default function Form(props: {
           {filesError && <div className="text-red-400 mt-2 text-sm">{filesError}</div>}
 
           <div className="relative mt-3 grid grid-cols-3 gap-3">
-            { images.map((image) => <Thumbnail key={image.index} image={image} removeImage={removeImage} />) }
+            {images.map((image) => <Thumbnail key={image.index} image={image} removeImage={removeImage} />)}
           </div>
 
           <button
@@ -598,6 +598,7 @@ export default function Form(props: {
             Ок
           </button>
         </div>
+
       </form>
     </>
   );

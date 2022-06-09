@@ -1,11 +1,7 @@
-declare module '*.css';
+import { tabs } from './src/controls/Sidebar';
+type Tab = typeof tabs[number];
 
-declare module "*.svg" {
-  const content: any;
-  export default content;
-}
-
-type Image = {
+export type Image = {
     index: string,
     id: number | null,
     file: File | null
@@ -13,34 +9,34 @@ type Image = {
     destroy: boolean
 }
 
-type SentimentItem = {value: string, label: JSX.Element}
+export type SentimentItem = {value: string, label: JSX.Element}
 
-type Entity = {
+export type Entity = {
   entity_id: string,
   title: string,
   intro: string,
   images: Image[]
 }
 
-type OptionalComponent = {
+export type OptionalComponent = {
   key: string,
   show: boolean,
   component: (props: any) => JSX.Element
 }
 
-type Kind = {
+export type Kind = {
   index: string,
   id: string | null, 
   label: string,
   destroy: boolean | null
 }
 
-type Relevance = {
+export type Relevance = {
   id: string, 
   label: string
 }
 
-type FragmentHash = {
+export type FragmentHash = {
   prefix: string,
   suffix: string
   textStart: string,

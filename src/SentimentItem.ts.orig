@@ -1,3 +1,0 @@
-import React from 'react';
-
-export type SentimentItem = {value: string, label: JSX.Element}

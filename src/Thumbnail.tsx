@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { TrashIcon } from '@heroicons/react/outline';
 import { Transition } from '@headlessui/react';
+import { Image } from '../main';
 
 export default function Thumbnail(props: {image: Image, removeImage: any}) {
   const objectUrl = props.image.url || URL.createObjectURL(props.image.file);
