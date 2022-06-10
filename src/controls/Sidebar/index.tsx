@@ -24,13 +24,11 @@ export default function Sidebar(
     setCurrentTab(tab === currentTab ? null : tab);
   };
 
-  const [cache, setCache] = useState<Partial<Record<Tab, any>> | null>();
   const [internalSearchString, setInternalSearchString] = useState<string>('');
   
   const {searchString, linkUrl} = props
 
   useEffect(() => {
-    debugger
 
     const getDefaultValue = () => {
       switch (currentTab) {
@@ -48,12 +46,6 @@ export default function Sidebar(
     const defaultValue = getDefaultValue()
     setInternalSearchString(defaultValue);
   }, [searchString, linkUrl, currentTab])
-
-  // setCache({(['yandex' as Tab]): '1'})
-  const storeCache = (key: Tab, value: object) => {
-    const tmp = { [key]: value };
-    setCache({ ...cache, ...tmp });
-  };
 
   let Component = React.lazy(() => import('./Extractors/Hack'));
 
@@ -109,8 +101,6 @@ export default function Sidebar(
                   apiKey={props.apiKey}
                   setIsBusy={props.setIsBusy}
                   currentTab={currentTab}
-                  cache={cache}
-                  storeCache={storeCache}
                   q={internalSearchString}
                 />
               </Suspense>

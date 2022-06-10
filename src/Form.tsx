@@ -269,7 +269,7 @@ export default function Form(props: {
       // console.log(img!.src);
 
       if (img) {
-        const finalUrl = `http://localhost:8080/AfrOrF3gWeDA6VOlDG4TzxMv39O7MXnF4CXpKUwGqRM/background:FFF/rs:fit:400:400:1/ex:1/el:1/g:sm/plain/${img.src}`;
+        const finalUrl = `http://localhost:8080/AfrOrF3gWeDA6VOlDG4TzxMv39O7MXnF4CXpKUwGqRM/background:FFF/rs:fit:400:400:1/ex:1/el:1/g:sm/plain/${encodeURIComponent(img.src)}`;
 
         fetch(finalUrl, {
           credentials: 'omit'

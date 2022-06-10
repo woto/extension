@@ -1,41 +1,23 @@
 import React, { useEffect, useState } from 'react';
+import { useQuery } from "react-query";
+
 import { Tab } from '../../../../main';
 
 export default function Iframely(props: {
     apiKey: string,
     setIsBusy: React.Dispatch<React.SetStateAction<boolean>>,
     currentTab: Tab | null,
-    cache: Partial<Record<Tab, any>> | undefined | null,
-    storeCache: (key: Tab, value: object) => void,
     q: string
 }) {
-  // const [data, setData] = useState();
 
-  let data;
-
-  if (props.currentTab && props.cache) {
-    data = props.cache[props.currentTab];
-  }
-
-  // useEffect(
-  //   () => {
-  //     setTimeout(() => {
-  //       props.setIsBusy(true);
-  //     }, 1000)
-
-  //     return () => {}
-  //   }, [])
-
-  useEffect(() => {
-    if (props.currentTab && props.cache && props.cache[props.currentTab]) return;
-
-    props.setIsBusy(true);
+  const { isLoading, error, data, isFetching } = useQuery("Iframely", () => {
+    props.setIsBusy(true)
     
     const query = new URLSearchParams({
       url: props.q,
     })
 
-    fetch(`http://localhost:3000/api/tools/iframely?${query}`, {
+    return fetch(`http://localhost:3000/api/tools/iframely?${query}`, {
       credentials: 'omit',
       method: 'GET',
       headers: {
@@ -45,18 +27,21 @@ export default function Iframely(props: {
       }
     }).then((result) => {
       if (!result.ok) throw new Error(result.statusText);
-      return result.json();
-    }).then((result) => {
-      if (result && props.currentTab) props.storeCache(props.currentTab, result);
       props.setIsBusy(false);
+      return result.json();
     }).catch((reason) => {
       // console.log(reason);
       props.setIsBusy(false);
     });
-  }, []);
+  });
+
+  if (isLoading) return "Loading...";
+
+  if (error) return "An error has occurred: " + (error as Record<string, string>).message;
 
   return (
     <div className="overflow-auto p-3 space-y-3 break-all">
+
       <p className="text-xs">
         {' '}
         { data && data.meta && data.meta.title }

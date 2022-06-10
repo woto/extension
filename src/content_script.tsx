@@ -4,6 +4,15 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import tailwind from './tailwind.css';
 import AppAdd from './AppAdd';
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  QueryClient,
+  QueryClientProvider,
+} from 'react-query'
+
+const queryClient = new QueryClient()
 
 class AddPopupComponent extends HTMLElement {
   constructor() {
@@ -25,7 +34,9 @@ class AddPopupComponent extends HTMLElement {
 
     ReactDOM.render(
       <React.StrictMode>
-        <AppAdd />
+        <QueryClientProvider client={queryClient}>
+          <AppAdd />
+        </QueryClientProvider>
       </React.StrictMode>,
       mountPoint,
     );

@@ -1,41 +1,23 @@
 import React, { useEffect, useState } from 'react';
+import { useQuery } from "react-query";
+
 import { Tab } from '../../../../main';
 
 export default function Google(props: {
   apiKey: string,
   setIsBusy: React.Dispatch<React.SetStateAction<boolean>>,
   currentTab: Tab | null,
-  cache: Partial<Record<Tab, any>> | undefined | null,
-  storeCache: (key: Tab, value: object) => void,
   q: string
 }) {
-  // const [data, setData] = useState();
 
-  let data;
-
-  if (props.currentTab && props.cache) {
-    data = props.cache[props.currentTab];
-  }
-
-  // useEffect(
-  //   () => {
-  //     setTimeout(() => {
-  //       props.setIsBusy(true);
-  //     }, 1000)
-
-  //     return () => {}
-  //   }, [])
-
-  useEffect(() => {
-    if (props.currentTab && props.cache && props.cache[props.currentTab]) return;
-
-    props.setIsBusy(true);
+  const { isLoading, error, data, isFetching } = useQuery("Google", () => {
+    props.setIsBusy(true)
 
     const query = new URLSearchParams({
       q: props.q,
     })
 
-    fetch(`http://localhost:3000/api/tools/google_graph?${query}`, {
+    return fetch(`http://localhost:3000/api/tools/google_graph?${query}`, {
       credentials: 'omit',
       method: 'GET',
       headers: {
@@ -45,17 +27,17 @@ export default function Google(props: {
       }
     }).then((result) => {
       if (!result.ok) throw new Error(result.statusText);
-      return result.json();
-    }).then((result) => {
-      if (result && props.currentTab) props.storeCache(props.currentTab, result);
       props.setIsBusy(false);
+      return result.json();
     }).catch((reason) => {
       // console.log(reason);
       props.setIsBusy(false);
     });
-  }, []);
+  });
 
-  debugger
+  if (isLoading) return "Loading...";
+
+  if (error) return "An error has occurred: " + (error as Record<string, string>).message;
 
   return (
     <div className="overflow-auto p-3 space-y-3 break-all">
@@ -78,8 +60,8 @@ export default function Google(props: {
           </p>
           <p className="text-xs mb-1">
             {' '}
-            {element.result && element.result.image && element.result.image.contentUrl && 
-              <img src={element.result.image.contentUrl} /> }
+            {element.result && element.result.image && element.result.image.contentUrl &&
+              <img src={element.result.image.contentUrl} />}
             {' '}
           </p>
         </div>

@@ -66,7 +66,7 @@ function AppAdd() {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [kindsOptions, setKindsOptions] = useState<Kind[]>([]);
   const [apiKey, setApiKey] = useState<string>('');
-
+  
   useEffect(() => {
     const fn = async () => {
       const data = await chrome.storage.sync.get('api_key');
@@ -163,7 +163,6 @@ function AppAdd() {
 
   return (
     <>
-
       {false
         && <Toast />}
 
