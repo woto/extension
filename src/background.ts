@@ -1,63 +1,30 @@
-type Feature = 'list' | 'add';
+import { appUrl } from './Utils';
+import { Feature } from '../main';
 
-const sendResponse = () => {
+const sendMessageToPage = (data: {}, tab?: chrome.tabs.Tab | undefined) => {
+  return new Promise((resolve, reject) => {
+    if (!tab || !tab.id) return;
 
-};
-
-chrome.runtime.onMessage.addListener(
-  (message: any, sender: chrome.runtime.MessageSender, sendResponse) => {
-    debugger;
-  },
-);
-
-const sendMessageToPage = (data: {}, info: chrome.contextMenus.OnClickData, tab?: chrome.tabs.Tab | undefined) => new Promise((resolve, reject) => {
-  if (!tab || !tab.id) return;
-
-  chrome.tabs.sendMessage(tab.id, data, (response) => {
-    if (!response) {
-      return reject(
-        new Error('Failed to connect to the specified tab.'),
-      );
-    }
-    return resolve(response);
-  });
-});
+    chrome.tabs.sendMessage(tab.id, data, (response) => {
+      if (!response) {
+        return reject(
+          new Error('Failed to connect to the specified tab.'),
+        );
+      }
+      return resolve(response);
+    });
+  })
+}
 
 // manifest permissions/history
 // chrome.history.onVisited.addListener(
-//   () => {debugger},
+//   () => {},
 // )
 
-async function onClickHandler(info: chrome.contextMenus.OnClickData, tab?: chrome.tabs.Tab | undefined) {
-  if (['select-link', 'select-text'].includes(info.menuItemId.toString())) {
-    const authPopup = await chrome.windows.create(
-      {
-        url: chrome.runtime.getURL('auth.html'),
-        type: 'popup',
-        height: 500,
-        width: 300,
-      },
-    );
-
-    console.log(authPopup);
-  }
-  // if (!tab || !tab.id) return;
-
-  if (['select-link', 'select-text'].includes(info.menuItemId.toString())) {
-    await injectContentScripts('add', 'js/content_script.js', info, tab);
-    const result = await sendMessageToPage({ message: 'select-element', selectionType: info.menuItemId }, info, tab);
-    await sendMessageToPage({ message: 'create-fragment', linkUrl: (result as Record<'linkUrl', string>).linkUrl }, info, tab);
-  } else if (['list'].includes(info.menuItemId.toString())) {
-    // debugger
-    await injectContentScripts('list', 'js/content_script2.js', info, tab);
-    await sendMessageToPage({ message: 'list-fragments' }, info, tab);
-  }
-}
-
-const injectContentScripts = async (feature: Feature, contentScriptName: string, info: chrome.contextMenus.OnClickData, tab?: chrome.tabs.Tab | undefined) => {
+const injectContentScripts = async (feature: Feature, contentScriptName: string, tab?: chrome.tabs.Tab | undefined) => {
   // If there's a reply, the content script already was injected.
   try {
-    return await sendMessageToPage({ message: 'ping', feature }, info, tab);
+    return await sendMessageToPage({ message: 'ping', feature }, tab);
   } catch (err) {
     if (!tab || !tab.id) return;
 
@@ -67,6 +34,90 @@ const injectContentScripts = async (feature: Feature, contentScriptName: string,
     });
   }
 };
+
+const showAppAuth = async () => {
+  chrome.windows.getCurrent(function(window) {
+    var width = 400;
+    var height = 500;
+    var left = ((window.width! / 2) - (width / 2)) + window.left!;
+    var top = ((window.height! / 2) - (height / 2)) + window.top!;
+
+    chrome.windows.create({
+        url: 'auth.html',
+        width: width,
+        height: height,
+        top: Math.round(top),
+        left: Math.round(left),
+        type: 'popup'
+    });
+ });
+}
+
+const showAppAdd = async (selectionType: string, tab: chrome.tabs.Tab) => {
+  await injectContentScripts('add', 'js/content_script.js', tab);
+  const result = await sendMessageToPage({ message: 'select-element', selectionType: selectionType }, tab);
+  await sendMessageToPage({ message: 'create-fragment', linkUrl: (result as Record<'linkUrl', string>).linkUrl }, tab);
+}
+
+const showAppList = async (tab: chrome.tabs.Tab) => {
+  await injectContentScripts('list', 'js/content_script2.js', tab);
+  await sendMessageToPage({ message: 'list-fragments' }, tab);
+}
+
+const checkToken = async () => {
+  const data = await chrome.storage.sync.get('api_key');
+  const apiKey = data.api_key;
+
+  return new Promise((resolve, reject) => {
+    if (!apiKey) {
+      return reject();
+    }
+
+    fetch(`http://localhost:3000/api/me`, {
+      credentials: 'omit',
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Api-Key': apiKey
+      },
+    }).then((result) => {
+      if (result.ok) {
+        return resolve('ok');
+      } else { 
+        return reject();
+      }
+    }).catch((reason) => {
+      return reject();
+    })
+  })
+}
+
+async function onClickHandler(info: chrome.contextMenus.OnClickData, tab?: chrome.tabs.Tab | undefined) {
+  const menuItemId = info.menuItemId.toString();
+
+  chrome.runtime.onMessage.addListener(
+    (message: any, sender: chrome.runtime.MessageSender, sendResponse) => {
+      console.log('received message:', message);
+      showAppAdd(menuItemId, tab!);
+      sendResponse({message: 'foo'});
+    },
+  );  
+
+  if (['select-link', 'select-text'].includes(menuItemId)) {
+    checkToken()
+      .then(() => {
+        showAppAdd(menuItemId, tab!);
+      })
+      .catch(() => {
+        showAppAuth();
+      })
+  }
+  
+  if (['list'].includes(info.menuItemId.toString())) {
+    showAppList(tab!)
+  }
+}
 
 chrome.contextMenus.create({ id: 'select-text', title: 'Добавить выделение', contexts: ['selection'] });
 chrome.contextMenus.create({ id: 'select-link', title: 'Добавить ссылку', contexts: ['link'] });

@@ -31,6 +31,7 @@ const schema = yup.object().shape({
 });
 
 export default function Form(props: {
+  apiKey: string,
   isBusy: boolean,
   setIsBusy: React.Dispatch<React.SetStateAction<boolean>>,
   fragmentUrl: string,
@@ -65,7 +66,13 @@ export default function Form(props: {
     props.setIsBusy(true);
 
     fetch(`${appUrl}/api/kinds/search`, {
+      credentials: 'omit',
       method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Api-Key': props.apiKey
+      },      
     })
       .then((res) => {
         if (!res.ok) throw new Error(res.statusText);
@@ -118,7 +125,7 @@ export default function Form(props: {
   const intro = watch('intro');
   const title = watch('title');
 
-  // const meth = (str: any) => fetch(str).then(response => { debugger; return response.text() })
+  // const meth = (str: any) => fetch(str).then(response => { return response.text() })
   // let [res1, res2] = await Promise.all(['http://example.com', 'http://example.com'].map((str: string) => meth(str)))
 
   const onSubmit = async (data: any) => {
@@ -128,8 +135,14 @@ export default function Form(props: {
       const formData = new FormData();
       formData.append('file', file);
       return fetch(`${appUrl}/images/upload`, {
+        credentials: 'omit',
         method: 'POST',
         body: formData,
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Api-Key': props.apiKey
+        },        
       }).then((res) => {
         if (!res.ok) throw new Error(res.statusText);
 
@@ -168,10 +181,13 @@ export default function Form(props: {
     };
 
     fetch(`${appUrl}/api/mentions/register`, {
+      credentials: 'omit',
       method: 'POST',
       body: JSON.stringify(data),
       headers: {
         'Content-Type': 'application/json',
+        'Accept': 'application/json',
+        'Api-Key': props.apiKey
       },
       // headers: {
       //   'Content-Type': 'multipart/form-data'
@@ -187,7 +203,6 @@ export default function Form(props: {
       // console.log('prevState');
       // console.log(prevState);
       let newState;
-      // debugger
       if (image.url) {
         newState = prevState.map((val: Image) => {
           if (val == image) {
@@ -238,7 +253,6 @@ export default function Form(props: {
   };
 
   const handleDrop = (e: any) => {
-    // debugger
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
@@ -257,7 +271,9 @@ export default function Form(props: {
       if (img) {
         const finalUrl = `http://localhost:8080/AfrOrF3gWeDA6VOlDG4TzxMv39O7MXnF4CXpKUwGqRM/background:FFF/rs:fit:400:400:1/ex:1/el:1/g:sm/plain/${img.src}`;
 
-        fetch(finalUrl)
+        fetch(finalUrl, {
+          credentials: 'omit'
+        })
           .then(async (res) => {
             if (!res.ok) throw new Error(res.statusText);
 
@@ -413,7 +429,6 @@ export default function Form(props: {
   };
 
   function isOptionalComponentVisible(key: string) {
-    // debugger
     return !!optionalComponents.find((object) => object.key === key && object.show === true);
   }
 
@@ -426,6 +441,7 @@ export default function Form(props: {
         {/* <div className="flex"> */}
 
         <Sidebar
+          apiKey={props.apiKey}
           searchString={title}
           linkUrl={props.linkUrl}
           setIsBusy={props.setIsBusy}

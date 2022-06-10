@@ -11,6 +11,7 @@ export const tabs = ['Yandex', 'Google', 'Iframely', 'Scrapper', 'Github', 'Ruby
 
 export default function Sidebar(
   props: {
+    apiKey: string,
     setIsBusy: React.Dispatch<React.SetStateAction<boolean>>,
     searchString: string, linkUrl: string
   },
@@ -26,7 +27,6 @@ export default function Sidebar(
 
   // setCache({(['yandex' as Tab]): '1'})
   const storeCache = (key: Tab, value: object) => {
-    // debugger
     const tmp = { [key]: value };
     setCache({ ...cache, ...tmp });
   };
@@ -85,6 +85,7 @@ export default function Sidebar(
             <div className="flex overflow-auto justify-self-stretch self-stretch items-stretch w-full bg-white/50 mt-1 mb-1 ml-1 border-gray-300 border rounded">
               <Suspense fallback={<div>Загрузка...</div>}>
                 <Component
+                  apiKey={props.apiKey}
                   setIsBusy={props.setIsBusy}
                   currentTab={currentTab}
                   cache={cache}

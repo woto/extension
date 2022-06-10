@@ -37,15 +37,11 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   let linkUrl = '';
 
   if (message === 'select-element') {
-    // debugger
-
     switch (request.selectionType) {
       case 'select-text': {
         break;
       }
       case 'select-link': {
-        // debugger
-
         if (!rightclickedElement) return;
 
         const selection = window.getSelection();
@@ -57,7 +53,6 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           linkUrl = (rightclickedElement as HTMLElement).getAttribute('href')!;
           selection.setBaseAndExtent(rightclickedElement, 0, rightclickedElement, 1);
           // selection.setBaseAndExtent(text, 0, text, text.textContent!.length);
-          // debugger
           // selection.setBaseAndExtent(text,0,text,text.toString().length)
         }
 

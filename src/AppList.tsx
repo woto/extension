@@ -6,7 +6,6 @@ import * as utils from './text-fragment-utils.js';
 const hash = '#:~:text=Яндекс';
 
 const init = () => {
-  // debugger
   const fragmentDirectives = utils.getFragmentDirectives(hash);
   const parsedFragmentDirectives = utils.parseFragmentDirectives(
     fragmentDirectives,
@@ -26,8 +25,6 @@ const init = () => {
 function AppList() {
   useEffect(() => {
     chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-      // debugger
-
       const { message, feature } = request;
       if (message === 'list-fragments') {
         init();

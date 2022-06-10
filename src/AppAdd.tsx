@@ -15,7 +15,6 @@ import { FragmentHash, Entity, Kind } from '../main';
 const fgu = require('./fragment-generation-utils');
 
 const createTextFragment = () => {
-  // debugger
   const selection = window.getSelection();
   // eslint-disable-next-line no-undef
   const result = fgu.generateFragment(selection);
@@ -66,6 +65,16 @@ function AppAdd() {
   const [page, setPage] = useState<number>(1);
   const [scrollPosition, setScrollPosition] = useState(0);
   const [kindsOptions, setKindsOptions] = useState<Kind[]>([]);
+  const [apiKey, setApiKey] = useState<string>('');
+
+  useEffect(() => {
+    const fn = async () => {
+      const data = await chrome.storage.sync.get('api_key');
+      setApiKey(data.api_key);
+    }
+
+    fn();
+  }, [])
 
   function usePrevious(value: string) {
     const ref = useRef<string>(window.location.toString());
@@ -81,9 +90,9 @@ function AppAdd() {
   useEffect(() => {
     const interval = setInterval(() => {
       if (previousLocation != window.location.toString()) {
-        console.log('location changed');
-        console.log(previousLocation);
-        console.log(window.location.toString());
+        // console.log('location changed');
+        // console.log(previousLocation);
+        // console.log(window.location.toString());
         previousLocation = window.location.toString();
         setShowWindow(false);
       }
@@ -99,8 +108,8 @@ function AppAdd() {
       const { message, feature } = request;
       if (message === 'create-fragment') {
         const { url, selection, fragmentHash } = createTextFragment();
-        console.log(url);
-        console.log(selection!.toString());
+        // console.log(url);
+        // console.log(selection!.toString());
         setSearchString(selection!.toString());
         setFragmentUrl(url!);
         setFragmentHash(fragmentHash!);
@@ -247,6 +256,7 @@ function AppAdd() {
                           />
 
                           <List
+                            apiKey={apiKey}
                             isBusy={isBusy}
                             setIsBusy={setIsBusy}
                             entities={entities}
@@ -276,6 +286,7 @@ function AppAdd() {
                     >
                       {showForm && (
                         <Form
+                          apiKey={apiKey}
                           kindsOptions={kindsOptions}
                           setKindsOptions={setKindsOptions}
                           isBusy={isBusy}

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Tab } from '../../../../main';
 
 export default function Iframely(props: {
+    apiKey: string,
     setIsBusy: React.Dispatch<React.SetStateAction<boolean>>,
     currentTab: Tab | null,
     cache: Partial<Record<Tab, any>> | undefined | null,
@@ -30,31 +31,29 @@ export default function Iframely(props: {
     if (props.currentTab && props.cache && props.cache[props.currentTab]) return;
 
     props.setIsBusy(true);
-
+    
     const query = new URLSearchParams({
       url: props.linkUrl,
-      api_key: 'EsqkkEtzzbWgkVzeZ2jV',
-    });
+    })
 
     fetch(`http://localhost:3000/api/tools/iframely?${query}`, {
+      credentials: 'omit',
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-      },
+        'Accept': 'application/json',
+        'Api-Key': props.apiKey
+      }
     }).then((result) => {
-      // debugger
       if (!result.ok) throw new Error(result.statusText);
       return result.json();
     }).then((result) => {
-      // debugger
       if (result && props.currentTab) props.storeCache(props.currentTab, result);
       props.setIsBusy(false);
     }).catch((reason) => {
-      console.log(reason);
+      // console.log(reason);
       props.setIsBusy(false);
     });
-
-    return () => {};
   }, []);
 
   return (

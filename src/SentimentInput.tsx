@@ -11,7 +11,6 @@ export default function SentimentInput(props: {
     setSentiment: React.Dispatch<React.SetStateAction<string | null>>,
     sentiment: string | null}) {
   const changeSentiment = (value: string | null) => {
-    // debugger
     props.setSentiment(value);
   };
 

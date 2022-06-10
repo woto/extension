@@ -31,6 +31,7 @@ function Wrapper(props: any) {
   );
 }
 export default function List(props: {
+    apiKey: string,
     isBusy: boolean,
     setIsBusy: React.Dispatch<React.SetStateAction<boolean>>,
     fragmentUrl: string,
@@ -65,8 +66,7 @@ export default function List(props: {
 
   const abortController = useRef<AbortController>();
 
-  const fetchData = useCallback(
-    () => {
+  const fetchData = useCallback(() => {
       props.setIsBusy(true);
       setIsError(false);
 
@@ -80,20 +80,21 @@ export default function List(props: {
       };
 
       const params: RequestInit = {
+        credentials: 'omit',
         method: 'POST',
         body: JSON.stringify(data),
         headers: {
           'Content-Type': 'application/json',
+          'Accept': 'application/json',
+          'Api-Key': props.apiKey
         },
       };
 
       if (abortController.current) {
         params.signal = abortController.current.signal;
       } else {
-        alert('a');
+        console.error('some error')
       }
-
-      console.log('fetching');
 
       fetch(`${appUrl}/api/mentions/seek`, params)
         .then((res) => {
@@ -121,7 +122,7 @@ export default function List(props: {
           }
         })
         .catch((reason) => {
-          console.log(reason);
+          // console.log(reason);
 
           if (reason.name === 'AbortError') return;
 
@@ -134,12 +135,11 @@ export default function List(props: {
 
   useEffect(() => {
     abortController.current = new AbortController();
-    console.log('created');
 
     return () => {
       if (abortController.current) {
         abortController.current.abort();
-        console.log('aborted');
+        // console.log('aborted');
       } else {
         alert('b');
       }
@@ -147,12 +147,7 @@ export default function List(props: {
   }, [fragmentUrl, searchString, page, linkUrl, fetchData]);
 
   useEffect(() => {
-    // debugger
-    // console.log('requested props.fragmentUrl')
-    // console.log(props.fragmentUrl);
-
     if (page == 1 && !!fragmentUrl) {
-      // console.log('fetching from useEffect');
       fetchData();
     }
 
@@ -170,7 +165,6 @@ export default function List(props: {
     asyncFunctionDebounced(e.target.scrollTop);
 
     if (Math.floor(e.target.scrollHeight - e.target.scrollTop) <= Math.floor(e.target.clientHeight)) {
-      // console.log('fetching from handleScroll');
       fetchData();
     }
   };
