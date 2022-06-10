@@ -1,8 +1,24 @@
 let rightclickedElement: EventTarget;
 
 document.body.addEventListener('contextmenu', (e) => {
-  if (e.target) {
-    rightclickedElement = e.target;
+  let elem = e.target as HTMLElement;
+
+  while (true) {
+    const src = elem.getAttribute('href') || '';
+
+    try {
+      new URL(src);
+      rightclickedElement = elem;
+      return;
+    } catch (_) {
+      if (elem.parentElement) {
+        elem = elem.parentElement;
+      } else {
+        break;
+      }
+
+      continue;
+    }
   }
 });
 
@@ -21,14 +37,14 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   let linkUrl = '';
 
   if (message === 'select-element') {
-    debugger
+    // debugger
 
     switch (request.selectionType) {
-      case 'selection': {
+      case 'select-text': {
         break;
       }
-      case 'link': {
-        debugger
+      case 'select-link': {
+        // debugger
 
         if (!rightclickedElement) return;
 
@@ -39,7 +55,8 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
           // selection.selectAllChildren(rightclickedElement);
           const text = rightclickedElement.childNodes[0];
           linkUrl = (rightclickedElement as HTMLElement).getAttribute('href')!;
-          selection.setBaseAndExtent(text, 0, text, text.textContent!.length);
+          selection.setBaseAndExtent(rightclickedElement, 0, rightclickedElement, 1);
+          // selection.setBaseAndExtent(text, 0, text, text.textContent!.length);
           // debugger
           // selection.setBaseAndExtent(text,0,text,text.toString().length)
         }

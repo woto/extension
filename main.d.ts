@@ -42,3 +42,5 @@ export type FragmentHash = {
   textStart: string,
   textEnd: string
 }
+
+type Feature = 'list' | 'add';

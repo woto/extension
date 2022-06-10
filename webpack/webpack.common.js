@@ -11,6 +11,7 @@ module.exports = {
       content_script: path.join(srcDir, 'content_script.tsx'),
       content_script2: path.join(srcDir, 'content_script2.tsx'),
       context_menu: path.join(srcDir, 'context_menu.ts'),
+      auth_app: path.join(srcDir, 'AuthApp.tsx'),
       // "fragment-generation-utils": path.join(srcDir, 'fragment-generation-utils.js'),
     },
     output: {

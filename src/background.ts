@@ -1,5 +1,15 @@
 type Feature = 'list' | 'add';
 
+const sendResponse = () => {
+
+};
+
+chrome.runtime.onMessage.addListener(
+  (message: any, sender: chrome.runtime.MessageSender, sendResponse) => {
+    debugger;
+  },
+);
+
 const sendMessageToPage = (data: {}, info: chrome.contextMenus.OnClickData, tab?: chrome.tabs.Tab | undefined) => new Promise((resolve, reject) => {
   if (!tab || !tab.id) return;
 
@@ -13,10 +23,27 @@ const sendMessageToPage = (data: {}, info: chrome.contextMenus.OnClickData, tab?
   });
 });
 
+// manifest permissions/history
+// chrome.history.onVisited.addListener(
+//   () => {debugger},
+// )
+
 async function onClickHandler(info: chrome.contextMenus.OnClickData, tab?: chrome.tabs.Tab | undefined) {
+  if (['select-link', 'select-text'].includes(info.menuItemId.toString())) {
+    const authPopup = await chrome.windows.create(
+      {
+        url: chrome.runtime.getURL('auth.html'),
+        type: 'popup',
+        height: 500,
+        width: 300,
+      },
+    );
+
+    console.log(authPopup);
+  }
   // if (!tab || !tab.id) return;
 
-  if (['link', 'selection'].includes(info.menuItemId.toString())) {
+  if (['select-link', 'select-text'].includes(info.menuItemId.toString())) {
     await injectContentScripts('add', 'js/content_script.js', info, tab);
     const result = await sendMessageToPage({ message: 'select-element', selectionType: info.menuItemId }, info, tab);
     await sendMessageToPage({ message: 'create-fragment', linkUrl: (result as Record<'linkUrl', string>).linkUrl }, info, tab);
@@ -41,8 +68,8 @@ const injectContentScripts = async (feature: Feature, contentScriptName: string,
   }
 };
 
-chrome.contextMenus.create({ id: 'selection', title: 'Добавить выделение', contexts: ['selection'] });
-chrome.contextMenus.create({ id: 'link', title: 'Добавить ссылку', contexts: ['link'] });
+chrome.contextMenus.create({ id: 'select-text', title: 'Добавить выделение', contexts: ['selection'] });
+chrome.contextMenus.create({ id: 'select-link', title: 'Добавить ссылку', contexts: ['link'] });
 chrome.contextMenus.create({ id: 'list', title: 'Список объектов', contexts: ['page'] });
 
 chrome.contextMenus.onClicked.addListener(onClickHandler);

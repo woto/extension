@@ -17,7 +17,6 @@ export default function Iframely(props: {
     data = props.cache[props.currentTab];
   }
 
-
   // useEffect(
   //   () => {
   //     setTimeout(() => {
@@ -34,7 +33,7 @@ export default function Iframely(props: {
 
     const query = new URLSearchParams({
       url: props.linkUrl,
-      api_key: 'EsqkkEtzzbWgkVzeZ2jV'
+      api_key: 'EsqkkEtzzbWgkVzeZ2jV',
     });
 
     fetch(`http://localhost:3000/api/tools/iframely?${query}`, {
@@ -43,37 +42,47 @@ export default function Iframely(props: {
         'Content-Type': 'application/json',
       },
     }).then((result) => {
-      debugger      
+      // debugger
       if (!result.ok) throw new Error(result.statusText);
       return result.json();
     }).then((result) => {
-      debugger
+      // debugger
       if (result && props.currentTab) props.storeCache(props.currentTab, result);
-      props.setIsBusy(false)
+      props.setIsBusy(false);
     }).catch((reason) => {
       console.log(reason);
       props.setIsBusy(false);
     });
 
-    return () => {}
-
+    return () => {};
   }, []);
 
   return (
     <div className="overflow-auto p-3 space-y-3 break-all">
-      <p className="text-xs"> { data && data.meta && data.meta.title } </p>
-      <p className="text-xs"> { data && data.meta && data.meta.site } </p>
-      <p className="text-xs"> { data && data.meta && data.meta.description } </p>
-      <p className="text-xs"> { data && data.meta && data.meta.canonical } </p>
+      <p className="text-xs">
+        {' '}
+        { data && data.meta && data.meta.title }
+        {' '}
+      </p>
+      <p className="text-xs">
+        {' '}
+        { data && data.meta && data.meta.site }
+        {' '}
+      </p>
+      <p className="text-xs">
+        {' '}
+        { data && data.meta && data.meta.description }
+        {' '}
+      </p>
+      <p className="text-xs">
+        {' '}
+        { data && data.meta && data.meta.canonical }
+        {' '}
+      </p>
 
-      { data && data.links && data.links.thumbnail && data.links.thumbnail.map((row: any, idx: number) => 
-        <img key={row.href} src={row.href}></img>
-      ) }
-      
+      { data && data.links && data.links.thumbnail && data.links.thumbnail.map((row: any, idx: number) => <img key={row.href} src={row.href} />) }
 
-      { data && data.links && data.links.icon && data.links.icon.map((row: any, idx: number) => 
-        <img key={row.href} src={row.href}></img>
-      ) }
+      { data && data.links && data.links.icon && data.links.icon.map((row: any, idx: number) => <img key={row.href} src={row.href} />) }
 
     </div>
   );

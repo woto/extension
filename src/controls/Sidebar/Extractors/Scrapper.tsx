@@ -24,20 +24,20 @@ export default function Scrapper(props: {
 
     const query = new URLSearchParams({
       url: props.linkUrl,
-      api_key: 'EsqkkEtzzbWgkVzeZ2jV'
+      api_key: 'EsqkkEtzzbWgkVzeZ2jV',
     });
 
     fetch(`http://localhost:3000/api/tools/scrape_webpage?${query}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }).then((result) => {
-      debugger
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    }).then((result) => {
+      // debugger
       if (!result.ok) throw new Error(result.statusText);
       return result.json();
     }).then((result) => {
-      debugger      
+      // debugger
       if (result && props.currentTab) props.storeCache(props.currentTab, result);
       props.setIsBusy(false);
     }).catch((reason) => {
@@ -45,15 +45,27 @@ export default function Scrapper(props: {
       props.setIsBusy(false);
     });
 
-    return () => {}
+    return () => {};
   }, []);
 
   return (
     <div className="overflow-auto p-3 space-y-3 break-all">
-      <p className="text-xs"> {data && data.title } </p>
-      <p className="text-xs"> {data && data.excerpt } </p>
-      <p className="text-xs"> {data && data.siteName } </p>
-      { data && <img className="border border-slate-300" src={data.image}></img> }
+      <p className="text-xs">
+        {' '}
+        {data && data.title }
+        {' '}
+      </p>
+      <p className="text-xs">
+        {' '}
+        {data && data.excerpt }
+        {' '}
+      </p>
+      <p className="text-xs">
+        {' '}
+        {data && data.siteName }
+        {' '}
+      </p>
+      { data && <img className="border border-slate-300" src={data.image} /> }
     </div>
   );
 }

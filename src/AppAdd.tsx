@@ -61,7 +61,7 @@ function AppAdd() {
   const [entity, setEntity] = useState<Entity>({
     entity_id: '', title: '', intro: '', images: [],
   });
-  const setIsBusy = useCallback((num) => _setIsBusy(num), [])
+  const setIsBusy = useCallback((num) => _setIsBusy(num), []);
   const [entities, setEntities] = useState<Entity[] | null>(null);
   const [page, setPage] = useState<number>(1);
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -133,6 +133,8 @@ function AppAdd() {
     });
   };
 
+  // const handleClick = useCallback((event) => _handleClick(event), [])
+
   const handleStart = () => {
     setIsDragging(true);
   };
@@ -183,7 +185,7 @@ function AppAdd() {
             >
               <div
                 ref={nodeRef}
-                className={`min-h-[570px] bg-slate-100 rounded-lg w-[320px] ${isDragging ? 'opacity-50' : 'opacity-100'}`}
+                className={`min-h-[608px] bg-slate-100 rounded-lg w-[320px] ${isDragging ? 'opacity-50' : 'opacity-100'}`}
               >
 
                 <div
