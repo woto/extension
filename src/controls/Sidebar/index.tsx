@@ -13,7 +13,8 @@ export default function Sidebar(
   props: {
     apiKey: string,
     setIsBusy: React.Dispatch<React.SetStateAction<boolean>>,
-    searchString: string, linkUrl: string
+    searchString: string, 
+    linkUrl: string,
   },
 ) {
   const [currentTab, _setCurrentTab] = useState<Tab | null>(null);
@@ -24,29 +25,35 @@ export default function Sidebar(
   };
 
   const [cache, setCache] = useState<Partial<Record<Tab, any>> | null>();
+  const [internalSearchString, setInternalSearchString] = useState<string>('');
+  
+  const {searchString, linkUrl} = props
+
+  useEffect(() => {
+    debugger
+
+    const getDefaultValue = () => {
+      switch (currentTab) {
+        case 'Yandex':
+          return searchString;
+        case 'Iframely':
+          return linkUrl || 'https://example.com';
+        case 'Scrapper':
+          return linkUrl || 'https://example.com';
+      }
+  
+      return searchString
+    }
+  
+    const defaultValue = getDefaultValue()
+    setInternalSearchString(defaultValue);
+  }, [searchString, linkUrl, currentTab])
 
   // setCache({(['yandex' as Tab]): '1'})
   const storeCache = (key: Tab, value: object) => {
     const tmp = { [key]: value };
     setCache({ ...cache, ...tmp });
   };
-
-  // const disabled = (tab: string) => {
-  //   switch (tab) {
-  //     case 'Yandex':
-  //       return false;
-  //     case 'Iframely':
-  //       if (props.linkUrl) {
-  //         return false;
-  //       }
-  //     case 'Scrapper':
-  //       if (props.linkUrl) {
-  //         return false;
-  //       }
-  //   }
-
-  //   return true;
-  // };
 
   let Component = React.lazy(() => import('./Extractors/Hack'));
 
@@ -82,7 +89,21 @@ export default function Sidebar(
         <div className="flex h-full bg-slate-50/90 backdrop-blur-sm rounded-r border-gray-300 border">
 
           <div className="flex w-full">
-            <div className="flex overflow-auto justify-self-stretch self-stretch items-stretch w-full bg-white/50 mt-1 mb-1 ml-1 border-gray-300 border rounded">
+            
+            <div className="flex-col overflow-auto justify-self-stretch self-stretch items-stretch w-full bg-white/50 mt-1 mb-1 ml-1 border-gray-300 border rounded">
+
+              <div className="mt-1 border-b border-gray-300 focus-within:border-indigo-600">
+                <input
+                  type="text"
+                  name="name"
+                  id="name"
+                  className="block w-full border-0 border-b border-transparent bg-gray-50 focus:border-indigo-600 focus:ring-0 sm:text-sm"
+                  placeholder="Поиск..."
+                  value={internalSearchString}
+                  onChange={(e) => setInternalSearchString(e.target.value) }
+                />
+              </div>
+
               <Suspense fallback={<div>Загрузка...</div>}>
                 <Component
                   apiKey={props.apiKey}
@@ -90,8 +111,7 @@ export default function Sidebar(
                   currentTab={currentTab}
                   cache={cache}
                   storeCache={storeCache}
-                  linkUrl={props.linkUrl}
-                  searchString={props.searchString}
+                  q={internalSearchString}
                 />
               </Suspense>
             </div>

@@ -7,8 +7,7 @@ export default function Iframely(props: {
     currentTab: Tab | null,
     cache: Partial<Record<Tab, any>> | undefined | null,
     storeCache: (key: Tab, value: object) => void,
-    searchString: string,
-    linkUrl: string
+    q: string
 }) {
   // const [data, setData] = useState();
 
@@ -33,7 +32,7 @@ export default function Iframely(props: {
     props.setIsBusy(true);
     
     const query = new URLSearchParams({
-      url: props.linkUrl,
+      url: props.q,
     })
 
     fetch(`http://localhost:3000/api/tools/iframely?${query}`, {
