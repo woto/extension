@@ -43,42 +43,40 @@ export default function Ruby(props: {
 
   return (
     <div className="overflow-auto p-3 space-y-3 break-all">
-      { data?.map((element: any, idx: number) => {
-        return (
-          <div key={idx}>
-            <p className="text-base font-medium mb-1">
-              {' '}
-              {element.name}
-              {' '}
-            </p>
+      { data?.map((element: any, idx: number) => (
+        <div key={idx}>
+          <p className="text-base font-medium mb-1">
+            {' '}
+            {element.name}
+            {' '}
+          </p>
 
-            <p className="text-sm mb-1">
-              {' '}
-              {element.info}
-              {' '}
-            </p>
+          <p className="text-sm mb-1">
+            {' '}
+            {element.info}
+            {' '}
+          </p>
 
-            <p className="text-sm mb-1">
-              {' '}
-              {element.homepage_uri}
-              {' '}
-            </p>
+          <p className="text-sm mb-1">
+            {' '}
+            {element.homepage_uri}
+            {' '}
+          </p>
 
-            <p className="text-sm mb-1">
-              {' '}
-              {element.authors}
-              {' '}
-            </p>
+          <p className="text-sm mb-1">
+            {' '}
+            {element.authors}
+            {' '}
+          </p>
 
-            <p className="text-sm mb-1">
-              {' '}
-              {element.downloads}
-              {' '}
-            </p>
-            {/* { JSON.stringify(element) } */}
-          </div>
-        )
-      }) }
+          <p className="text-sm mb-1">
+            {' '}
+            {element.downloads}
+            {' '}
+          </p>
+          {/* { JSON.stringify(element) } */}
+        </div>
+      )) }
     </div>
   );
 }

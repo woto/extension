@@ -41,53 +41,51 @@ export default function Javascript(props: {
 
   if (error) return `An error has occurred: ${(error as Record<string, string>).message}`;
 
-  debugger
-  
+  debugger;
+
   return (
     <div className="overflow-auto p-3 space-y-3 break-all">
-      { data?.map((element: any, idx: number) => {
-        return (
-          <div key={idx}>
-            <p className="text-base font-medium mb-1">
-              {' '}
-              {element.name}
-              {' '}
-            </p>
+      { data?.map((element: any, idx: number) => (
+        <div key={idx}>
+          <p className="text-base font-medium mb-1">
+            {' '}
+            {element.name}
+            {' '}
+          </p>
 
-            <p className="text-sm mb-1">
-              {' '}
-              {element.description}
-              {' '}
-            </p>
+          <p className="text-sm mb-1">
+            {' '}
+            {element.description}
+            {' '}
+          </p>
 
-            <p className="text-sm mb-1">
-              {' '}
-              {element?.links?.repository}
-              {' '}
-            </p>
+          <p className="text-sm mb-1">
+            {' '}
+            {element?.links?.repository}
+            {' '}
+          </p>
 
-            <p className="text-sm mb-1">
-              {' '}
-              {element?.links?.homepage}
-              {' '}
-            </p> 
+          <p className="text-sm mb-1">
+            {' '}
+            {element?.links?.homepage}
+            {' '}
+          </p>
 
-            <p className="text-sm mb-1">
-              {' '}
-              {element?.maintainers?.map((maintainer: any) => {
-                { maintainer.username }
-              })}
-              {' '}
-            </p>
+          <p className="text-sm mb-1">
+            {' '}
+            {element?.maintainers?.map((maintainer: any) => {
+              { maintainer.username; }
+            })}
+            {' '}
+          </p>
 
-            <p className="text-sm mb-1">
-              {' '}
-              {element.downloads}
-              {' '}
-            </p>
-          </div>
-        )
-      }) }
+          <p className="text-sm mb-1">
+            {' '}
+            {element.downloads}
+            {' '}
+          </p>
+        </div>
+      )) }
     </div>
   );
 }
