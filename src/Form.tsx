@@ -138,9 +138,9 @@ export default function Form(props: {
         credentials: 'omit',
         method: 'POST',
         body: formData,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
+        headers: {          
+          // 'Content-Type': 'multipart/form-data',
+          // 'Accept': 'application/json',
           'Api-Key': props.apiKey
         },        
       }).then((res) => {
@@ -189,9 +189,6 @@ export default function Form(props: {
         'Accept': 'application/json',
         'Api-Key': props.apiKey
       },
-      // headers: {
-      //   'Content-Type': 'multipart/form-data'
-      // }
     }).then((res) => {
       props.setShowWindow(false);
       console.error(res);

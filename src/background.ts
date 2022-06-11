@@ -94,6 +94,7 @@ const checkToken = async () => {
 }
 
 async function onClickHandler(info: chrome.contextMenus.OnClickData, tab?: chrome.tabs.Tab | undefined) {
+  debugger
   const menuItemId = info.menuItemId.toString();
 
   chrome.runtime.onMessage.addListener(
@@ -103,7 +104,6 @@ async function onClickHandler(info: chrome.contextMenus.OnClickData, tab?: chrom
       sendResponse({message: 'foo'});
     },
   );  
-
   if (['select-link', 'select-text'].includes(menuItemId)) {
     checkToken()
       .then(() => {

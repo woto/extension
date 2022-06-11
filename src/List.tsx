@@ -159,7 +159,7 @@ export default function List(props: {
   const asyncFunctionDebounced = AwesomeDebouncePromise(someFunc, 50);
 
   const handleScroll = (e: any) => {
-    if (props.isBusy) return;
+    // if (props.isBusy) return;
     if (page === 1) return;
 
     asyncFunctionDebounced(e.target.scrollTop);
@@ -180,7 +180,7 @@ export default function List(props: {
         <div
           onScroll={handleScroll}
           ref={scrollRef}
-          className="h-[442px] overscroll-contain p-1 overflow-auto"
+          className="h-[440px] overscroll-contain p-1 overflow-auto"
         >
           <DetermineList onSelectItem={props.onSelectItem} entities={props.entities} />
         </div>
@@ -190,7 +190,7 @@ export default function List(props: {
         />
 
         <div className="flex justify-center items-center overflow-hidden absolute inset-x-0 h-10 bottom-0">
-          { props.isBusy && <div className="dot-falling" /> }
+          {/* { props.isBusy && <div className="dot-falling" /> } */}
         </div>
 
         <div className="flex justify-center items-center overflow-hidden absolute inset-x-0 h-10 bottom-0">

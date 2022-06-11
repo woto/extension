@@ -163,7 +163,7 @@ function AppAdd() {
 
   return (
     <>
-      {false
+      {true
         && <Toast />}
 
       {true
@@ -193,7 +193,7 @@ function AppAdd() {
             >
               <div
                 ref={nodeRef}
-                className={`select-none min-h-[600px] bg-slate-100 rounded-lg w-[320px] ${isDragging ? 'opacity-50' : 'opacity-100'}`}
+                className={`select-none min-h-[600px] bg-slate-100 rounded-lg w-[320px] ${isDragging ? 'blur-sm opacity-50' : 'opacity-100'}`}
               >
 
                 <div
@@ -228,8 +228,8 @@ function AppAdd() {
                   </div>
                 </div>
 
-                {/* <div className={`${isBusy ? 'background-animate from-indigo-500 via-lime-400 to-indigo-500 bg-gradient-to-r bg-orange-400' : 'from-lime-400 to-indigo-500 bg-gradient-to-r bg-orange-400'} transition-all h-1`}></div> */}
-                <div className={`${isBusy ? 'background-animate from-indigo-500 via-lime-400 to-indigo-500 bg-gradient-to-r bg-orange-400' : 'bg-slate-400'} transition-all h-2`} />
+                <div className={`${isBusy ? 'background-animate from-indigo-500 via-lime-400 to-indigo-500 bg-gradient-to-r bg-orange-400' : 'from-lime-400 to-indigo-500 bg-gradient-to-r bg-orange-400'} transition-all h-1`}></div>
+                {/* <div className={`${isBusy ? 'background-animate from-indigo-500 via-lime-400 to-indigo-500 bg-gradient-to-r bg-orange-400' : 'bg-slate-400'} transition-all h-2`} /> */}
 
                 {/* <div className="border border-t-0 border-slate-300 rounded-t-none rounded-lg overflow-hidden flex flex-col h-full"> */}
                 <div className="flex flex-col h-full">

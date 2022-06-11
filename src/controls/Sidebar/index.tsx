@@ -1,5 +1,5 @@
 import React, {
-  Fragment, Suspense, useCallback, useEffect, useState,
+  Fragment, Suspense, useCallback, useEffect, useMemo, useState
 } from 'react';
 
 import { Transition } from '@headlessui/react';
@@ -7,9 +7,9 @@ import Button from './Button';
 
 import { Tab } from '../../../main';
 
-export const tabs = ['Yandex', 'Google', 'Iframely', 'Scrapper', 'Github', 'Ruby', 'Javascript', 'Python', 'Youtube', 'Telegram', 'Yandex2'] as const;
+export const tabs = ['Yandex', 'Google', 'Iframely', 'Scrapper', 'Github', 'Ruby', 'Javascript', 'Python', 'Youtube', 'Telegram', 'YandexXml'] as const;
 
-export default function Sidebar(
+function _Sidebar(
   props: {
     apiKey: string,
     setIsBusy: React.Dispatch<React.SetStateAction<boolean>>,
@@ -82,7 +82,7 @@ export default function Sidebar(
       enterTo="translate-x-[43px]"
     >
       <div className={`absolute inset-0 transition-transform ${currentTab ? 'translate-x-full' : 'translate-x-[43px]'} rounded`}>
-        <div className="flex h-full bg-slate-50/90 backdrop-blur-sm rounded-r border-gray-300 border">
+        <div className="flex h-full bg-slate-100/80 backdrop-blur-sm rounded-r border-gray-300 border">
 
           <div className="flex w-full">
             
@@ -128,3 +128,9 @@ export default function Sidebar(
     </Transition>
   );
 }
+
+const Mycomponents = React.memo((props: any) => {
+  return _Sidebar(props);
+});
+
+export default Mycomponents;
