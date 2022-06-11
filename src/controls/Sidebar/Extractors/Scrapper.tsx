@@ -9,7 +9,7 @@ export default function Scrapper(props: {
     currentTab: Tab | null,
     q: string,
 }) {
-  const { isLoading, error, data, isFetching } = useQuery("Scrapper", () => {
+  const { isLoading, error, data, isFetching } = useQuery(`Scrapper ${props.q}`, () => {
     props.setIsBusy(true);
 
     const query = new URLSearchParams({

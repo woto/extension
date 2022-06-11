@@ -10,7 +10,7 @@ export default function Iframely(props: {
     q: string
 }) {
 
-  const { isLoading, error, data, isFetching } = useQuery("Iframely", () => {
+  const { isLoading, error, data, isFetching } = useQuery(`Iframely ${props.q}`, () => {
     props.setIsBusy(true)
     
     const query = new URLSearchParams({

@@ -10,7 +10,7 @@ export default function Google(props: {
   q: string
 }) {
 
-  const { isLoading, error, data, isFetching } = useQuery("Google", () => {
+  const { isLoading, error, data, isFetching } = useQuery(`Google ${props.q}`, () => {
     props.setIsBusy(true)
 
     const query = new URLSearchParams({
@@ -40,15 +40,15 @@ export default function Google(props: {
   if (error) return "An error has occurred: " + (error as Record<string, string>).message;
 
   return (
-    <div className="overflow-auto p-3 space-y-3 break-all">
-      {data && data.itemListElement && data.itemListElement.length > 0 && data.itemListElement.map((element: any) =>
-        <div className="mb-3">
-          <p className="text-xs mb-1">
+    <div className="overflow-auto p-3 space-y-7 break-all">
+      {data && data.itemListElement && data.itemListElement.length > 0 && data.itemListElement.map((element: any, idx: number) =>
+        <div key={idx}>
+          <p className="text-base font-medium mb-1">
             {' '}
             {element.result && element.result.name}
             {' '}
           </p>
-          <p className="text-xs mb-1">
+          <p className="text-sm mb-1">
             {' '}
             {element.result && element.result.description}
             {' '}
