@@ -193,7 +193,7 @@ function AppAdd() {
             >
               <div
                 ref={nodeRef}
-                className={`min-h-[608px] bg-slate-100 rounded-lg w-[320px] ${isDragging ? 'opacity-50' : 'opacity-100'}`}
+                className={`select-none min-h-[600px] bg-slate-100 rounded-lg w-[320px] ${isDragging ? 'opacity-50' : 'opacity-100'}`}
               >
 
                 <div
@@ -206,10 +206,10 @@ function AppAdd() {
                       onMouseDown={stopPropagation}
                       onTouchStart={stopPropagation}
                       target="_blank"
-                      className="font-extrabold tracking-wide text-xl text-slate-50"
+                      className="select-none drag-none font-extrabold tracking-wide text-xl text-slate-50"
                       rel="noreferrer"
                     >
-                      <img className="h-6" src={chrome.runtime.getURL('logo.png')} />
+                      <img className="drag-none h-6" src={chrome.runtime.getURL('logo.png')} />
                     </a>
                   </span>
 

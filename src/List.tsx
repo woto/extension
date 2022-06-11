@@ -204,7 +204,7 @@ export default function List(props: {
           <a
             href="#"
             onClick={props.onClick}
-            className="text-sm font-medium text-indigo-600 hover:text-indigo-500"
+            className="drag-none text-sm font-medium text-indigo-600 hover:text-indigo-500"
           >
             Добавить новый объект
           </a>

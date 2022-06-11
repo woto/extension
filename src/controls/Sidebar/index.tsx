@@ -82,7 +82,7 @@ export default function Sidebar(
 
           <div className="flex w-full">
             
-            <div className="flex-col overflow-auto justify-self-stretch self-stretch items-stretch w-full bg-white/50 mt-1 mb-1 ml-1 border-gray-300 border rounded">
+            <div className="select-text flex-col overflow-auto justify-self-stretch self-stretch items-stretch w-full bg-white/50 mt-1 mb-1 ml-1 border-gray-300 border rounded">
 
               <div className="mt-1 border-b border-gray-300 focus-within:border-indigo-600">
                 <input

@@ -496,15 +496,15 @@ export default function Form(props: {
           <div className="text-sm">
             Вы можете так же указать
             {' '}
-            <a onClick={(e) => { toggleVisibility(e, 'sentiment'); }} href="#" className={`${isOptionalComponentVisible('sentiment') ? 'text-gray-700 hover:text-gray-600' : 'text-indigo-600 hover:text-indigo-500'} font-medium`}>настроение</a>
+            <a onClick={(e) => { toggleVisibility(e, 'sentiment'); }} href="#" className={`${isOptionalComponentVisible('sentiment') ? 'text-gray-700 hover:text-gray-600' : 'text-indigo-600 hover:text-indigo-500'} font-medium drag-none`}>настроение</a>
             {' '}
             с которым упоминается объект,
             {' '}
-            <a onClick={(e) => { toggleVisibility(e, 'relevance'); }} href="#" className={`${isOptionalComponentVisible('relevance') ? 'text-gray-700 hover:text-gray-600' : 'text-indigo-600 hover:text-indigo-500'} font-medium`}>важность</a>
+            <a onClick={(e) => { toggleVisibility(e, 'relevance'); }} href="#" className={`${isOptionalComponentVisible('relevance') ? 'text-gray-700 hover:text-gray-600' : 'text-indigo-600 hover:text-indigo-500'} font-medium drag-none`}>важность</a>
             {' '}
             упоминаемого объекта в статье, а так же
             {' '}
-            <a onClick={(e) => { toggleVisibility(e, 'kinds'); }} href="#" className={`${isOptionalComponentVisible('kinds') ? 'text-gray-700 hover:text-gray-600' : 'text-indigo-600 hover:text-indigo-500'} font-medium`}>тип</a>
+            <a onClick={(e) => { toggleVisibility(e, 'kinds'); }} href="#" className={`${isOptionalComponentVisible('kinds') ? 'text-gray-700 hover:text-gray-600' : 'text-indigo-600 hover:text-indigo-500'} font-medium drag-none`}>тип</a>
             {' '}
             объекта.
           </div>
