@@ -2,18 +2,18 @@ import 'react-devtools';
 import '@webcomponents/webcomponentsjs/webcomponents-bundle.js';
 import React from 'react';
 import ReactDOM from 'react-dom';
-import tailwind from './tailwind.css';
-import AppAdd from './AppAdd';
 import {
   useQuery,
   useMutation,
   useQueryClient,
   QueryClient,
   QueryClientProvider,
-} from 'react-query'
-import { ReactQueryDevtools } from "react-query/devtools";
+} from 'react-query';
+import { ReactQueryDevtools } from 'react-query/devtools';
+import tailwind from './tailwind.css';
+import AppAdd from './AppAdd';
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient();
 
 class AddPopupComponent extends HTMLElement {
   constructor() {

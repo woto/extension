@@ -66,7 +66,8 @@ export default function List(props: {
 
   const abortController = useRef<AbortController>();
 
-  const fetchData = useCallback(() => {
+  const fetchData = useCallback(
+    () => {
       props.setIsBusy(true);
       setIsError(false);
 
@@ -85,15 +86,15 @@ export default function List(props: {
         body: JSON.stringify(data),
         headers: {
           'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'Api-Key': props.apiKey
+          Accept: 'application/json',
+          'Api-Key': props.apiKey,
         },
       };
 
       if (abortController.current) {
         params.signal = abortController.current.signal;
       } else {
-        console.error('some error')
+        console.error('some error');
       }
 
       fetch(`${appUrl}/api/mentions/seek`, params)
@@ -122,7 +123,7 @@ export default function List(props: {
           }
         })
         .catch((reason) => {
-          // console.log(reason);
+        // console.log(reason);
 
           if (reason.name === 'AbortError') return;
 
@@ -159,7 +160,7 @@ export default function List(props: {
   const asyncFunctionDebounced = AwesomeDebouncePromise(someFunc, 50);
 
   const handleScroll = (e: any) => {
-    // if (props.isBusy) return;
+    if (props.isBusy) return;
     if (page === 1) return;
 
     asyncFunctionDebounced(e.target.scrollTop);

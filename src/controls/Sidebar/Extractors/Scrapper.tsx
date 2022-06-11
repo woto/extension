@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useQuery } from "react-query";
+import { useQuery } from 'react-query';
 
 import { Tab } from '../../../../main';
 
@@ -9,7 +9,9 @@ export default function Scrapper(props: {
     currentTab: Tab | null,
     q: string,
 }) {
-  const { isLoading, error, data, isFetching } = useQuery(`Scrapper ${props.q}`, () => {
+  const {
+    isLoading, error, data, isFetching,
+  } = useQuery(`Scrapper ${props.q}`, () => {
     props.setIsBusy(true);
 
     const query = new URLSearchParams({
@@ -21,8 +23,8 @@ export default function Scrapper(props: {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Api-Key': props.apiKey
+        Accept: 'application/json',
+        'Api-Key': props.apiKey,
       },
     }).then((result) => {
       if (!result.ok) throw new Error(result.statusText);
@@ -34,9 +36,9 @@ export default function Scrapper(props: {
     });
   });
 
-  if (isLoading) return "Loading...";
+  if (isLoading) return 'Loading...';
 
-  if (error) return "An error has occurred: " + (error as Record<string, string>).message;
+  if (error) return `An error has occurred: ${(error as Record<string, string>).message}`;
 
   return (
     <div className="overflow-auto p-3 space-y-3 break-all">

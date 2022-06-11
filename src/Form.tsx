@@ -70,9 +70,9 @@ export default function Form(props: {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Api-Key': props.apiKey
-      },      
+        Accept: 'application/json',
+        'Api-Key': props.apiKey,
+      },
     })
       .then((res) => {
         if (!res.ok) throw new Error(res.statusText);
@@ -138,11 +138,11 @@ export default function Form(props: {
         credentials: 'omit',
         method: 'POST',
         body: formData,
-        headers: {          
+        headers: {
           // 'Content-Type': 'multipart/form-data',
           // 'Accept': 'application/json',
-          'Api-Key': props.apiKey
-        },        
+          'Api-Key': props.apiKey,
+        },
       }).then((res) => {
         if (!res.ok) throw new Error(res.statusText);
 
@@ -186,8 +186,8 @@ export default function Form(props: {
       body: JSON.stringify(data),
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Api-Key': props.apiKey
+        Accept: 'application/json',
+        'Api-Key': props.apiKey,
       },
     }).then((res) => {
       props.setShowWindow(false);
@@ -269,7 +269,7 @@ export default function Form(props: {
         const finalUrl = `http://localhost:8080/AfrOrF3gWeDA6VOlDG4TzxMv39O7MXnF4CXpKUwGqRM/background:FFF/rs:fit:400:400:1/ex:1/el:1/g:sm/plain/${encodeURIComponent(img.src)}`;
 
         fetch(finalUrl, {
-          credentials: 'omit'
+          credentials: 'omit',
         })
           .then(async (res) => {
             if (!res.ok) throw new Error(res.statusText);

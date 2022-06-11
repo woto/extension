@@ -66,15 +66,15 @@ function AppAdd() {
   const [scrollPosition, setScrollPosition] = useState(0);
   const [kindsOptions, setKindsOptions] = useState<Kind[]>([]);
   const [apiKey, setApiKey] = useState<string>('');
-  
+
   useEffect(() => {
     const fn = async () => {
       const data = await chrome.storage.sync.get('api_key');
       setApiKey(data.api_key);
-    }
+    };
 
     fn();
-  }, [])
+  }, []);
 
   function usePrevious(value: string) {
     const ref = useRef<string>(window.location.toString());
@@ -163,7 +163,7 @@ function AppAdd() {
 
   return (
     <>
-      {true
+      { false
         && <Toast />}
 
       {true
@@ -228,7 +228,7 @@ function AppAdd() {
                   </div>
                 </div>
 
-                <div className={`${isBusy ? 'background-animate from-indigo-500 via-lime-400 to-indigo-500 bg-gradient-to-r bg-orange-400' : 'from-lime-400 to-indigo-500 bg-gradient-to-r bg-orange-400'} transition-all h-1`}></div>
+                <div className={`${isBusy ? 'background-animate from-indigo-500 via-lime-400 to-indigo-500 bg-gradient-to-r bg-orange-400' : 'from-lime-400 to-indigo-500 bg-gradient-to-r bg-orange-400'} transition-all h-1`} />
                 {/* <div className={`${isBusy ? 'background-animate from-indigo-500 via-lime-400 to-indigo-500 bg-gradient-to-r bg-orange-400' : 'bg-slate-400'} transition-all h-2`} /> */}
 
                 {/* <div className="border border-t-0 border-slate-300 rounded-t-none rounded-lg overflow-hidden flex flex-col h-full"> */}

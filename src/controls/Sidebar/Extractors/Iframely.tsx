@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useQuery } from "react-query";
+import { useQuery } from 'react-query';
 
 import { Tab } from '../../../../main';
 
@@ -9,22 +9,23 @@ export default function Iframely(props: {
     currentTab: Tab | null,
     q: string
 }) {
+  const {
+    isLoading, error, data, isFetching,
+  } = useQuery(`Iframely ${props.q}`, () => {
+    props.setIsBusy(true);
 
-  const { isLoading, error, data, isFetching } = useQuery(`Iframely ${props.q}`, () => {
-    props.setIsBusy(true)
-    
     const query = new URLSearchParams({
       url: props.q,
-    })
+    });
 
     return fetch(`http://localhost:3000/api/tools/iframely?${query}`, {
       credentials: 'omit',
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Api-Key': props.apiKey
-      }
+        Accept: 'application/json',
+        'Api-Key': props.apiKey,
+      },
     }).then((result) => {
       if (!result.ok) throw new Error(result.statusText);
       props.setIsBusy(false);
@@ -35,9 +36,9 @@ export default function Iframely(props: {
     });
   });
 
-  if (isLoading) return "Loading...";
+  if (isLoading) return 'Loading...';
 
-  if (error) return "An error has occurred: " + (error as Record<string, string>).message;
+  if (error) return `An error has occurred: ${(error as Record<string, string>).message}`;
 
   return (
     <div className="overflow-auto p-3 space-y-3 break-all">

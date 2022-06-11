@@ -21,6 +21,10 @@ export default function SearchInput(props: {
     props.setSearchString(event.target.value);
   };
 
+  const stopPropagation = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+  };
+
   return (
     <div className="p-3">
       <div className="relative">
@@ -31,6 +35,7 @@ export default function SearchInput(props: {
           id="name"
           className="pr-9 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full text-sm border-gray-300 px-4 rounded-full"
           placeholder="Поиск..."
+          onKeyDown={stopPropagation}
           onChange={handleChange}
         />
 

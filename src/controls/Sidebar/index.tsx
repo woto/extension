@@ -1,5 +1,5 @@
 import React, {
-  Fragment, Suspense, useCallback, useEffect, useMemo, useState
+  Fragment, Suspense, useCallback, useEffect, useMemo, useState,
 } from 'react';
 
 import { Transition } from '@headlessui/react';
@@ -13,7 +13,7 @@ function _Sidebar(
   props: {
     apiKey: string,
     setIsBusy: React.Dispatch<React.SetStateAction<boolean>>,
-    searchString: string, 
+    searchString: string,
     linkUrl: string,
   },
 ) {
@@ -25,11 +25,10 @@ function _Sidebar(
   };
 
   const [internalSearchString, setInternalSearchString] = useState<string>('');
-  
-  const {searchString, linkUrl} = props
+
+  const { searchString, linkUrl } = props;
 
   useEffect(() => {
-
     const getDefaultValue = () => {
       switch (currentTab) {
         case 'Yandex':
@@ -39,13 +38,13 @@ function _Sidebar(
         case 'Scrapper':
           return linkUrl || 'https://example.com';
       }
-  
-      return searchString
-    }
-  
-    const defaultValue = getDefaultValue()
+
+      return searchString;
+    };
+
+    const defaultValue = getDefaultValue();
     setInternalSearchString(defaultValue);
-  }, [searchString, linkUrl, currentTab])
+  }, [searchString, linkUrl, currentTab]);
 
   let Component = React.lazy(() => import('./Extractors/Hack'));
 
@@ -85,7 +84,7 @@ function _Sidebar(
         <div className="flex h-full bg-slate-100/80 backdrop-blur-sm rounded-r border-gray-300 border">
 
           <div className="flex w-full">
-            
+
             <div className="select-text flex-col overflow-auto justify-self-stretch self-stretch items-stretch w-full bg-white/50 mt-1 mb-1 ml-1 border-gray-300 border rounded">
 
               <div className="mt-1 border-b border-gray-300 focus-within:border-indigo-600">
@@ -97,7 +96,7 @@ function _Sidebar(
                   placeholder="Поиск..."
                   value={internalSearchString}
                   onKeyDown={stopPropagation}
-                  onChange={(e) => setInternalSearchString(e.target.value) }
+                  onChange={(e) => setInternalSearchString(e.target.value)}
                 />
               </div>
 
@@ -129,8 +128,6 @@ function _Sidebar(
   );
 }
 
-const Mycomponents = React.memo((props: any) => {
-  return _Sidebar(props);
-});
+const Mycomponents = React.memo((props: any) => _Sidebar(props));
 
 export default Mycomponents;

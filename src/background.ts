@@ -1,20 +1,18 @@
 import { appUrl } from './Utils';
 import { Feature } from '../main';
 
-const sendMessageToPage = (data: {}, tab?: chrome.tabs.Tab | undefined) => {
-  return new Promise((resolve, reject) => {
-    if (!tab || !tab.id) return;
+const sendMessageToPage = (data: {}, tab?: chrome.tabs.Tab | undefined) => new Promise((resolve, reject) => {
+  if (!tab || !tab.id) return;
 
-    chrome.tabs.sendMessage(tab.id, data, (response) => {
-      if (!response) {
-        return reject(
-          new Error('Failed to connect to the specified tab.'),
-        );
-      }
-      return resolve(response);
-    });
-  })
-}
+  chrome.tabs.sendMessage(tab.id, data, (response) => {
+    if (!response) {
+      return reject(
+        new Error('Failed to connect to the specified tab.'),
+      );
+    }
+    return resolve(response);
+  });
+});
 
 // manifest permissions/history
 // chrome.history.onVisited.addListener(
@@ -36,33 +34,33 @@ const injectContentScripts = async (feature: Feature, contentScriptName: string,
 };
 
 const showAppAuth = async () => {
-  chrome.windows.getCurrent(function(window) {
-    var width = 400;
-    var height = 500;
-    var left = ((window.width! / 2) - (width / 2)) + window.left!;
-    var top = ((window.height! / 2) - (height / 2)) + window.top!;
+  chrome.windows.getCurrent((window) => {
+    const width = 400;
+    const height = 500;
+    const left = ((window.width! / 2) - (width / 2)) + window.left!;
+    const top = ((window.height! / 2) - (height / 2)) + window.top!;
 
     chrome.windows.create({
-        url: 'auth.html',
-        width: width,
-        height: height,
-        top: Math.round(top),
-        left: Math.round(left),
-        type: 'popup'
+      url: 'auth.html',
+      width,
+      height,
+      top: Math.round(top),
+      left: Math.round(left),
+      type: 'popup',
     });
- });
-}
+  });
+};
 
 const showAppAdd = async (selectionType: string, tab: chrome.tabs.Tab) => {
   await injectContentScripts('add', 'js/content_script.js', tab);
-  const result = await sendMessageToPage({ message: 'select-element', selectionType: selectionType }, tab);
+  const result = await sendMessageToPage({ message: 'select-element', selectionType }, tab);
   await sendMessageToPage({ message: 'create-fragment', linkUrl: (result as Record<'linkUrl', string>).linkUrl }, tab);
-}
+};
 
 const showAppList = async (tab: chrome.tabs.Tab) => {
   await injectContentScripts('list', 'js/content_script2.js', tab);
   await sendMessageToPage({ message: 'list-fragments' }, tab);
-}
+};
 
 const checkToken = async () => {
   const data = await chrome.storage.sync.get('api_key');
@@ -73,37 +71,33 @@ const checkToken = async () => {
       return reject();
     }
 
-    fetch(`http://localhost:3000/api/me`, {
+    fetch('http://localhost:3000/api/me', {
       credentials: 'omit',
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        'Accept': 'application/json',
-        'Api-Key': apiKey
+        Accept: 'application/json',
+        'Api-Key': apiKey,
       },
     }).then((result) => {
       if (result.ok) {
         return resolve('ok');
-      } else { 
-        return reject();
       }
-    }).catch((reason) => {
       return reject();
-    })
-  })
-}
+    }).catch((reason) => reject());
+  });
+};
 
 async function onClickHandler(info: chrome.contextMenus.OnClickData, tab?: chrome.tabs.Tab | undefined) {
-  debugger
   const menuItemId = info.menuItemId.toString();
 
   chrome.runtime.onMessage.addListener(
     (message: any, sender: chrome.runtime.MessageSender, sendResponse) => {
       console.log('received message:', message);
       showAppAdd(menuItemId, tab!);
-      sendResponse({message: 'foo'});
+      sendResponse({ message: 'foo' });
     },
-  );  
+  );
   if (['select-link', 'select-text'].includes(menuItemId)) {
     checkToken()
       .then(() => {
@@ -111,11 +105,11 @@ async function onClickHandler(info: chrome.contextMenus.OnClickData, tab?: chrom
       })
       .catch(() => {
         showAppAuth();
-      })
+      });
   }
-  
+
   if (['list'].includes(info.menuItemId.toString())) {
-    showAppList(tab!)
+    showAppList(tab!);
   }
 }
 
