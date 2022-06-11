@@ -69,6 +69,10 @@ export default function Sidebar(
   //     return import('./Extractors/Yandex');
   // }
 
+  const stopPropagation = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    e.stopPropagation();
+  };
+
   return (
     <Transition
       as={Fragment}
@@ -92,6 +96,7 @@ export default function Sidebar(
                   className="block w-full border-0 border-b border-transparent bg-gray-50 focus:border-indigo-600 focus:ring-0 sm:text-sm"
                   placeholder="Поиск..."
                   value={internalSearchString}
+                  onKeyDown={stopPropagation}
                   onChange={(e) => setInternalSearchString(e.target.value) }
                 />
               </div>
