@@ -74,7 +74,6 @@
 .drag-none {
     /* user-drag: none; */
     -webkit-user-drag: none;
-    @apply select-none;
 }
 
 /* SCROLLBARS */
@@ -105,7 +104,7 @@ textarea {
 }
 
 ::-webkit-resizer{
-/*  Does not work as I want  */
+    /*  Does not work as I want  */
 }
 
 /* PROGRESS BAR LOADER */
