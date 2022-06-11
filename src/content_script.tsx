@@ -11,6 +11,7 @@ import {
   QueryClient,
   QueryClientProvider,
 } from 'react-query'
+import { ReactQueryDevtools } from "react-query/devtools";
 
 const queryClient = new QueryClient()
 
@@ -35,6 +36,7 @@ class AddPopupComponent extends HTMLElement {
     ReactDOM.render(
       <React.StrictMode>
         <QueryClientProvider client={queryClient}>
+          <ReactQueryDevtools initialIsOpen={false} />
           <AppAdd />
         </QueryClientProvider>
       </React.StrictMode>,
