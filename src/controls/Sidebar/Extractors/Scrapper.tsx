@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 
 import { Tab } from '../../../../main';
+import DotFlasing from '../../DotFlashing';
 
 export default function Scrapper(props: {
     apiKey: string,
@@ -36,7 +37,7 @@ export default function Scrapper(props: {
     });
   });
 
-  if (isLoading) return 'Loading...';
+  if (isLoading) return <DotFlasing />;
 
   if (error) return `An error has occurred: ${(error as Record<string, string>).message}`;
 

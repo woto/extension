@@ -10,6 +10,7 @@ import NothingFound from './NothingFound';
 import { appUrl } from './Utils';
 
 import { Entity, Image } from '../main';
+import DotFlasing from './controls/DotFlashing';
 
 function DetermineList(props: { entities: Entity[] | null, onSelectItem: any }) {
   if (props.entities === null) {
@@ -191,7 +192,7 @@ export default function List(props: {
         />
 
         <div className="flex justify-center items-center overflow-hidden absolute inset-x-0 h-10 bottom-0">
-          {/* { props.isBusy && <div className="dot-falling" /> } */}
+          { props.isBusy && <DotFlasing /> }
         </div>
 
         <div className="flex justify-center items-center overflow-hidden absolute inset-x-0 h-10 bottom-0">
