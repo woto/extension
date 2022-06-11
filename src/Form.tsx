@@ -468,15 +468,15 @@ export default function Form(props: {
           </div>
 
           <p className="shadow-inner mb-3 text-xs text-orange-200 bg-slate-700 p-2 rounded-lg">
-            Вы привязываете синоним:
+            Вы привязываете:
             {' '}
-            <span className="text-orange-50">{props.fragmentHash.textStart}</span>
+            <span className="text-orange-50 select-all">{props.fragmentHash.textStart}</span>
             {props.linkUrl
               && (
               <>
                 , имеющий ссылку:
                 {' '}
-                <span className="text-red-50 break-all">{props.linkUrl}</span>
+                <span className="text-red-50 break-all select-all">{props.linkUrl}</span>
               </>
               )}
           </p>

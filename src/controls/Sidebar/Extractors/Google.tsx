@@ -45,7 +45,7 @@ export default function Google(props: {
     <div className="overflow-auto p-3 space-y-7 break-all">
       {data && data.itemListElement && data.itemListElement.length > 0 && data.itemListElement.map((element: any, idx: number) => (
         <div key={idx}>
-          <p className="text-base font-medium mb-1">
+          <p className="text-sm mb-1">
             {' '}
             {element.result && element.result.name}
             {' '}

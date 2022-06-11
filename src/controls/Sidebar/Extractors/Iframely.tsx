@@ -44,12 +44,12 @@ export default function Iframely(props: {
   return (
     <div className="overflow-auto p-3 space-y-3 break-all">
 
-      <p className="text-xs">
+      <p className="text-sm">
         {' '}
         { data && data.meta && data.meta.title }
         {' '}
       </p>
-      <p className="text-xs">
+      <p className="text-sm">
         {' '}
         { data && data.meta && data.meta.site }
         {' '}

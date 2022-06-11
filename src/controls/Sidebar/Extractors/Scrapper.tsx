@@ -43,12 +43,12 @@ export default function Scrapper(props: {
 
   return (
     <div className="overflow-auto p-3 space-y-3 break-all">
-      <p className="text-xs">
+      <p className="text-sm">
         {' '}
         {data && data.title }
         {' '}
       </p>
-      <p className="text-xs">
+      <p className="text-sm">
         {' '}
         {data && data.excerpt }
         {' '}

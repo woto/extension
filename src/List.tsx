@@ -191,9 +191,7 @@ export default function List(props: {
           className="inset-x-0 bottom-0 flex justify-center bg-gradient-to-b from-transparent to-slate-100 pt-6 pb-10 pointer-events-none absolute"
         />
 
-        <div className="flex justify-center items-center overflow-hidden absolute inset-x-0 h-10 bottom-0">
-          { props.isBusy && <DotFlasing /> }
-        </div>
+        { props.isBusy && <DotFlasing /> }
 
         <div className="flex justify-center items-center overflow-hidden absolute inset-x-0 h-10 bottom-0">
           { isError && <div className="text-red-400 text-sm font-medium">что-то пошло не так</div> }
