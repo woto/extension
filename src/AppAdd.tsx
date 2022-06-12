@@ -193,7 +193,7 @@ function AppAdd() {
             >
               <div
                 ref={nodeRef}
-                className={`selection:bg-slate-400 selection:text-white select-none min-h-[600px] bg-slate-100 rounded-lg w-[320px] ${isDragging ? 'blur-[2px] opacity-50' : 'opacity-100'}`}
+                className={`shadow-sm selection:bg-purple-800 selection:text-white select-none min-h-[600px] bg-slate-100 rounded-lg w-[320px] ${isDragging ? 'blur-[1px] opacity-50' : 'opacity-100'}`}
               >
 
                 <div
