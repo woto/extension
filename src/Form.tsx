@@ -189,9 +189,12 @@ export default function Form(props: {
         Accept: 'application/json',
         'Api-Key': props.apiKey,
       },
-    }).then((res) => {
+    }).then((result) => {
+      if (!result.ok) throw new Error(result.statusText);
+
       props.setShowWindow(false);
-      console.error(res);
+    }).catch((reason) => {
+      console.error(reason);
     });
   };
 
