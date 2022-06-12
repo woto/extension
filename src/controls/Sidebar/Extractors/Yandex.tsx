@@ -4,7 +4,7 @@ import { useQuery } from 'react-query';
 import { Tab } from '../../../../main';
 import DotFlasing from '../../DotFlashing';
 
-export default function YandexXml(props: {
+export default function Yandex(props: {
   apiKey: string,
   setIsBusy: React.Dispatch<React.SetStateAction<boolean>>,
   currentTab: Tab | null,
