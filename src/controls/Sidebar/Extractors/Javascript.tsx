@@ -41,8 +41,6 @@ export default function Javascript(props: {
 
   if (error) return `An error has occurred: ${(error as Record<string, string>).message}`;
 
-  debugger;
-
   return (
     <div className="overflow-auto p-3 space-y-3 break-all">
       { data?.map((element: any, idx: number) => (

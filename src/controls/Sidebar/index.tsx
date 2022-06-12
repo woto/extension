@@ -6,8 +6,7 @@ import { Transition } from '@headlessui/react';
 import Button from './Button';
 
 import { Tab } from '../../../main';
-
-export const tabs = ['Yandex', 'Google', 'Iframely', 'Scrapper', 'Github', 'Ruby', 'Javascript', 'Python', 'Youtube', 'Telegram', 'YandexXml'] as const;
+export const tabs = ['Yandex', 'Google', 'Iframely', 'Scrapper', 'Github', 'Ruby', 'Javascript', 'Youtube', 'Telegram'] as const;
 
 function _Sidebar(
   props: {
@@ -31,6 +30,8 @@ function _Sidebar(
   useEffect(() => {
     const getDefaultValue = () => {
       switch (currentTab) {
+        case 'Telegram':
+          return linkUrl || searchString;
         case 'Yandex':
           return searchString;
         case 'Iframely':
