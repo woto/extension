@@ -123,7 +123,7 @@ export default function KindsInput(props: {
         <Tags>
           { props.kinds.map((option: Kind) => (
             <Item
-              handleClick={() => removeKind(option)}
+              handleClick={(e: any) => { e.preventDefault(); removeKind(option); }}
               key={option.index}
               item={option}
             />
