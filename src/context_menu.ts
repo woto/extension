@@ -16,13 +16,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
       case 'select-link': {
         const selection = window.getSelection();
 
-        for (let i = 0; i < 100; i++) {
+        for (let i = 0; i < 10; i++) {
           if (!rightClickedElement) break;
 
           linkUrl = rightClickedElement.getAttribute('href');
-          if (linkUrl) break;
 
-          rightClickedElement = rightClickedElement.parentElement;
+          if (!linkUrl) {
+            rightClickedElement = rightClickedElement.parentElement;
+            continue;
+          }
+
+          linkUrl = new URL(linkUrl, window.location.toString()).toString();
         }
 
         if (!linkUrl) return;
