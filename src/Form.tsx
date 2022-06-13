@@ -534,7 +534,7 @@ export default function Form(props: {
           <div className="relative mt-3">
             <textarea
               onKeyDown={stopPropagation}
-              rows={2}
+              rows={4}
               {...register('intro')}
               className="hide-resize pb-7 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full text-sm border-gray-300 rounded-md"
               placeholder="Описание"
