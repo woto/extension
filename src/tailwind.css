@@ -165,3 +165,7 @@ a {
 /* GITHUB README HIGHLIGHT */
 
 @import 'github-markdown-css/github-markdown.css';
+
+.markdown-body {
+    --color-canvas-default: transparent;
+}
