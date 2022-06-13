@@ -12,39 +12,35 @@ import Toast from './Toast';
 
 import { FragmentHash, Entity, Kind } from '../main';
 
-const fgu = require('./fragment-generation-utils');
-
 const createTextFragment = () => {
   const selection = window.getSelection();
-  // eslint-disable-next-line no-undef
-  const result = fgu.generateFragment(selection);
-  let fragmentHash: FragmentHash;
+  const fragmentHash: FragmentHash = {
+    prefix: '',
+    suffix: '',
+    textStart: selection?.toString() || '',
+    textEnd: '',
+  };
 
   let url = `${location.origin}${location.pathname}${location.search}`;
 
-  if (result.status === 0) {
-    fragmentHash = result.fragment;
+  const prefix = fragmentHash.prefix
+    ? `${encodeURIComponent(fragmentHash.prefix)}-,`
+    : '';
 
-    const prefix = fragmentHash.prefix
-      ? `${encodeURIComponent(fragmentHash.prefix)}-,`
-      : '';
+  const suffix = fragmentHash.suffix
+    ? `,-${encodeURIComponent(fragmentHash.suffix)}`
+    : '';
 
-    const suffix = fragmentHash.suffix
-      ? `,-${encodeURIComponent(fragmentHash.suffix)}`
-      : '';
+  const textStart = encodeURIComponent(fragmentHash.textStart)
+    .replace('-', '%2D');
 
-    const textStart = encodeURIComponent(fragmentHash.textStart)
-      .replace('-', '%2D');
+  const textEnd = fragmentHash.textEnd
+    ? `,${encodeURIComponent(fragmentHash.textEnd)}`
+    : '';
 
-    const textEnd = fragmentHash.textEnd
-      ? `,${encodeURIComponent(fragmentHash.textEnd)}`
-      : '';
+  url = `${url}#:~:text=${prefix}${textStart}${textEnd}${suffix}`;
 
-    url = `${url}#:~:text=${prefix}${textStart}${textEnd}${suffix}`;
-
-    return { selection: selection!, url: url!, fragmentHash: fragmentHash! };
-  }
-  throw new Error(`Не удалось сформировать ссылку с выделением. Код ошибки: ${result.status}`);
+  return { selection: selection!, url: url!, fragmentHash: fragmentHash! };
 };
 
 function AppAdd() {

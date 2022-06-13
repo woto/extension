@@ -484,14 +484,14 @@ export default function Form(props: {
               )}
           </p>
 
-          {/* {showDebug
+          {showDebug
             && (
-              <div className="select-text">
-                <p className="break-normal text-sm mb-3">{props.fragmentUrl}</p>
-                <p className="break-normal text-sm mb-3">{props.linkUrl}</p>
-                <p className="break-normal text-sm mb-3">{props.entity.entity_id}</p>
+              <div className="text-pink-500">
+                <p className="select-text break-all text-sm mb-3">{props.fragmentUrl}</p>
+                <p className="select-text break-all text-sm mb-3">{props.linkUrl}</p>
+                <p className="select-text break-all text-sm mb-3">{props.entity.entity_id}</p>
               </div>
-            )} */}
+            )}
 
           <div className="text-sm">
             Вы можете так же указать

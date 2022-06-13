@@ -1,40 +1,12 @@
-let rightclickedElement: EventTarget;
+let rightClickedElement: Element | null;
 
 document.body.addEventListener('contextmenu', (e) => {
-  let elem = e.target as HTMLElement;
-
-  while (true) {
-    const src = elem.getAttribute('href') || '';
-
-    try {
-      new URL(src);
-      rightclickedElement = elem;
-      return;
-    } catch (_) {
-      if (elem.parentElement) {
-        elem = elem.parentElement;
-      } else {
-        break;
-      }
-
-      continue;
-    }
-  }
+  rightClickedElement = e.target as Element;
 });
 
-// function addScript( src: string ) {
-//   var s = document.createElement( 'script' );
-//   s.setAttribute( 'src', src );
-//   document.body.appendChild( s );
-// }
-
-// // addScript("http://localhost:8097");
-
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  // console.log(request);
-
   const { message } = request;
-  let linkUrl = '';
+  let linkUrl: string | null = null;
 
   if (message === 'select-element') {
     switch (request.selectionType) {
@@ -42,19 +14,24 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
         break;
       }
       case 'select-link': {
-        if (!rightclickedElement) return;
-
         const selection = window.getSelection();
+
+        for (let i = 0; i < 100; i++) {
+          if (!rightClickedElement) break;
+
+          linkUrl = rightClickedElement.getAttribute('href');
+          if (linkUrl) break;
+
+          rightClickedElement = rightClickedElement.parentElement;
+        }
+
+        if (!linkUrl) return;
+
+        if (!rightClickedElement) return;
+
         if (!selection) return;
 
-        if (rightclickedElement instanceof Node) {
-          // selection.selectAllChildren(rightclickedElement);
-          const text = rightclickedElement.childNodes[0];
-          linkUrl = (rightclickedElement as HTMLElement).getAttribute('href')!;
-          selection.setBaseAndExtent(rightclickedElement, 0, rightclickedElement, 1);
-          // selection.setBaseAndExtent(text, 0, text, text.textContent!.length);
-          // selection.setBaseAndExtent(text,0,text,text.toString().length)
-        }
+        selection.selectAllChildren(rightClickedElement);
 
         break;
       }
@@ -62,5 +39,4 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
     return sendResponse({ message: 'element-selected-successfully', linkUrl });
   }
-  // foo
 });
