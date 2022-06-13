@@ -43,41 +43,45 @@ export default function Telegram(props: {
 
   return (
     <div className="overflow-auto p-3 space-y-3 break-all">
+
       <p className="text-sm">
         {' '}
         { data?.kind }
         {' '}
       </p>
+
       <p className="text-sm">
         {' '}
         { data?.members }
         {' '}
       </p>
+
       <p className="text-sm">
         {' '}
         { data?.online }
         {' '}
       </p>
+
       <p className="text-sm">
         {' '}
         { data?.subscribers }
         {' '}
       </p>
+
       <p className="text-sm">
         {' '}
         { data?.label }
         {' '}
       </p>
+
       <p className="text-sm">
         {' '}
         { data?.title }
         {' '}
       </p>
-      <p className="text-sm">
-        {' '}
-        { data?.description }
-        {' '}
-      </p>
+
+      <p className="text-sm" dangerouslySetInnerHTML={{ __html: data?.description || '' }} />
+
       <p className="text-sm">
         {' '}
         <img src={data?.image} />
