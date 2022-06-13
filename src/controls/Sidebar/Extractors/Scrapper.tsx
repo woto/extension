@@ -53,7 +53,7 @@ export default function Scrapper(props: {
         {data && data.excerpt }
         {' '}
       </p>
-      <p className="text-xs">
+      <p className="text-sm">
         {' '}
         {data && data.siteName }
         {' '}

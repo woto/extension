@@ -42,7 +42,7 @@ export default function Github(props: {
   if (error) return `An error has occurred: ${(error as Record<string, string>).message}`;
 
   return (
-    <div className="p-3 space-y-3 break-all">
+    <div className="p-3 space-y-3 break-all text-sm">
       <p dangerouslySetInnerHTML={{ __html: data?.readme }} />
     </div>
   );

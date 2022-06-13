@@ -55,12 +55,12 @@ export default function Google(props: {
             {element.result && element.result.description}
             {' '}
           </p>
-          <p className="text-xs mb-1">
+          <p className="text-sm mb-1">
             {' '}
             {element.result && element.result.detailedDescription && element.result.detailedDescription.articleBody}
             {' '}
           </p>
-          <p className="text-xs mb-1">
+          <p className="text-sm mb-1">
             {' '}
             {element.result && element.result.image && element.result.image.contentUrl
               && <img src={element.result.image.contentUrl} />}

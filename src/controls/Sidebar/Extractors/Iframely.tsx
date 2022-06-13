@@ -54,12 +54,12 @@ export default function Iframely(props: {
         { data && data.meta && data.meta.site }
         {' '}
       </p>
-      <p className="text-xs">
+      <p className="text-sm">
         {' '}
         { data && data.meta && data.meta.description }
         {' '}
       </p>
-      <p className="text-xs">
+      <p className="text-sm">
         {' '}
         { data && data.meta && data.meta.canonical }
         {' '}

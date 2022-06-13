@@ -44,7 +44,7 @@ export default function Yandex(props: {
   return (
     <div className="overflow-auto p-3 space-y-7 break-all">
       {data && data.yandexsearch && data.yandexsearch.response && data.yandexsearch.response.results && data.yandexsearch.response.results.grouping && data.yandexsearch.response.results.grouping.group && data.yandexsearch.response.results.grouping.group.length > 0 && data.yandexsearch.response.results.grouping.group.map((element: any, idx: number) => (
-        <div key={idx.toString()}>
+        <div className="text-sm" key={idx.toString()}>
           { JSON.stringify(element) }
           {/* <p className="text font-medium mb-1">
             {' '}
@@ -56,12 +56,12 @@ export default function Yandex(props: {
             {element.result && element.result.description}
             {' '}
           </p>
-          <p className="text-xs mb-1">
+          <p className="text-sm mb-1">
             {' '}
             {element.result && element.result.detailedDescription && element.result.detailedDescription.articleBody}
             {' '}
           </p>
-          <p className="text-xs mb-1">
+          <p className="text-sm mb-1">
             {' '}
             {element.result && element.result.image && element.result.image.contentUrl &&
               <img src={element.result.image.contentUrl} />}

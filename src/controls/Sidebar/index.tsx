@@ -1,5 +1,5 @@
 import React, {
-  Fragment, Suspense, useCallback, useEffect, useMemo, useState,
+  Fragment, Suspense, useCallback, useEffect, useState,
 } from 'react';
 
 import { Transition } from '@headlessui/react';
@@ -27,47 +27,99 @@ function _Sidebar(
 
   const { searchString, linkUrl } = props;
 
+  const SidabrStates: { [key in Tab]: {
+    bell: () => boolean | undefined,
+    q: string
+  } } = {
+    Yandex: {
+      q: searchString,
+      bell() { return true; },
+    },
+    Google: {
+      q: searchString,
+      bell() { return true; },
+    },
+    Iframely: {
+      q: linkUrl,
+      bell() {
+        try {
+          const url = new URL(linkUrl);
+          return true
+        } catch {}
+      },
+    },
+    Scrapper: {
+      q: linkUrl,
+      bell() {
+        try {
+          const url = new URL(linkUrl);
+          return true
+        } catch {}
+      },
+    },    
+    Github: {
+      q: linkUrl || searchString,
+      bell() {
+        try {
+          const url = new URL(linkUrl);
+          if ( ['github.com'].includes(url.host) ) return true;
+        } catch { }
+      },
+    },
+    Telegram: {
+      q: linkUrl || searchString,
+      bell() {
+        try {
+          const url = new URL(linkUrl);
+          if (['www.t.me', 't.me', 'telegram.me'].includes(url.host)) return true;
+        } catch { }
+      },
+    },
+    Ruby: {
+      q: linkUrl || searchString,
+      bell() {
+        try {
+          const url = new URL(linkUrl);
+          if (['rubygems.org'].includes(url.host)) return true;
+        } catch { }
+      },
+    },
+    Javascript: {
+      q: linkUrl || searchString,
+      bell() {
+        try {
+          const url = new URL(linkUrl);
+          if (['npmjs.com'].includes(url.host)) return true;
+        } catch { }
+      },
+    },
+    Youtube: {
+      q: linkUrl || searchString,
+      bell() { 
+        try {
+          const url = new URL(linkUrl);
+          if (['youtube.com', 'www.youtube.com'].includes(url.host)) return true;
+        } catch { }
+       },
+    },
+  };
+
   useEffect(() => {
-    const getDefaultValue = () => {
-      switch (currentTab) {
-        case 'Telegram':
-          return linkUrl || searchString;
-        case 'Yandex':
-          return searchString;
-        case 'Iframely':
-          return linkUrl || 'https://example.com';
-        case 'Scrapper':
-          return linkUrl || 'https://example.com';
-      }
+    const str = currentTab && SidabrStates[currentTab].q || '';
+    setInternalSearchString(str);
+  }, [currentTab]);
 
-      return searchString;
-    };
+  const [Component, setComponent] = useState<any>(
+    React.lazy(() => import('./Extractors/Hack'))
+  );
 
-    const defaultValue = getDefaultValue();
-    setInternalSearchString(defaultValue);
-  }, [searchString, linkUrl, currentTab]);
-
-  let Component = React.lazy(() => import('./Extractors/Hack'));
-
-  if (currentTab) {
-    Component = React.lazy(() => import(`./Extractors/${currentTab}`));
-  }
-
-  // const loadLibrary = () => import('../Combobox/index');
-  // return loadLibrary().then((mod => {
-  //   return mod;
-  // })
-  // );
-
-  // const load = (
-  //   async () => await import('./Extractors/Yandex')
-  // )();
-  // return load();
-
-  // switch(mod) {
-  //   case 'Yandex':
-  //     return import('./Extractors/Yandex');
-  // }
+  useEffect(() => {
+    if (currentTab) {
+      setComponent(
+        React.lazy(() => import(`./Extractors/${currentTab}`))
+      );
+    }
+  }, [currentTab]);
 
   const stopPropagation = (e: React.KeyboardEvent<HTMLInputElement>) => {
     e.stopPropagation();
@@ -82,9 +134,9 @@ function _Sidebar(
       enterTo="translate-x-[43px]"
     >
       <div className={`absolute inset-0 transition-transform ${currentTab ? 'translate-x-full' : 'translate-x-[43px]'} rounded`}>
-        <div className="flex h-full bg-slate-100/80 backdrop-blur-sm rounded-r border-gray-300 border">
+        <div className="flex h-full bg-white/80 backdrop-blur-sm rounded-r border-gray-300 border">
 
-          <div className="flex w-full">
+          <div className="flex w-full overflow-auto">
 
             <div className="select-text flex-col overflow-auto justify-self-stretch self-stretch items-stretch w-full bg-white/50 mt-1 mb-1 ml-1 border-gray-300 border rounded">
 
@@ -113,12 +165,13 @@ function _Sidebar(
           </div>
 
           <div className="flex flex-col">
-            { tabs.map((tab) => (
+            {tabs.map((tab) => (
               <Button
                 key={tab}
                 iconName={tab}
                 setCurrentTab={handleClick}
                 currentTab={currentTab}
+                isShowBell={SidabrStates[tab].bell() || false}
               />
             ))}
           </div>

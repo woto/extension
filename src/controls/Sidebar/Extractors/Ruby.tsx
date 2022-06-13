@@ -45,7 +45,7 @@ export default function Ruby(props: {
     <div className="overflow-auto p-3 space-y-3 break-all">
       { data?.map((element: any, idx: number) => (
         <div key={idx}>
-          <p className="text-base font-medium mb-1">
+          <p className="text-sm font-medium mb-1">
             {' '}
             {element.name}
             {' '}
