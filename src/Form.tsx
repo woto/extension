@@ -470,27 +470,42 @@ export default function Form(props: {
             </div>
           </div>
 
-          <p className="shadow-inner mb-3 text-xs text-orange-200 bg-slate-700 p-2 rounded-lg">
-            Вы привязываете:
-            {' '}
-            <span className="text-orange-50 select-all">{props.fragmentHash.textStart}</span>
-            {props.linkUrl
-              && (
-              <>
-                , имеющий ссылку:
-                {' '}
-                <span className="text-red-50 break-all select-all">{props.linkUrl}</span>
-              </>
-              )}
-          </p>
-
           {showDebug
             && (
-              <div className="text-pink-500">
-                <p className="select-text break-all text-sm mb-3">{props.fragmentUrl}</p>
-                <p className="select-text break-all text-sm mb-3">{props.linkUrl}</p>
-                <p className="select-text break-all text-sm mb-3">{props.entity.entity_id}</p>
-              </div>
+              <>
+
+                <div className="shadow-inner mb-3 text-xs text-orange-200 bg-slate-700 p-2 rounded-lg">
+
+                  Вы привязываете:
+                  {' '}
+                  <span className="text-orange-50 select-all">{props.fragmentHash.textStart}</span>
+
+                  {props.linkUrl
+                    && (
+                    <>
+                      , имеющий ссылку:
+                      {' '}
+                      <span className="text-orange-50 break-all select-all">{props.linkUrl}</span>
+                    </>
+                    )}
+
+                  { props.entity.entity_id
+                    && (
+                    <>
+                      к объекту с id:
+                      {' '}
+                      <p className="select-text break-all text-sm mb-3">{props.entity.entity_id}</p>
+                    </>
+                    )}
+
+                  . Сформированная ссылка имеет адрес:
+                  {' '}
+                  <span className="text-orange-50 break-all select-all">{props.fragmentUrl}</span>
+
+                </div>
+
+                <div className="select-text mx-auto text-center text-gray-400 mb-3">¯\_(ツ)_/¯</div>
+              </>
             )}
 
           <div className="text-sm">
