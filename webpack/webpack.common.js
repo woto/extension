@@ -9,10 +9,8 @@ module.exports = {
       options: path.join(srcDir, 'options.tsx'),
       background: path.join(srcDir, 'background.ts'),
       content_script: path.join(srcDir, 'content_script.tsx'),
-      content_script2: path.join(srcDir, 'content_script2.tsx'),
       context_menu: path.join(srcDir, 'context_menu.ts'),
       app_auth: path.join(srcDir, 'AppAuth.tsx'),
-      // "fragment-generation-utils": path.join(srcDir, 'fragment-generation-utils.js'),
     },
     output: {
         path: path.join(__dirname, "../dist/js"),

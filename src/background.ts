@@ -57,11 +57,6 @@ const showAppAdd = async (selectionType: string, tab: chrome.tabs.Tab) => {
   await sendMessageToPage({ message: 'create-fragment', linkUrl: (result as Record<'linkUrl', string>).linkUrl }, tab);
 };
 
-const showAppList = async (tab: chrome.tabs.Tab) => {
-  await injectContentScripts('list', 'js/content_script2.js', tab);
-  await sendMessageToPage({ message: 'list-fragments' }, tab);
-};
-
 const checkToken = async () => {
   const data = await chrome.storage.sync.get('api_key');
   const apiKey = data.api_key;
@@ -107,14 +102,8 @@ async function onClickHandler(info: chrome.contextMenus.OnClickData, tab?: chrom
         showAppAuth();
       });
   }
-
-  if (['list'].includes(info.menuItemId.toString())) {
-    showAppList(tab!);
-  }
 }
 
 chrome.contextMenus.create({ id: 'select-text', title: 'Добавить выделение', contexts: ['selection'] });
 chrome.contextMenus.create({ id: 'select-link', title: 'Добавить ссылку', contexts: ['link'] });
-chrome.contextMenus.create({ id: 'list', title: 'Список объектов', contexts: ['page'] });
-
 chrome.contextMenus.onClicked.addListener(onClickHandler);
