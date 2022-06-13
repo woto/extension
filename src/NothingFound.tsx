@@ -6,7 +6,6 @@ export default function NothingFound() {
   return (
     <div className="h-full flex justify-center items-center self-center content-center">
       <div>
-        {/* <div className="mx-auto text-center text-gray-400">¯\_(ツ)_/¯</div> */}
         <div className="w-44 h-44 mx-auto flex" dangerouslySetInnerHTML={{ __html: Icon }} />
         <div className="mt-2 mx-auto text-center text-sm font-medium text-slate-400">Объект не найден</div>
       </div>
