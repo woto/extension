@@ -134,7 +134,7 @@ function _Sidebar(
       enterTo="translate-x-[43px]"
     >
       <div className={`absolute inset-0 transition-transform ${currentTab ? 'translate-x-full' : 'translate-x-[43px]'} rounded`}>
-        <div className="flex h-full bg-white/80 backdrop-blur-sm rounded-r border-gray-300 border">
+        <div className="flex h-full bg-amber-50/80 backdrop-blur-sm rounded-r border-gray-300 border">
 
           <div className="flex w-full overflow-auto">
 

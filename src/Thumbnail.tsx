@@ -23,9 +23,9 @@ export default function Thumbnail(props: {image: Image, removeImage: any}) {
       appear
       enter="transition-opacity"
       enterFrom="opacity-0"
-      enterTo="opacity-80"
+      enterTo="opacity-100"
       leave="transition-opacity"
-      leaveFrom="opacity-80"
+      leaveFrom="opacity-100"
       leaveTo="opacity-0"
       afterLeave={removeImage}
     >
