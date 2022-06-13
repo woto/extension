@@ -184,7 +184,7 @@ function AppAdd() {
               onStop={handleStop}
               handle=".dragHandler"
               nodeRef={nodeRef}
-              defaultPosition={{ x: 10, y: 10 }}
+              defaultPosition={{ x: 5, y: 5 }}
               bounds="html"
             >
               <div
