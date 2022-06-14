@@ -169,3 +169,11 @@ a {
 .markdown-body {
     --color-canvas-default: transparent;
 }
+
+/* REPLACE PREFLIGHT TAILWIND REM TO PX */
+
+[type='text'], [type='email'], [type='url'], [type='password'], [type='number'], [type='date'], [type='datetime-local'], 
+[type='month'], [type='search'], [type='tel'], [type='time'], [type='week'], [multiple], textarea, select {
+    @apply py-2;
+    @apply px-3;
+}
