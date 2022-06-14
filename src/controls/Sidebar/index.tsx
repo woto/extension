@@ -5,8 +5,9 @@ import React, {
 import { Transition } from '@headlessui/react';
 import Button from './Button';
 
-import { Tab } from '../../../main';
-export const tabs = ['Yandex', 'Google', 'Iframely', 'Scrapper', 'Github', 'Ruby', 'Javascript', 'Youtube', 'Telegram'] as const;
+import { Tab, SidebarButtonState } from '../../../main';
+
+export const tabs = ['Yandex', 'Google', 'Iframely', 'Scrapper', 'Github', 'Ruby', 'Javascript', 'Youtube', 'Telegram', 'GoogleCS', 'YandexXML'] as const;
 
 function _Sidebar(
   props: {
@@ -27,44 +28,56 @@ function _Sidebar(
 
   const { searchString, linkUrl } = props;
 
-  const SidabrStates: { [key in Tab]: {
-    bell: () => boolean | undefined,
-    q: string
-  } } = {
+  const SidebarButtonsStates: { [key in Tab]: SidebarButtonState } = {
     Yandex: {
       q: searchString,
       bell() { return true; },
+      disabled: false,
+    },
+    YandexXML: {
+      q: searchString,
+      bell() { return false; },
+      disabled: true,
     },
     Google: {
       q: searchString,
       bell() { return true; },
+      disabled: false,
+    },
+    GoogleCS: {
+      q: searchString,
+      bell() { return false; },
+      disabled: true,
     },
     Iframely: {
       q: linkUrl,
       bell() {
         try {
           const url = new URL(linkUrl);
-          return true
+          return true;
         } catch {}
       },
+      disabled: false,
     },
     Scrapper: {
       q: linkUrl,
       bell() {
         try {
           const url = new URL(linkUrl);
-          return true
+          return true;
         } catch {}
       },
-    },    
+      disabled: false,
+    },
     Github: {
       q: linkUrl || searchString,
       bell() {
         try {
           const url = new URL(linkUrl);
-          if ( ['github.com'].includes(url.host) ) return true;
+          if (['github.com'].includes(url.host)) return true;
         } catch { }
       },
+      disabled: false,
     },
     Telegram: {
       q: linkUrl || searchString,
@@ -74,6 +87,7 @@ function _Sidebar(
           if (['www.t.me', 't.me', 'telegram.me'].includes(url.host)) return true;
         } catch { }
       },
+      disabled: false,
     },
     Ruby: {
       q: linkUrl || searchString,
@@ -83,6 +97,7 @@ function _Sidebar(
           if (['rubygems.org'].includes(url.host)) return true;
         } catch { }
       },
+      disabled: false,
     },
     Javascript: {
       q: linkUrl || searchString,
@@ -92,31 +107,33 @@ function _Sidebar(
           if (['npmjs.com'].includes(url.host)) return true;
         } catch { }
       },
+      disabled: false,
     },
     Youtube: {
       q: linkUrl || searchString,
-      bell() { 
+      bell() {
         try {
           const url = new URL(linkUrl);
           if (['youtube.com', 'www.youtube.com'].includes(url.host)) return true;
         } catch { }
-       },
+      },
+      disabled: false,
     },
   };
 
   useEffect(() => {
-    const str = currentTab && SidabrStates[currentTab].q || '';
+    const str = currentTab && SidebarButtonsStates[currentTab].q || '';
     setInternalSearchString(str);
   }, [currentTab]);
 
   const [Component, setComponent] = useState<any>(
-    React.lazy(() => import('./Extractors/Hack'))
+    React.lazy(() => import('./Extractors/Hack')),
   );
 
   useEffect(() => {
     if (currentTab) {
       setComponent(
-        React.lazy(() => import(`./Extractors/${currentTab}`))
+        React.lazy(() => import(`./Extractors/${currentTab}`)),
       );
     }
   }, [currentTab]);
@@ -134,7 +151,7 @@ function _Sidebar(
       enterTo="translate-x-[43px]"
     >
       <div className={`absolute inset-0 transition-transform ${currentTab ? 'translate-x-full' : 'translate-x-[43px]'} rounded`}>
-        <div className="flex h-full bg-amber-50/80 backdrop-blur-sm rounded-r border-gray-300 border">
+        <div className="flex h-full bg-orange-50/80 backdrop-blur-sm rounded-r border-gray-300 border">
 
           <div className="flex w-full overflow-auto">
 
@@ -171,7 +188,7 @@ function _Sidebar(
                 iconName={tab}
                 setCurrentTab={handleClick}
                 currentTab={currentTab}
-                isShowBell={SidabrStates[tab].bell() || false}
+                state={SidebarButtonsStates[tab]}
               />
             ))}
           </div>

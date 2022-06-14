@@ -1,2 +1,12 @@
-
-<svg width="24px" height="24px" viewBox="-6 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="m 7.4593937,14.8 -4.098,9.2 H -0.75779528 L 3.743622,14.166 C 1.629622,13.092 0.21732283,11.147496 0.21732283,7.5514961 0.21232283,2.5174961 4.159,0.001 7.953,0.001 h 4.612039 v 24 H 9.229 v -9.2 H 7.4593937 Z M 9.2288425,2.9366929 h -1.378 C 5.7708425,2.9366929 3.755,4.102599 3.755,7.552 c 0,3.310702 1.9689866,4.160756 4.097,4.160756 H 9.23 Z"/></svg>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 25.0.1, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Yandex_Logo" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px"
+	 y="0px" viewBox="0 0 1080 1080" style="enable-background:new 0 0 1080 1080;" xml:space="preserve">
+<style type="text/css">
+	.st0{fill:#FC3F1D;}
+	.st1{fill:#FFFFFF;}
+</style>
+<circle class="st0" cx="540" cy="540" r="538.9"/>
+<path id="Glyph" class="st1" d="M735,878.3H616.7V293.2H564c-96.6,0-147.2,48.3-147.2,120.4c0,81.8,34.9,119.7,107.1,168l59.5,40.1
+	l-171,256.5H285.2l153.9-229c-88.5-63.2-138.3-124.9-138.3-229c0-130.1,90.7-218.6,262.4-218.6h171v676.5H735z"/>
+</svg>
