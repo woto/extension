@@ -4,7 +4,7 @@ import { useQuery } from 'react-query';
 import { Tab } from '../../../../main';
 import DotFlasing from '../../DotFlashing';
 
-export default function Google(props: {
+export default function GoogleGraph(props: {
   apiKey: string,
   setIsBusy: React.Dispatch<React.SetStateAction<boolean>>,
   currentTab: Tab | null,
@@ -12,7 +12,7 @@ export default function Google(props: {
 }) {
   const {
     isLoading, error, data, isFetching,
-  } = useQuery(`Google ${props.q}`, () => {
+  } = useQuery(`GoogleGraph ${props.q}`, () => {
     props.setIsBusy(true);
 
     const query = new URLSearchParams({

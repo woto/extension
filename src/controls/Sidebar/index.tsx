@@ -7,7 +7,7 @@ import Button from './Button';
 
 import { Tab, SidebarButtonState } from '../../../main';
 
-export const tabs = ['Yandex', 'Google', 'Iframely', 'Scrapper', 'Github', 'Ruby', 'Javascript', 'Youtube', 'Telegram', 'GoogleCS', 'YandexXML'] as const;
+export const tabs = ['YandexXML', 'GoogleCustomSearch', 'Iframely', 'Scrapper', 'Github', 'Ruby', 'Javascript', 'Youtube', 'Telegram', 'YandexMicrodata', 'GoogleGraph'] as const;
 
 function _Sidebar(
   props: {
@@ -29,25 +29,25 @@ function _Sidebar(
   const { searchString, linkUrl } = props;
 
   const SidebarButtonsStates: { [key in Tab]: SidebarButtonState } = {
-    Yandex: {
+    YandexMicrodata: {
       q: searchString,
-      bell() { return true; },
-      disabled: false,
+      bell() { return false; },
+      disabled: true,
     },
     YandexXML: {
       q: searchString,
-      bell() { return false; },
-      disabled: true,
+      bell() { return true; },
+      disabled: false,
     },
-    Google: {
+    GoogleGraph: {
       q: searchString,
       bell() { return true; },
       disabled: false,
     },
-    GoogleCS: {
+    GoogleCustomSearch: {
       q: searchString,
-      bell() { return false; },
-      disabled: true,
+      bell() { return true; },
+      disabled: false,
     },
     Iframely: {
       q: linkUrl,
