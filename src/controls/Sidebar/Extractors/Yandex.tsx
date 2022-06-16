@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { Fragment, useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 
 import { Tab } from '../../../../main';
@@ -24,13 +24,17 @@ export default function Yandex(props: {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Accept: 'application/json',
+        Accept: 'application/xml',
         'Api-Key': props.apiKey,
       },
     }).then((result) => {
       if (!result.ok) throw new Error(result.statusText);
       props.setIsBusy(false);
-      return result.json();
+      return result.text();
+    }).then((result) => {
+      let parser = new DOMParser();
+      let xml = parser.parseFromString(result, "application/xml");
+      return xml.querySelectorAll('doc');
     }).catch((reason) => {
       // console.log(reason);
       props.setIsBusy(false);
@@ -43,32 +47,18 @@ export default function Yandex(props: {
 
   return (
     <div className="overflow-auto p-3 space-y-7 break-all">
-      {data && data.yandexsearch && data.yandexsearch.response && data.yandexsearch.response.results && data.yandexsearch.response.results.grouping && data.yandexsearch.response.results.grouping.group && data.yandexsearch.response.results.grouping.group.length > 0 && data.yandexsearch.response.results.grouping.group.map((element: any, idx: number) => (
-        <div className="text-sm" key={idx.toString()}>
-          { JSON.stringify(element) }
-          {/* <p className="text font-medium mb-1">
-            {' '}
-            {element.result && element.result.name}
-            {' '}
-          </p>
-          <p className="text mb-1">
-            {' '}
-            {element.result && element.result.description}
-            {' '}
-          </p>
-          <p className="text-sm mb-1">
-            {' '}
-            {element.result && element.result.detailedDescription && element.result.detailedDescription.articleBody}
-            {' '}
-          </p>
-          <p className="text-sm mb-1">
-            {' '}
-            {element.result && element.result.image && element.result.image.contentUrl &&
-              <img src={element.result.image.contentUrl} />}
-            {' '}
-          </p> */}
-        </div>
-      ))}
+      { Array.from(data!).map((item, idx) => {
+        return (
+          <div key={idx}>
+            <p className="font-medium text-sm mb-1">{item.querySelector('title')?.textContent!}</p>
+            <a href={item.querySelector('url')?.textContent!}>
+              <p className="text-sm mb-1">{decodeURI(item.querySelector('url')?.textContent!)}</p>
+            </a>
+            <p className="text-sm mb-1">{item.querySelector('headline')?.textContent!}</p>
+            <p className="text-sm mb-1">{item.querySelector('passages')?.textContent!}</p>
+          </div>
+        )
+      }) }
     </div>
   );
 }
