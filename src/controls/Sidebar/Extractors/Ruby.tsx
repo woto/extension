@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 
 import { Tab } from '../../../../main';
+import { appUrl } from '../../../Utils';
 import DotFlasing from '../../DotFlashing';
 
 export default function Ruby(props: {
@@ -19,7 +20,7 @@ export default function Ruby(props: {
       q: props.q,
     });
 
-    return fetch(`http://localhost:3000/api/tools/rubygems?${query}`, {
+    return fetch(`${appUrl}/api/tools/rubygems?${query}`, {
       credentials: 'omit',
       method: 'GET',
       headers: {

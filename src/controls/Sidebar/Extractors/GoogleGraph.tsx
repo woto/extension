@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 
 import { Tab } from '../../../../main';
+import { appUrl } from '../../../Utils';
 import DotFlasing from '../../DotFlashing';
 
 export default function GoogleGraph(props: {
@@ -19,7 +20,7 @@ export default function GoogleGraph(props: {
       q: props.q,
     });
 
-    return fetch(`http://localhost:3000/api/tools/google_graph?${query}`, {
+    return fetch(`${appUrl}/api/tools/google_graph?${query}`, {
       credentials: 'omit',
       method: 'GET',
       headers: {

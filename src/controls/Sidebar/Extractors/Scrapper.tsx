@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 
 import { Tab } from '../../../../main';
+import { appUrl } from '../../../Utils';
 import DotFlasing from '../../DotFlashing';
 
 export default function Scrapper(props: {
@@ -19,7 +20,7 @@ export default function Scrapper(props: {
       url: props.q,
     });
 
-    return fetch(`http://localhost:3000/api/tools/scrape_webpage?${query}`, {
+    return fetch(`${appUrl}/api/tools/scrape_webpage?${query}`, {
       credentials: 'omit',
       method: 'GET',
       headers: {

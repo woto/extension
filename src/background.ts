@@ -66,7 +66,7 @@ const checkToken = async () => {
       return reject();
     }
 
-    fetch('http://localhost:3000/api/me', {
+    fetch(`${appUrl}/api/me`, {
       credentials: 'omit',
       method: 'GET',
       headers: {
