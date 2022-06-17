@@ -61,7 +61,7 @@ export default function GoogleCustomSearch(props: {
             {element.snippet}
           </p>
 
-          <img src={element.pagemap.cse_thumbnail?.[0]?.src} />
+          <img src={element.pagemap?.cse_thumbnail?.[0]?.src} />
 
         </div>
       ))}
