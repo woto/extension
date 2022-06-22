@@ -30,6 +30,8 @@ const schema = yup.object().shape({
   // })
 });
 
+let renderCount = 0;
+
 export default function Form(props: {
   apiKey: string,
   isBusy: boolean,
@@ -43,6 +45,8 @@ export default function Form(props: {
   setKindsOptions: React.Dispatch<React.SetStateAction<Kind[]>>
   kindsOptions: Kind[]
 }) {
+  renderCount++;
+
   const [isDragging, setIsDragging] = useState(false);
   const [images, setImages] = useState<Image[]>([]);
   const [filesError, setFilesError] = useState<string>('');
@@ -501,7 +505,8 @@ export default function Form(props: {
                   . Сформированная ссылка имеет адрес:
                   {' '}
                   <span className="text-orange-50 break-all select-all">{props.fragmentUrl}</span>
-
+                  {' '}
+                  Количество отрисовок: { renderCount }
                 </div>
 
                 <div className="select-text mx-auto text-center text-gray-400 mb-3">¯\_(ツ)_/¯</div>
