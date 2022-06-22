@@ -10,3 +10,5 @@
 // };
 
 export const appUrl = 'http://localhost:3000';
+export const imgproxyUrl = 'http://localhost:8080';
+
