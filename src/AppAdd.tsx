@@ -9,6 +9,7 @@ import Form from './Form';
 import List from './List';
 import SearchInput from './controls/SearchInput';
 import Toast from './Toast';
+import logo from './logo.svg';
 
 import { FragmentHash, Entity, Kind } from '../main';
 
@@ -193,10 +194,11 @@ function AppAdd() {
               >
 
                 <div
-                  className="p-3 border-slate-600 border-t border-r border-l rounded-b-none rounded-lg flex cursor-move
+                  className="py-2 px-3 border-slate-600 border-t border-r border-l rounded-b-none rounded-lg flex cursor-move
                   dragHandler bg-gradient-to-b to-stone-800 from-zinc-700"
                 >
                   <span className="grow flex items-center">
+                    <div className="w-9 h-9 mr-2 inline-block" dangerouslySetInnerHTML={{ __html: logo }} />
                     <a
                       href="https://roastme.ru"
                       onMouseDown={stopPropagation}
@@ -209,15 +211,15 @@ function AppAdd() {
                     </a>
                   </span>
 
-                  <div className="flex-none">
+                  <div className="self-center">
                     <button
                       onClick={() => setShowWindow(false)}
                       onMouseDown={stopPropagation}
                       onTouchStart={stopPropagation}
                       type="button"
                       className="inline-flex items-center p-1 border border-transparent rounded-full
-                                               shadow-sm text-white bg-stone-900 hover:bg-stone-800 focus:outline-none
-                                               focus:ring-2 focus:ring-offset-2 focus:ring-stone-900 focus:ring-offset-stone-500"
+                                              shadow-sm text-white bg-stone-900 hover:bg-stone-800 focus:outline-none
+                                              focus:ring-2 focus:ring-offset-2 focus:ring-stone-900 focus:ring-offset-stone-500"
                     >
                       <XIcon className="h-4 w-4" />
                     </button>
