@@ -264,16 +264,17 @@ export default function Form(props: {
     const data = e.dataTransfer;
     const { files } = data;
 
-    if (files.length > 0) {
-      Array.from(files).forEach((file) => uploadFile(file));
-    } else {
+    // NOTE: In previous version it was made like if `files` includes images then it "uploads" file without imgproxy
+    // if (files.length > 0) {
+    //   Array.from(files).forEach((file) => uploadFile(file));
+    // } else {
       const domParser = new DOMParser();
       const fragment = domParser.parseFromString(e.dataTransfer.getData('text/html'), 'text/html');
       const img = fragment.querySelector('img');
       // console.log(img!.src);
 
       if (img) {
-        const finalUrl = `${imgproxyUrl}/AfrOrF3gWeDA6VOlDG4TzxMv39O7MXnF4CXpKUwGqRM/background:FFF/rs:fit:400:400:1/ex:0/el:0/g:sm/plain/${encodeURIComponent(img.src)}`;
+        const finalUrl = `${imgproxyUrl}/AfrOrF3gWeDA6VOlDG4TzxMv39O7MXnF4CXpKUwGqRM/background:FFF/rs:fit:400:400:1/ex:0/el:0/g:sm/plain/${encodeURIComponent(img.src)}@png`;
 
         fetch(finalUrl, {
           credentials: 'omit',
@@ -290,7 +291,7 @@ export default function Form(props: {
       } else {
         setFilesError('изображение не найдено');
       }
-    }
+    // }
   };
 
   const appendToAllFiles = (e: any) => {
