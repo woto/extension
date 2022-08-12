@@ -1,6 +1,7 @@
 const webpack = require("webpack");
 const path = require("path");
 const CopyPlugin = require("copy-webpack-plugin");
+const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 const srcDir = path.join(__dirname, "..", "src");
 
 module.exports = {
@@ -10,7 +11,6 @@ module.exports = {
       background: path.join(srcDir, 'background.ts'),
       content_script: path.join(srcDir, 'content_script.tsx'),
       context_menu: path.join(srcDir, 'context_menu.ts'),
-      app_auth: path.join(srcDir, 'AppAuth.tsx'),
     },
     output: {
         path: path.join(__dirname, "../dist/js"),
@@ -29,7 +29,7 @@ module.exports = {
             {
                 test: /\.svg$/,
                 loader: 'svg-inline-loader'
-            },        
+            },
             {
                 test: /\.tsx?$/,
                 use: "ts-loader",
@@ -48,23 +48,25 @@ module.exports = {
                           // but it is depends what browsers you want to support
                           insert: function insertIntoTarget(element, options) {
                             var parent = options.target || document.head;
-            
+
                             parent.appendChild(element);
                           },
                         },
                     },
                     'css-loader', 'postcss-loader'
                 ]
-            },        
+            },
         ],
     },
     resolve: {
-        extensions: [".ts", ".tsx", ".js", '.css'],
+        extensions: [".ts", ".tsx", ".js", ".css"],
     },
     plugins: [
         new CopyPlugin({
             patterns: [{ from: ".", to: "../", context: "public" }],
             options: {},
         }),
+        // new BundleAnalyzerPlugin({analyzerMode: 'server'})
+        new BundleAnalyzerPlugin({analyzerMode: 'disabled'})
     ],
 };

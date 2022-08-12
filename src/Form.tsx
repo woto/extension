@@ -1,361 +1,234 @@
 import React, {
-  useState, useEffect, Fragment,
+  useState, useEffect, Fragment, useContext, useRef, MouseEventHandler, SetStateAction, Dispatch, useCallback, useMemo,
 } from 'react';
-import { useForm } from 'react-hook-form';
-import * as yup from 'yup';
-import { yupResolver } from '@hookform/resolvers/yup';
 import {
-  ArrowCircleLeftIcon, CogIcon, ThumbUpIcon, ThumbDownIcon,
+  ArrowCircleLeftIcon, CogIcon, XIcon
 } from '@heroicons/react/solid';
 import { v4 as uuidv4 } from 'uuid';
 
-import { appUrl } from './Utils';
+import {
+  appUrl, GlobalContext, newImage, newLookup, EntityActionType, newEntity,
+} from './Utils';
 
-import Thumbnail from './Thumbnail';
 import SentimentInput from './SentimentInput';
 import KindsInput from './KindsInput';
+import LookupsInput from './LookupsInput';
 import RelevanceInput from './RelevanceInput';
+import DateInput from './MentionDateInput'
 import Sidebar from './controls/Sidebar';
-// import type { SentimentItem } from './controls/SentimentItem';
+import Textarea from './controls/Textarea';
 
 import {
-  Kind, FragmentHash, Entity, Image, Relevance, SentimentItem, OptionalComponent,
+  Kind, Lookup, FragmentHash, Entity, Image, Relevance, Sentiment, OptionalComponent, EntityAction,
 } from '../main';
-
-const schema = yup.object().shape({
-  title: yup.string().required('должно быть заполнено').max(150, 'должно быть короче 150 символов'),
-  intro: yup.string().max(350, 'должно быть короче 350 символов'),
-  // files: yup.mixed().test('required', 'изображение не загружено', value => {
-  //   return value && value.length;
-  // })
-});
+import { ExclamationCircleIcon, ThumbUpIcon, ThumbDownIcon, DocumentDuplicateIcon, HashtagIcon, ClockIcon } from '@heroicons/react/outline';
+import { useQuery } from "react-query";
+import { useToasts } from './ToastManager';
+import TitleInput from './form/TitleInput';
+import IntroInput from './form/IntroInput';
+import Debug from './form/Debug';
+import FileInput from './FileInput';
+import useMentionDate from './useMentionDate';
+import Thumbnails from './Thumbnails';
 
 let renderCount = 0;
 
 export default function Form(props: {
-  apiKey: string,
   isBusy: boolean,
-  setIsBusy: React.Dispatch<React.SetStateAction<boolean>>,
+  setIsBusy: Dispatch<SetStateAction<boolean>>,
   fragmentUrl: string,
   fragmentHash: FragmentHash,
   linkUrl: string,
+  imageSrc: string,
   entity: Entity,
-  onClick: any,
-  setShowWindow: any
-  setKindsOptions: React.Dispatch<React.SetStateAction<Kind[]>>
-  kindsOptions: Kind[]
+  relevance: Relevance | null | undefined,
+  setRelevance: Dispatch<SetStateAction<Relevance | null | undefined>>
+  sentiment: Sentiment | null | undefined,
+  setSentiment: Dispatch<SetStateAction<Sentiment | null | undefined>>
+  mentionDate: Date | null | undefined,
+  setMentionDate: Dispatch<SetStateAction<Date | null | undefined>>
+  dispatch: Dispatch<EntityAction>,
+  handleBackButtonClick: MouseEventHandler<HTMLButtonElement> | undefined,
+  operation: 'add' | 'edit',
+  showDebug: boolean
 }) {
+  const {
+    dispatch: _dispatch,
+    operation,
+    entity: {
+      entity_id: _entity_id,
+      lookups: _lookups,
+      kinds: _kinds,
+    } } = props
+
+  const {
+    mentionDate: _mentionDate,
+    setMentionDate: _setMentionDate,
+    relevance: _relevance,
+    setRelevance: _setRelevance,
+    sentiment: _sentiment,
+    setSentiment: _setSentiment
+  } = props
+
+  const _images = useMemo(() => {
+    return props.entity.images
+  },
+    [props.entity.images]
+  );
+
   renderCount++;
 
-  const [isDragging, setIsDragging] = useState(false);
-  const [images, setImages] = useState<Image[]>([]);
-  const [filesError, setFilesError] = useState<string>('');
-  const [sentiment, setSentiment] = useState<string | null>(null);
-  const [kinds, setKinds] = useState<Kind[]>([]);
-  const [relevance, setRelevance] = useState<Relevance | null>(null);
+  const globalContext = useContext(GlobalContext);
+  const [submit, setSubmit] = useState(false);
+  const [optionalComponents, setOptionalComponents] = useState<OptionalComponentsItem[]>([]);
+  const { add } = useToasts();
 
   const relevanceOptions: Relevance[] = [
-    { id: '0', label: 'Основной объект' },
-    { id: '1', label: 'Второстепенный объект' },
-    { id: '2', label: 'Один из равнозначных' },
-    { id: '3', label: 'Ссылающееся издание или автор' },
+    { id: '0', title: 'Закрепленный'},
+    { id: '1', title: 'Основной объект' },
+    { id: '2', title: 'Второстепенный объект' },
+    { id: '3', title: 'Один из равнозначных' },
+    { id: '4', title: 'Ссылающееся издание или автор' },
   ];
 
-  const sentimentOptions: SentimentItem[] = [
-    { value: '0', label: <ThumbUpIcon className="h-5 w-5" /> },
-    { value: '1', label: <ThumbDownIcon className="h-5 w-5" /> },
+  const sentimentOptions: Sentiment[] = [
+    { id: '0', title: 'ThumbUpIcon' },
+    { id: '1', title: 'ThumbDownIcon' },
   ];
 
   useEffect(() => {
-    props.setIsBusy(true);
+    if (_lookups.length === 0) {
+      props.dispatch({ type: EntityActionType.APPEND_LOOKUP, payload: { lookup: newLookup() } })
+    }
+  }, []);
 
-    fetch(`${appUrl}/api/kinds/search`, {
+  const { status: MentionDateStatus, data: mentionDateData, error: MentionDateError, isFetching: MentionDateIsFetching } =
+    useMentionDate({ url: window.location.href, entityId: _entity_id })
+
+  useEffect(() => {
+    if (mentionDateData && props.mentionDate == null) {
+      props.setMentionDate(mentionDateData)
+      // props.dispatch({ type: EntityActionType.SET_MENTION_DATE, payload: { mentionDate: mentionDateData } });
+    }
+  }, [mentionDateData, props.mentionDate])
+
+  useEffect(() => {
+    if (!_entity_id) return;
+    if (!globalContext.apiKey) return;
+
+    fetch(`${appUrl}/api/entities/${_entity_id}`, {
       credentials: 'omit',
-      method: 'POST',
+      method: 'GET',
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        'Api-Key': props.apiKey,
+        'Api-Key': globalContext.apiKey,
       },
     })
       .then((res) => {
+
+        if (res.status === 401) {
+          chrome.runtime.sendMessage({ message: 'request-auth' });
+        }
+
         if (!res.ok) throw new Error(res.statusText);
 
         return res.json();
       })
-      .then((res) => {
-        res.forEach((row: Kind) => {
-          row.destroy = false;
+      .then((res: Entity) => {
+        res.images.forEach((image) => {
+          image.index = image.id!.toString();
+          image.destroy = false;
+        });
+
+        res.kinds.forEach((kind) => {
+          kind.index = kind.id!.toString();
+          kind.destroy = false;
+        });
+
+        res.lookups.forEach((lookup) => {
+          lookup.index = lookup.id!.toString();
+          lookup.destroy = false;
         });
 
         return res;
       })
-      .then((res: Kind[]) => {
-        res.forEach((res: Kind) => {
-          res.index = res.id!.toString();
-        });
-        return res;
+      .then((res: Entity) => {
+        _dispatch({ type: EntityActionType.INIT, payload: res });
       })
-      .then(
-        (result) => {
-          props.setIsBusy(false);
-          props.setKindsOptions(result);
-        },
-      )
       .catch((reason) => {
-        props.setIsBusy(false);
-        console.error(reason);
+        console.log(reason)
+        // if (reason.name === 'AbortError') return;
+
+        // console.error(reason);
+        // setError(reason.message);
       });
-  }, []);
 
-  const {
-    register,
-    watch,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
-    defaultValues: {
-      title: props.entity.title,
-      intro: props.entity.intro,
-      // files: props.entity.images
-    },
-    resolver: yupResolver(schema),
-  });
-
-  useEffect(() => {
-    setImages(props.entity.images);
-  }, []);
-
-  const intro = watch('intro');
-  const title = watch('title');
+    return () => { };
+  }, [globalContext.apiKey, _entity_id])
 
   // const meth = (str: any) => fetch(str).then(response => { return response.text() })
   // let [res1, res2] = await Promise.all(['http://example.com', 'http://example.com'].map((str: string) => meth(str)))
 
-  const onSubmit = async (data: any) => {
-    // console.log(data);
+  const onSubmit = async (e: any) => {
+    e.preventDefault();
+    setSubmit(true)
 
-    const upload = (file: File) => {
-      const formData = new FormData();
-      formData.append('file', file);
-      return fetch(`${appUrl}/images/upload`, {
-        credentials: 'omit',
-        method: 'POST',
-        body: formData,
-        headers: {
-          // 'Content-Type': 'multipart/form-data',
-          // 'Accept': 'application/json',
-          'Api-Key': props.apiKey,
-        },
-      }).then((res) => {
-        if (!res.ok) throw new Error(res.statusText);
-
-        return res.json();
-      });
-    };
-
-    const uploadedImages = await Promise.all(
-      images.map(
-        async (image: Image) => {
-          let file = null;
-
-          if (image.file) {
-            file = await upload(image.file);
-          }
-
-          return {
-            id: image.id,
-            destroy: image.destroy,
-            file,
-          };
-        },
-      ),
-    );
-
-    data = {
+    const data = {
       fragment_url: props.fragmentUrl,
       link_url: props.linkUrl,
-      relevance: relevance?.id || '',
-      sentiment: sentiment || '',
-      kinds: kinds.map((kind: Kind) => kind.label),
+      image_src: props.imageSrc,
+      relevance: props.relevance?.id,
+      sentiment: props.sentiment?.id,
+      kinds: props.entity.kinds.map((kind: Kind) => ({
+        id: kind.id,
+        destroy: kind.destroy,
+        title: kind.title,
+      })),
+      lookups: props.entity.lookups.map((lookup: Lookup) => ({
+        id: lookup.id,
+        destroy: lookup.destroy,
+        title: lookup.title,
+      })),
       entity_id: props.entity.entity_id,
-      title: data.title,
-      intro: data.intro,
-      images: uploadedImages,
+      title: props.entity.title,
+      intro: props.entity.intro,
+      images: props.entity.images,
+      mention_date: props.mentionDate
     };
 
-    fetch(`${appUrl}/api/mentions/register`, {
+    fetch(`${appUrl}/api/cites`, {
       credentials: 'omit',
       method: 'POST',
       body: JSON.stringify(data),
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        'Api-Key': props.apiKey,
+        'Api-Key': globalContext.apiKey,
       },
-    }).then((result) => {
-      if (!result.ok) throw new Error(result.statusText);
+    }).then((res) => {
 
-      props.setShowWindow(false);
+      if (res.status === 401) {
+        chrome.runtime.sendMessage({ message: 'request-auth' });
+      }
+
+      if (!res.ok) throw new Error(res.statusText);
+
+      return res.json();
+    }).then((res) => {
+
+      globalContext.setShowWindow(false);
+      add(<span>Упоминание <a href={res.url}>{res.title}</a> успешно добавлено.</span>);
+
     }).catch((reason) => {
       console.error(reason);
     });
   };
 
-  const removeImage = (image: any) => {
-    setImages((prevState: any) => {
-      // console.log('prevState');
-      // console.log(prevState);
-      let newState;
-      if (image.url) {
-        newState = prevState.map((val: Image) => {
-          if (val == image) {
-            return { ...val, ...{ destroy: true } };
-          }
-          return val;
-        });
-      } else {
-        newState = prevState.filter((val: Image) => val !== image);
-      }
-      // setValue('files', newState);
-      // console.log('newState');
-      // console.log(newState);
-      return newState;
-    });
-  };
-
-  const preventDefault = (e: any) => {
-    e.preventDefault();
-  };
-  const onDragEnter = (e: any) => {
-    setIsDragging(true);
-    e.preventDefault();
-  };
-  const onDragLeave = (e: any) => {
-    setIsDragging(false);
-    e.preventDefault();
-  };
-
-  const handlePaste = (e: any) => {
-    let errorMessage = 'изображение не найдено';
-
-    const { items } = e.clipboardData || e.originalEvent.clipboardData;
-    for (const index in items) {
-      const item = items[index];
-      if (item.kind === 'file') {
-        // console.log(item);
-        uploadFile(item.getAsFile());
-        errorMessage = '';
-      }
-    }
-
-    if (errorMessage !== '') setFilesError(errorMessage);
-  };
-
-  const stopPropagation = (e: any) => {
-    e.stopPropagation();
-  };
-
-  const handleDrop = (e: any) => {
-    e.preventDefault();
-    e.stopPropagation();
-    setIsDragging(false);
-
-    const data = e.dataTransfer;
-    const { files } = data;
-
-    // NOTE: In previous version it was made like if `files` includes images then it "uploads" file without imgproxy
-    // if (files.length > 0) {
-    //   Array.from(files).forEach((file) => uploadFile(file));
-    // } else {
-      const domParser = new DOMParser();
-      const fragment = domParser.parseFromString(e.dataTransfer.getData('text/html'), 'text/html');
-      const img = fragment.querySelector('img');
-      // console.log(img!.src);
-
-      if (img) {
-        const finalUrl = `${imgproxyUrl}/AfrOrF3gWeDA6VOlDG4TzxMv39O7MXnF4CXpKUwGqRM/background:FFF/rs:fit:400:400:1/ex:0/el:0/g:sm/plain/${encodeURIComponent(img.src)}@png`;
-
-        fetch(finalUrl, {
-          credentials: 'omit',
-        })
-          .then(async (res) => {
-            if (!res.ok) throw new Error(res.statusText);
-
-            const blob = await res.blob();
-            const file = new File([blob], new Date().toISOString());
-            uploadFile(file);
-          }).catch((reason) => {
-            alert(reason);
-          });
-      } else {
-        setFilesError('изображение не найдено');
-      }
-    // }
-  };
-
-  const appendToAllFiles = (e: any) => {
-    Array.from(e.target.files).forEach((file) => uploadFile(file));
-    cleanUploader(e);
-  };
-
-  const uploadFile = (file: any) => {
-    setImages((prevState: Image[]) => {
-      // console.log('prevState');
-      // console.log(prevState);
-      // const newState = [...new Map([...prevState, file].map((file) => [file.name, file])).values()];
-      // Array.from(newState)
-      const newState = [...prevState, {
-        index: uuidv4(),
-        id: null,
-        file,
-        url: null,
-        destroy: false,
-      }];
-      // console.log('newState');
-      // console.log(newState);
-      // setValue('files', newState);
-      return newState;
-    });
-    // console.log(files);
-    // console.log();
-  };
-
-  const cleanUploader = (e: any) => {
-    // clean up
-    const container = new DataTransfer();
-    e.target.files = container.files;
-  };
-
-  // useEffect(() => {
-  //     register('files', { required: true }) // still have validation for required
-  // }, [register])
-
-  const draggingClass = isDragging ? 'bg-yellow-50' : 'bg-white';
-
-  const [showDebug, setShowDebug] = useState(false);
-
-  // console.log('value of sentiment in <Form /> component');
-  // console.log(sentiment);
-
-  // const [tmp, setTmp] = useState(1)
-  // const update = () => setTmp((prevVal) => prevVal + 1);
-  // useEffect(() => { setInterval(update, 1000) }, [])
-
-  // console.log('tmp 1')
-  // console.log(tmp);
-
   type OptionalComponentsItem = { show: boolean, key: string, component: any };
 
-  const [optionalComponents, setOptionalComponents] = useState<OptionalComponentsItem[]>([]);
-
-  const { kindsOptions } = props;
-
   useEffect(() => {
-    // console.log('tmp 2')
-    // console.log(tmp);
-
-    const defaultOrder = ['sentiment', 'kinds', 'relevance'];
+    const defaultOrder = ['sentiment', 'kinds', 'lookups', 'relevance', 'mentionDate'];
     const isShow = (prevState: any, key: string) => prevState.find((obj: any) => obj.key === key)?.show || false;
 
     setOptionalComponents((prevState) => {
@@ -365,8 +238,9 @@ export default function Form(props: {
           show: isShow(prevState, 'sentiment'),
           component: (props: any) => (
             <SentimentInput
-              setSentiment={setSentiment}
-              sentiment={sentiment}
+              toggleVisibility={toggleVisibility}
+              sentiment={_sentiment}
+              setSentiment={_setSentiment}
               options={sentimentOptions}
               {...props}
             />
@@ -377,9 +251,21 @@ export default function Form(props: {
           show: isShow(prevState, 'kinds'),
           component: (props: any) => (
             <KindsInput
-              setKinds={setKinds}
-              kinds={kinds}
-              options={kindsOptions}
+              toggleVisibility={toggleVisibility}
+              dispatch={_dispatch}
+              kinds={_kinds}
+              {...props}
+            />
+          ),
+        },
+        {
+          key: 'lookups',
+          show: isShow(prevState, 'lookups'),
+          component: (props: any) => (
+            <LookupsInput
+              toggleVisibility={toggleVisibility}
+              dispatch={_dispatch}
+              lookups={_lookups}
               {...props}
             />
           ),
@@ -389,9 +275,22 @@ export default function Form(props: {
           show: isShow(prevState, 'relevance'),
           component: (props: any) => (
             <RelevanceInput
-              setRelevance={setRelevance}
-              relevance={relevance}
+              toggleVisibility={toggleVisibility}
+              relevance={_relevance}
+              setRelevance={_setRelevance}
               options={relevanceOptions}
+              {...props}
+            />
+          ),
+        },
+        {
+          key: 'mentionDate',
+          show: isShow(prevState, 'mentionDate'),
+          component: (props: any) => (
+            <DateInput
+              toggleVisibility={toggleVisibility}
+              mentionDate={_mentionDate}
+              setMentionDate={_setMentionDate}
               {...props}
             />
           ),
@@ -408,9 +307,9 @@ export default function Form(props: {
         (key: string) => types.find((obj) => obj.key === key),
       ) as OptionalComponentsItem[];
     });
-  }, [sentiment, relevance, kinds, kindsOptions]);
+  }, [_kinds, _lookups, _mentionDate, _sentiment, _relevance]);
 
-  const toggleVisibility = (e: any, key: string) => {
+  const toggleVisibility = useCallback((e: any, key: string) => {
     e.preventDefault();
 
     setOptionalComponents((prevValues) => {
@@ -431,104 +330,112 @@ export default function Form(props: {
         ...prevValues.slice(idx + 1),
       ];
     });
-  };
+  }, []);
 
   function isOptionalComponentVisible(key: string) {
     return !!optionalComponents.find((object) => object.key === key && object.show === true);
   }
 
+  const toolbarButtonClass = (name: string, disableable: boolean) => {
+    let classes = [''];
+
+    if (isOptionalComponentVisible(name)) {
+      classes.push('text-white bg-gray-600 hover:bg-gray-700');
+    } else {
+      classes.push('text-gray-500 bg-white');
+      if (disableable && operation === 'edit') {
+        classes.push('opacity-50');
+      } else {
+        classes.push('hover:bg-gray-50 hover:text-gray-900');
+      }
+    }
+      classes.push(`mb-0 inline-flex ml-1 items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs
+                    font-medium rounded focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500`);
+
+    return classes.join(' ');
+  }
+
   return (
     <>
 
-      {/* { console.log('render <Form />') } */}
-
-      <form onSubmit={handleSubmit(onSubmit)}>
-        {/* <div className="flex"> */}
-
+      <form onSubmit={onSubmit} style={{ marginBlockEnd: 0 }}>
         <Sidebar
-          apiKey={props.apiKey}
-          searchString={title}
+          searchString={props.entity.title}
           linkUrl={props.linkUrl}
-          setIsBusy={props.setIsBusy}
+          imageSrc={props.imageSrc}
+          fragmentUrl={props.fragmentUrl}
         />
 
         <div className="p-3 relative svg-pattern border border-t-0 border-slate-300 rounded-t-none rounded-lg">
 
           <div className="flex">
             <button
-              onClick={props.onClick}
+              disabled={operation === 'edit'}
+              onClick={props.handleBackButtonClick}
               type="button"
-              className="mb-3 inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              className={`mb-0 inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium
+              rounded bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
+              ${operation === 'edit' ? 'opacity-50' : ''}`}
             >
-              <ArrowCircleLeftIcon className="mr-2 -ml-0.5 h-5 w-5 text-gray-400" aria-hidden="true" />
-              Назад
+              <ArrowCircleLeftIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+              {/*<ArrowCircleLeftIcon className="mr-2 -ml-0.5 h-5 w-5 text-gray-400" aria-hidden="true" />*/}
+              {/*Назад*/}
             </button>
 
             <div className="flex ml-auto flex-grow justify-end">
 
               <button
-                onClick={(e) => { e.preventDefault(); setShowDebug(!showDebug); }}
-                className="mb-3 ml-1 inline-flex items-center px-2.5 py-1.5 border border-gray-300 shadow-sm text-xs font-medium rounded text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                disabled={operation === 'edit'}
+                onClick={(e) => { toggleVisibility(e, 'sentiment'); }}
+                className={toolbarButtonClass('sentiment', true)}
               >
-                <CogIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                <ThumbUpIcon className="h-5 w-5" aria-hidden="true" />
+              </button>
+
+              <button
+                disabled={operation === 'edit'}
+                onClick={(e) => { toggleVisibility(e, 'relevance'); }}
+                className={toolbarButtonClass('relevance', true)}
+              >
+                <ExclamationCircleIcon className="h-5 w-5" aria-hidden="true" />
+              </button>
+
+              <button
+                disabled={false}
+                onClick={(e) => { toggleVisibility(e, 'kinds'); }}
+                className={toolbarButtonClass('kinds', false)}
+              >
+                <HashtagIcon className="h-5 w-5" aria-hidden="true" />
+              </button>
+
+              <button
+                disabled={false}
+                onClick={(e) => { toggleVisibility(e, 'lookups'); }}
+                className={toolbarButtonClass('lookups', false)}
+              >
+                <DocumentDuplicateIcon className="h-5 w-5" aria-hidden="true" />
+              </button>
+
+              <button
+                disabled={operation === 'edit'}
+                onClick={(e) => { toggleVisibility(e, 'mentionDate'); }}
+                className={toolbarButtonClass('mentionDate', true)}
+              >
+                <ClockIcon className="h-5 w-5" aria-hidden="true" />
               </button>
             </div>
           </div>
 
-          {showDebug
-            && (
-              <>
-
-                <div className="shadow-inner mb-3 text-xs text-orange-200 bg-slate-700 p-2 rounded-lg">
-
-                  Вы привязываете:
-                  {' '}
-                  <span className="text-orange-50 select-all">{props.fragmentHash.textStart}</span>
-
-                  {props.linkUrl
-                    && (
-                    <>
-                      , имеющий ссылку:
-                      {' '}
-                      <span className="text-orange-50 break-all select-all">{props.linkUrl}</span>
-                    </>
-                    )}
-
-                  { props.entity.entity_id
-                    && (
-                    <>
-                      к объекту с id:
-                      {' '}
-                      <p className="select-text break-all text-sm mb-3">{props.entity.entity_id}</p>
-                    </>
-                    )}
-
-                  . Сформированная ссылка имеет адрес:
-                  {' '}
-                  <span className="text-orange-50 break-all select-all">{props.fragmentUrl}</span>
-                  {' '}
-                  Количество отрисовок: { renderCount }
-                </div>
-
-                <div className="select-text mx-auto text-center text-gray-400 mb-3">¯\_(ツ)_/¯</div>
-              </>
-            )}
-
-          <div className="text-sm">
-            Вы можете так же указать
-            {' '}
-            <a onClick={(e) => { toggleVisibility(e, 'sentiment'); }} href="#" className={`${isOptionalComponentVisible('sentiment') ? 'text-gray-700 hover:text-gray-600' : 'text-indigo-600 hover:text-indigo-500'} font-medium drag-none`}>настроение</a>
-            {' '}
-            с которым упоминается объект,
-            {' '}
-            <a onClick={(e) => { toggleVisibility(e, 'relevance'); }} href="#" className={`${isOptionalComponentVisible('relevance') ? 'text-gray-700 hover:text-gray-600' : 'text-indigo-600 hover:text-indigo-500'} font-medium drag-none`}>важность</a>
-            {' '}
-            упоминаемого объекта в статье, а так же
-            {' '}
-            <a onClick={(e) => { toggleVisibility(e, 'kinds'); }} href="#" className={`${isOptionalComponentVisible('kinds') ? 'text-gray-700 hover:text-gray-600' : 'text-indigo-600 hover:text-indigo-500'} font-medium drag-none`}>тип</a>
-            {' '}
-            объекта.
-          </div>
+          {props.showDebug &&
+            <Debug
+              imageSrc={props.imageSrc}
+              linkUrl={props.linkUrl}
+              entity={props.entity}
+              fragmentUrl={props.fragmentUrl}
+              fragmentHash={props.fragmentHash}
+              renderCount={renderCount}
+            />
+          }
 
           {optionalComponents.map(({ key, show, component }, index) => {
             const priority = optionalComponents.length - index;
@@ -538,101 +445,16 @@ export default function Form(props: {
             );
           })}
 
-          <div className="relative mt-3">
-            <input
-              onKeyDown={stopPropagation}
-              {...register('title')}
-              type="text"
-              className="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full text-sm border-gray-300 rounded-md"
-              placeholder="Название"
-            />
-          </div>
-
-          {/* <input className="hidden" {...register('files')} /> */}
-
-          {errors.title && <div className="text-red-400 mt-2 text-sm">{errors.title.message}</div>}
-
-          <div className="relative mt-3">
-            <textarea
-              onKeyDown={stopPropagation}
-              rows={4}
-              {...register('intro')}
-              className="hide-resize pb-7 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 block w-full text-sm border-gray-300 rounded-md"
-              placeholder="Описание"
-            />
-
-            <div className="absolute bottom-1 right-3 p-1 text-sm text-slate-400 bg-white/90 rounded">
-              {intro?.length || 0}
-              {' '}
-              / 350
-            </div>
-          </div>
-
-          {errors.intro && <div className="text-red-400 mt-2 text-sm">{errors.intro.message}</div>}
-
-          <div className={`relative mt-3 rounded-md transition-colors ${draggingClass}`}>
-            <textarea
-              onDragEnter={onDragEnter}
-              onDragLeave={onDragLeave}
-              onDragOver={preventDefault}
-              onDrop={handleDrop}
-              onPaste={handlePaste}
-              className="cursor-default peer absolute inset-3 opacity-0"
-              tabIndex={-1}
-            />
-
-            <div
-              className="shadow-sm peer-focus:ring-indigo-500 peer-focus:border-indigo-500 text-sm max-w-lg flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md block w-full"
-            >
-              <div className="space-y-1 text-center">
-                <svg
-                  className="mx-auto h-12 w-12 text-gray-400"
-                  stroke="currentColor"
-                  fill="none"
-                  viewBox="0 0 48 48"
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8m-12 4h.02"
-                    strokeWidth={2}
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-                <div className="inline-block text-sm text-gray-600">
-                  <label
-                    htmlFor="file-upload"
-                    className="relative cursor-pointer bg-white font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
-                  >
-                    <span>Загрузите</span>
-                    <input
-                      id="file-upload"
-                      onChange={appendToAllFiles}
-                      type="file"
-                      className="sr-only"
-                      multiple
-                    />
-                  </label>
-                  <span className="pl-1">перетащите или вставьте</span>
-                </div>
-                <p className="text-xs text-gray-500">PNG, JPG, GIF размером до 10Мб</p>
-              </div>
-            </div>
-          </div>
-
-          {/* {errors.files && <div className="text-red-400 mt-2 text-sm">{errors.files.message}</div>} */}
-
-          {filesError && <div className="text-red-400 mt-2 text-sm">{filesError}</div>}
-
-          <div className="relative mt-3 grid grid-cols-3 gap-3">
-            {images.map((image) => <Thumbnail key={image.index} image={image} removeImage={removeImage} />)}
-          </div>
+          <TitleInput submit={submit} entity={props.entity} dispatch={props.dispatch}></TitleInput>
+          <IntroInput submit={submit} entity={props.entity} dispatch={props.dispatch}></IntroInput>
+          <FileInput entity={props.entity} dispatch={props.dispatch}></FileInput>
+          <Thumbnails images={_images} dispatch={props.dispatch}></Thumbnails>
 
           <button
             type="submit"
             className="mt-3 w-full bg-indigo-600 border border-transparent rounded-md shadow-sm py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-indigo-500"
           >
-            Ок
+            Сохранить
           </button>
         </div>
 

@@ -1,20 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 
 import { Tab } from '../../../../main';
-import { appUrl } from '../../../Utils';
+import { appUrl, GlobalContext } from '../../../Utils';
 import DotFlasing from '../../DotFlashing';
 
 export default function Iframely(props: {
-    apiKey: string,
     setIsBusy: React.Dispatch<React.SetStateAction<boolean>>,
     currentTab: Tab | null,
-    q: string
+    q: string,
+    refetchClicked: boolean,
+    setRefetchClicked: React.Dispatch<React.SetStateAction<boolean>>,
 }) {
+  const globalContext = useContext(GlobalContext);
+
   const {
-    isLoading, error, data, isFetching,
-  } = useQuery(`Iframely ${props.q}`, () => {
-    props.setIsBusy(true);
+    isLoading, error, data, refetch, isFetching
+  } = useQuery(`Iframely:${props.q}:${globalContext.apiKey}`, () => {
 
     const query = new URLSearchParams({
       url: props.q,
@@ -26,49 +28,67 @@ export default function Iframely(props: {
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        'Api-Key': props.apiKey,
+        'Api-Key': globalContext.apiKey,
       },
-    }).then((result) => {
-      if (!result.ok) throw new Error(result.statusText);
-      props.setIsBusy(false);
-      return result.json();
+    }).then((res) => {
+
+      if (res.status === 401) {
+        chrome.runtime.sendMessage({ message: 'request-auth' });
+      }
+
+      if (!res.ok) throw new Error(res.statusText);
+
+      return res.json();
     }).catch((reason) => {
-      // console.log(reason);
-      props.setIsBusy(false);
+      console.error(reason);
     });
-  });
+  }, {enabled: false});
+
+  useEffect(() => {
+    refetch()
+  }, [])
+
+  useEffect(() => {
+    props.setIsBusy(isFetching);
+  }, [isFetching])
+
+  useEffect(() => {
+    props.setRefetchClicked(false);
+    refetch().then()
+  }, [props.refetchClicked])
 
   if (isLoading) return <DotFlasing />;
 
   if (error) return `An error has occurred: ${(error as Record<string, string>).message}`;
 
   return (
-    <div className="overflow-auto p-3 space-y-3 break-all">
+    <div className="py-3 space-y-7 break-all">
+      <div>
 
-      <p className="text-sm">
-        {' '}
-        { data && data.meta && data.meta.title }
-        {' '}
-      </p>
-      <p className="text-sm">
-        {' '}
-        { data && data.meta && data.meta.site }
-        {' '}
-      </p>
-      <p className="text-sm">
-        {' '}
-        { data && data.meta && data.meta.description }
-        {' '}
-      </p>
-      <p className="text-sm">
-        {' '}
-        { data && data.meta && data.meta.canonical }
-        {' '}
-      </p>
+        <p className="font-medium text-sm mb-1">
+          { data && data.meta && data.meta.site }
+        </p>
 
-      { data && data.links && data.links.thumbnail && data.links.thumbnail.map((row: any, idx: number) => <img key={row.href} src={row.href} />) }
+        <p className="font-medium text-sm mb-1">
+          { data && data.meta && data.meta.title }
+        </p>
 
-      { data && data.links && data.links.icon && data.links.icon.map((row: any, idx: number) => <img key={row.href} src={row.href} />) }
+        <p className="text-sm mb-1">
+          { data && data.meta && data.meta.canonical
+            && (
+            <a href={data.meta.canonical}>
+              {data.meta.canonical}
+            </a>
+            )}
+        </p>
+
+        <p className="text-sm mb-1">
+          { data && data.meta && data.meta.description }
+        </p>
+
+        { data && data.links && data.links.thumbnail && data.links.thumbnail.map((row: any, idx: number) => <img key={row.href} className="mb-1" src={row.href} />) }
+        { data && data.links && data.links.icon && data.links.icon.map((row: any, idx: number) => <img key={row.href} className="mb-1" src={row.href} />) }
+      </div>
 
     </div>
   );

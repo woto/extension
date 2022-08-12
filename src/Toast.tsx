@@ -1,59 +1,102 @@
-import React from 'react';
+import React, { MouseEventHandler, useEffect } from 'react';
 /* This example requires Tailwind CSS v2.0+ */
 import { Fragment, useState } from 'react';
 import { Transition } from '@headlessui/react';
 import { CheckCircleIcon } from '@heroicons/react/outline';
 import { XIcon } from '@heroicons/react/solid';
+import { AnimatePresence, motion, useAnimation, useAnimationControls } from 'framer-motion';
 
-export default function Example() {
+const draw = {
+  hidden: { pathLength: 0, opacity: 0 },
+  visible: {
+    pathLength: 1,
+    opacity: 1,
+    transition: {
+      opacity: { duration: 1 },
+      pathLength: { duration: 5, bounce: 0 }
+    }
+  }
+};
+
+
+export default function Toast(props: {
+  children: React.ReactNode,
+  onDismiss: MouseEventHandler<HTMLDivElement> | undefined
+}) {
+
   const [show, setShow] = useState(true);
+  const [showCircle, setShowCircle] = useState(false);
+
+  const controls = useAnimationControls();
+
+  useEffect(() => {
+    controls.start("visible");
+  }, [showCircle])
 
   return (
-    <>
-      {/* Global notification live region, render this permanently at the end of the document */}
+    <Transition
+      afterEnter={() => { setShowCircle(true); }}
+      appear={true}
+      show={show}
+      as={Fragment}
+      enter="transform ease-out duration-300 transition"
+      enterFrom="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
+      enterTo="translate-y-0 opacity-100 sm:translate-x-0"
+      leave="transition ease-in duration-100"
+      leaveFrom="opacity-100"
+      leaveTo="opacity-0"
+    >
       <div
-        aria-live="assertive"
-        className="fixed inset-0 flex items-end px-4 py-6 pointer-events-none sm:p-6 sm:items-start"
-      >
-        <div className="w-full flex flex-col items-center space-y-4 sm:items-end">
-          {/* Notification panel, dynamically insert this into the live region when it needs to be displayed */}
-          <Transition
-            show={show}
-            as={Fragment}
-            enter="transform ease-out transition"
-            enterFrom="translate-y-2 opacity-0 sm:translate-y-0 sm:translate-x-2"
-            enterTo="translate-y-0 opacity-100 sm:translate-x-0"
-            leave="transition ease-in"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
-              <div className="p-4">
-                <div className="flex items-start">
-                  <div className="flex-shrink-0">
-                    <CheckCircleIcon className="h-6 w-6 text-green-400" aria-hidden="true" />
-                  </div>
-                  <div className="ml-3 w-0 flex-1 pt-0.5">
-                    <p className="text-sm font-medium text-gray-900">Successfully saved!</p>
-                    <p className="mt-1 text-sm text-gray-500">Anyone with a link can now view this file.</p>
-                  </div>
-                  <div className="ml-4 flex-shrink-0 flex">
-                    <button
-                      className="bg-white rounded-md inline-flex text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                      onClick={() => {
-                        setShow(false);
-                      }}
+        onMouseEnter={() => { controls.stop() }}
+        onMouseLeave={() => { controls.start('visible') }}
+        className="max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
+        <div className="p-4">
+          <div className="flex items-center">
+
+            {props.children}
+
+            <div className="ml-4 relative p-1 flex-shrink-0 flex">
+              <button
+                className="bg-white rounded-full inline-flex text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                onClick={() => {
+                  setShow(false);
+                }}
+              >
+
+                <AnimatePresence>
+                  {showCircle &&
+                    <svg
+                      className="h-16 w-16 absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2"
+                      viewBox="0 0 40 40"
                     >
-                      <span className="sr-only">Close</span>
-                      <XIcon className="h-5 w-5" aria-hidden="true" />
-                    </button>
-                  </div>
-                </div>
-              </div>
+                      <circle
+                        className="stroke-2 stroke-sky-50 fill-transparent"
+                        cx="20"
+                        cy="20"
+                        r="10"
+                      />
+
+                      <motion.circle
+                        onAnimationComplete={() => setShow(false)}
+                        className="stroke-2 stroke-sky-300 fill-transparent"
+                        cx="20"
+                        cy="20"
+                        r="10"
+                        initial="hidden"
+                        animate={controls}
+                        variants={draw}
+                      />
+                    </svg>
+                  }
+                </AnimatePresence>
+
+                <XIcon className="h-5 w-5" aria-hidden="true" />
+
+              </button>
             </div>
-          </Transition>
+          </div>
         </div>
       </div>
-    </>
+    </Transition>
   );
 }

@@ -1,46 +1,106 @@
 let rightClickedElement: Element | null;
 
-document.body.addEventListener('contextmenu', (e) => {
+
+// NOTE: test
+window.addEventListener("message", function(event) {
+
+  // console.log(event);
+
+  if (event.source == window &&
+      event.data &&
+      event.data.direction == "from-page-script") {
+    alert("Content script received message: \"" + event.data.message + "\"");
+  }
+});
+
+
+document.addEventListener('contextmenu', (e) => {
   rightClickedElement = e.target as Element;
 });
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  const { message } = request;
-  let linkUrl: string | null = null;
+document.addEventListener('click', (e) => {
+  // console.debug('link click');
 
-  if (message === 'select-element') {
-    switch (request.selectionType) {
-      case 'select-text': {
-        break;
-      }
-      case 'select-link': {
-        const selection = window.getSelection();
+  if (e.target instanceof HTMLElement) {
+    if (e.target.dataset['entityId']) {
+      e.preventDefault();
 
-        for (let i = 0; i < 10; i++) {
-          if (!rightClickedElement) break;
+      alert('link click')
 
-          linkUrl = rightClickedElement.getAttribute('href');
+      chrome.runtime.sendMessage({message: 'edit-entity'}, () => {
+        alert('link click');
+      });
+    }
+  }
+})
 
-          if (!linkUrl) {
-            rightClickedElement = rightClickedElement.parentElement;
-            continue;
+  chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    const {message} = request;
+
+    let linkUrl: string | null = null;
+    let imageSrc: string | null = null;
+
+    if (message === 'select-element') {
+
+      switch (request.selectionType) {
+        case 'select-text': {
+          break;
+        }
+        case 'select-image': {
+          const selection = window.getSelection();
+
+          for (let i = 0; i < 10; i++) {
+            if (!rightClickedElement) break;
+
+            imageSrc = rightClickedElement.getAttribute('src');
+
+            if (!imageSrc) {
+              rightClickedElement = rightClickedElement.parentElement;
+              continue;
+            }
+            imageSrc = new URL(imageSrc, window.location.toString()).toString();
+            break
           }
 
-          linkUrl = new URL(linkUrl, window.location.toString()).toString();
+          if (!imageSrc) return;
+
+          if (!rightClickedElement) return;
+
+          if (!selection) return;
+
+          selection.selectAllChildren(rightClickedElement);
+
+          break;
         }
+        case 'select-link': {
+          const selection = window.getSelection();
 
-        if (!linkUrl) return;
+          for (let i = 0; i < 10; i++) {
+            if (!rightClickedElement) break;
 
-        if (!rightClickedElement) return;
+            linkUrl = rightClickedElement.getAttribute('href');
 
-        if (!selection) return;
+            if (!linkUrl) {
+              rightClickedElement = rightClickedElement.parentElement;
+              continue;
+            }
 
-        selection.selectAllChildren(rightClickedElement);
+            linkUrl = new URL(linkUrl, window.location.toString()).toString();
+            break
+          }
 
-        break;
+          if (!linkUrl) return;
+
+          if (!rightClickedElement) return;
+
+          if (!selection) return;
+
+          selection.selectAllChildren(rightClickedElement);
+
+          break;
+        }
       }
-    }
 
-    return sendResponse({ message: 'element-selected-successfully', linkUrl });
-  }
-});
+      return sendResponse({message: 'element-selected-successfully', linkUrl: linkUrl, imageSrc: imageSrc});
+    }
+  });

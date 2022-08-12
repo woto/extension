@@ -1,24 +1,33 @@
 import 'react-devtools';
 import '@webcomponents/webcomponentsjs/webcomponents-bundle.js';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import {
-  useQuery,
-  useMutation,
-  useQueryClient,
+  // useQuery,
+  // useMutation,
+  // useQueryClient,
   QueryClient,
   QueryClientProvider,
 } from 'react-query';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import tailwind from './tailwind.css';
 import AppAdd from './AppAdd';
+import {ToastProvider} from "./ToastManager";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  // defaultOptions: {
+  //   queries: {
+  //     refetchOnWindowFocus: false
+  //   }
+  // }
+});
 
 class AddPopupComponent extends HTMLElement {
   constructor() {
     super();
+
     this.attachShadow({ mode: 'open' });
+
     const mountPoint = document.createElement('div');
     mountPoint.style.zIndex = '2147483647';
     mountPoint.style.position = 'fixed';
@@ -30,20 +39,52 @@ class AddPopupComponent extends HTMLElement {
     // mountPoint.className = 'w-[320px]';
 
     if (!this.shadowRoot) return;
+
     this.shadowRoot.appendChild(mountPoint);
+
     tailwind.use({ target: this.shadowRoot });
 
     ReactDOM.render(
       <React.StrictMode>
         <QueryClientProvider client={queryClient}>
-          <ReactQueryDevtools initialIsOpen={false} />
-          <AppAdd />
+          <ToastProvider>
+            <ReactQueryDevtools initialIsOpen={false} />
+            <AppAdd />
+            <div id="screenshot-portal"></div>
+          </ToastProvider>
         </QueryClientProvider>
       </React.StrictMode>,
       mountPoint,
     );
   }
 }
+
+let placement = document.documentElement;
+
 customElements.define('add-popup-component', AddPopupComponent);
 
-document.body.insertAdjacentHTML('afterbegin', '<add-popup-component></add-popup-component>');
+// customElements.get('add-popup-component')
+
+const component = document.createElement('add-popup-component');
+
+// document.body.insertAdjacentHTML('afterbegin', '<add-popup-component></add-popup-component>');
+
+const subscription = (request: any, sender: chrome.runtime.MessageSender, sendResponse: (response?: any) => void) => {
+  const { message, feature } = request;
+
+  if (feature === 'add' && message === 'ping') {
+    if (!placement.contains(component)) {
+      placement.insertAdjacentElement('afterbegin', component);
+    }
+
+    return sendResponse('pong');
+    // let result = ReactDOM.unmountComponentAtNode(mountPoint);
+    // console.log('result:', result);
+    // let element = document.querySelector('add-popup-component');
+    // element?.remove();
+  }
+};
+
+placement.insertAdjacentElement('afterbegin', component);
+
+chrome.runtime.onMessage.addListener(subscription);

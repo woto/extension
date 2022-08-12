@@ -1,13 +1,11 @@
-import React, {
-  Fragment, useContext, useEffect, useState,
-} from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useQuery } from 'react-query';
 
 import { Tab } from '../../../../main';
 import { appUrl, GlobalContext } from '../../../Utils';
 import DotFlasing from '../../DotFlashing';
 
-export default function YandexXML(props: {
+export default function Wikipedia(props: {
   setIsBusy: React.Dispatch<React.SetStateAction<boolean>>,
   currentTab: Tab | null,
   q: string,
@@ -18,18 +16,18 @@ export default function YandexXML(props: {
 
   const {
     isLoading, error, data, refetch, isFetching
-  } = useQuery(`YandexXML:${props.q}:${globalContext.apiKey}`, () => {
+  } = useQuery(`Wikipedia:${props.q}:${globalContext.apiKey}`, () => {
 
     const query = new URLSearchParams({
       q: props.q,
     });
 
-    return fetch(`${appUrl}/api/tools/yandex_xml?${query}`, {
+    return fetch(`${appUrl}/api/tools/wikipedia?${query}`, {
       credentials: 'omit',
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
-        Accept: 'application/xml',
+        Accept: 'application/json',
         'Api-Key': globalContext.apiKey,
       },
     }).then((res) => {
@@ -40,11 +38,7 @@ export default function YandexXML(props: {
 
       if (!res.ok) throw new Error(res.statusText);
 
-      return res.text();
-    }).then((result) => {
-      const parser = new DOMParser();
-      const xml = parser.parseFromString(result, 'application/xml');
-      return xml.querySelectorAll('doc');
+      return res.json();
     }).catch((reason) => {
       console.error(reason);
     });
@@ -67,28 +61,11 @@ export default function YandexXML(props: {
 
   if (error) return `An error has occurred: ${(error as Record<string, string>).message}`;
 
-  const decodedURI = (text?: string | null) => {
-    try {
-      if (text == null) throw new Error();
-      return decodeURI(text);
-    } catch (err) {
-        return text;
-    }
-  }
-
   return (
     <div className="py-3 space-y-7 break-all">
-      { data && Array.from(data).map((item, idx) => (
-        <div key={idx}>
-          <p className="font-medium text-sm mb-1">{item.querySelector('title')?.textContent!}</p>
-          <a href={item.querySelector('url')?.textContent!}>
-            <p className="text-sm mb-1">{decodedURI(item.querySelector('url')?.textContent)}</p>
-          </a>
-          <p className="text-sm mb-1">{item.querySelector('headline')?.textContent!}</p>
-          <p className="text-sm mb-1">{item.querySelector('passages')?.textContent!}</p>
-        </div>
-      )) }
-      {' '}
+      <pre className="text-xs mb-1">
+        { JSON.stringify(data, null, 2) }
+      </pre>
     </div>
   );
 }

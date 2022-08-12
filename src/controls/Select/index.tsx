@@ -2,8 +2,9 @@ import React, { useEffect, useRef, useState } from 'react';
 import { SelectorIcon } from '@heroicons/react/solid';
 import Options from './Options';
 import useOutsideClick from '../../useOutsideClick';
+import { stopPropagation } from '../../Utils';
 
-export default function Select(props: {children: React.ReactNode, label: string | null}) {
+export default function Select(props: {children: React.ReactNode, title: string | null}) {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const menuRef = useRef<HTMLDivElement>(null);
   useOutsideClick(menuRef, setIsOpen);
@@ -33,13 +34,15 @@ export default function Select(props: {children: React.ReactNode, label: string 
 
       <button
         onKeyDown={handleKeyDown}
+        onKeyPress={stopPropagation}
+        onKeyUp={stopPropagation}
         onClick={handleClick}
         type="button"
         className="bg-white relative w-full border border-gray-300 rounded-md shadow-sm pl-3 pr-10 py-2 text-left cursor-default focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500 text-sm"
       >
 
-        <span className={`block truncate ${props.label ? '' : 'text-slate-500'}`}>
-          {props.label ? props.label : 'Выберите важность...'}
+        <span className={`block truncate ${props.title ? '' : 'text-slate-500'}`}>
+          {props.title ? props.title : 'Выберите важность...'}
         </span>
 
         <span className="absolute inset-y-0 right-0 flex items-center pr-2 pointer-events-none">

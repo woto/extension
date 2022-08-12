@@ -1,5 +1,5 @@
 import React, {
-  useState, useEffect, useRef, useCallback,
+  useState, useEffect, useRef, useCallback, useContext,
 } from 'react';
 import AwesomeDebouncePromise from 'awesome-debounce-promise';
 import { abort } from 'process';
@@ -7,9 +7,9 @@ import EmptyList from './EmptyList';
 import FullList from './FullList';
 import NothingFound from './NothingFound';
 
-import { appUrl } from './Utils';
+import { appUrl, GlobalContext } from './Utils';
 
-import { Entity, Image } from '../main';
+import { Entity, Image, Kind, Lookup } from '../main';
 import DotFlasing from './controls/DotFlashing';
 
 function DetermineList(props: { entities: Entity[] | null, onSelectItem: any }) {
@@ -32,22 +32,24 @@ function Wrapper(props: any) {
   );
 }
 export default function List(props: {
-    apiKey: string,
-    isBusy: boolean,
-    setIsBusy: React.Dispatch<React.SetStateAction<boolean>>,
-    fragmentUrl: string,
-    searchString: string,
-    linkUrl: string,
-    onSelectItem: any,
-    onClick: any,
-    entities: any[] | null,
-    setEntities: React.Dispatch<React.SetStateAction<any[] | null>>,
-    scrollPosition: number,
-    setScrollPosition: React.Dispatch<React.SetStateAction<number>>,
-    page: number,
-    setPage: React.Dispatch<React.SetStateAction<number>>
+  isBusy: boolean,
+  setIsBusy: React.Dispatch<React.SetStateAction<boolean>>,
+  fragmentUrl: string,
+  searchString: string,
+  linkUrl: string,
+  imageSrc: string,
+  onSelectItem: any,
+  handleNewEntityClick: any,
+  entities: any[] | null,
+  setEntities: React.Dispatch<React.SetStateAction<any[] | null>>,
+  scrollPosition: number,
+  setScrollPosition: React.Dispatch<React.SetStateAction<number>>,
+  page: number,
+  setPage: React.Dispatch<React.SetStateAction<number>>
 }) {
-  const [isError, setIsError] = useState<boolean>(false);
+  const globalContext = useContext(GlobalContext);
+
+  const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const { scrollPosition } = props;
@@ -62,22 +64,26 @@ export default function List(props: {
   }, [scrollPosition]);
 
   const {
-    fragmentUrl, searchString, page, linkUrl, setPage, setEntities,
+    fragmentUrl, searchString, page, linkUrl, imageSrc, setPage, setEntities,
   } = props;
+
+  const {apiKey} = globalContext
 
   const abortController = useRef<AbortController>();
 
   const fetchData = useCallback(
     () => {
+      if (!globalContext.apiKey) return null;
       props.setIsBusy(true);
-      setIsError(false);
+      setError(null);
 
-      console.log('%cFETCHING!', 'color: Orange');
+      // console.log('%cFETCHING!', 'color: Orange');
 
       const data = {
         fragment_url: fragmentUrl,
         search_string: searchString,
         link_url: linkUrl,
+        image_src: imageSrc,
         page,
       };
 
@@ -88,7 +94,7 @@ export default function List(props: {
         headers: {
           'Content-Type': 'application/json',
           Accept: 'application/json',
-          'Api-Key': props.apiKey,
+          'Api-Key': globalContext.apiKey,
         },
       };
 
@@ -98,19 +104,40 @@ export default function List(props: {
         console.error('some error');
       }
 
-      fetch(`${appUrl}/api/mentions/seek`, params)
+      fetch(`${appUrl}/api/entities/seek`, params)
         .then((res) => {
+
+          if (res.status === 401) {
+            chrome.runtime.sendMessage({ message: 'request-auth' });
+          }
+
           if (!res.ok) throw new Error(res.statusText);
 
           return res.json();
         })
         .then((res: Entity[]) => {
-          res.forEach((entity: Entity) => {
-            entity.images.forEach((image: Image) => {
+          res.forEach((entity) => {
+            entity.images.forEach((image) => {
               image.index = image.id!.toString();
-              image.id = image.id;
               image.destroy = false;
-              image.url = `${appUrl}${image.url}`;
+            });
+          });
+
+          // res.forEach((entity) => {
+          //   entity.relevance = null
+          // })
+
+          res.forEach((entity) => {
+            entity.kinds.forEach((kind) => {
+              kind.index = kind.id!.toString();
+              kind.destroy = false;
+            });
+          });
+
+          res.forEach((entity) => {
+            entity.lookups.forEach((lookup) => {
+              lookup.index = lookup.id!.toString();
+              lookup.destroy = false;
             });
           });
 
@@ -124,15 +151,14 @@ export default function List(props: {
           }
         })
         .catch((reason) => {
-        // console.log(reason);
-
+          props.setIsBusy(false);
           if (reason.name === 'AbortError') return;
 
-          props.setIsBusy(false);
-          setIsError(true);
+          console.error(reason);
+          setError(reason.message);
         });
     },
-    [fragmentUrl, searchString, page, linkUrl, setEntities, setPage],
+    [fragmentUrl, searchString, page, linkUrl, imageSrc, setEntities, setPage, apiKey],
   );
 
   useEffect(() => {
@@ -141,21 +167,20 @@ export default function List(props: {
     return () => {
       if (abortController.current) {
         abortController.current.abort();
-        // console.log('aborted');
       } else {
         alert('b');
       }
     };
-  }, [fragmentUrl, searchString, page, linkUrl, fetchData]);
+  }, [fragmentUrl, searchString, page, linkUrl, imageSrc, fetchData, apiKey]);
 
   useEffect(() => {
     if (page == 1 && !!fragmentUrl) {
       fetchData();
     }
 
-    return () => {};
+    return () => { };
     // , props.fragmentUrl, props.page
-  }, [fragmentUrl, searchString, page, linkUrl, fetchData]);
+  }, [fragmentUrl, searchString, page, linkUrl, imageSrc, fetchData, apiKey]);
 
   const someFunc = (val: any) => { props.setScrollPosition(val); };
   const asyncFunctionDebounced = AwesomeDebouncePromise(someFunc, 50);
@@ -171,6 +196,9 @@ export default function List(props: {
     }
   };
 
+  // // TODO: make it better
+  // if (!globalContext.apiKey) return (<></>);
+
   return (
     <>
       {/* { console.log('render <List/>') } */}
@@ -182,7 +210,7 @@ export default function List(props: {
         <div
           onScroll={handleScroll}
           ref={scrollRef}
-          className="h-[438px] overscroll-contain p-1 overflow-auto"
+          className="h-[346px] overscroll-contain p-1 overflow-auto"
         >
           <DetermineList onSelectItem={props.onSelectItem} entities={props.entities} />
         </div>
@@ -191,10 +219,10 @@ export default function List(props: {
           className="inset-x-0 bottom-0 flex justify-center bg-gradient-to-b from-transparent to-slate-100 pt-6 pb-10 pointer-events-none absolute"
         />
 
-        { props.isBusy && <DotFlasing /> }
+        {props.isBusy && <DotFlasing />}
 
         <div className="flex justify-center items-center overflow-hidden absolute inset-x-0 h-10 bottom-0">
-          { isError && <div className="text-red-400 text-sm font-medium">что-то пошло не так</div> }
+          {error && <div className="text-red-400 text-sm font-medium">{error}</div>}
         </div>
 
       </div>
@@ -203,7 +231,7 @@ export default function List(props: {
         <div className="text-center">
           <a
             href="#"
-            onClick={props.onClick}
+            onClick={props.handleNewEntityClick}
             className="drag-none text-sm font-medium text-indigo-600 hover:text-indigo-500"
           >
             Добавить новый объект

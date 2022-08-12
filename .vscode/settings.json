@@ -9,5 +9,23 @@
             "url": "http://json.schemastore.org/chrome-manifest"
         }
     ],
-    "workbench.colorTheme": "Default Light+"
+    "workbench.colorTheme": "Quiet Light",
+    "files.watcherExclude": {
+        "**/dist": true,
+        "**/dist/**": true,
+        "dist": true,
+        "dist/**": true
+    },
+    "files.exclude": {
+        "**/dist": true,
+        "**/dist/**": true,
+        "dist": true,
+        "dist/**": true
+    },
+    "search.exclude": {
+        "**/dist": true,
+        "**/dist/**": true,
+        "dist": true,
+        "dist/**": true
+    }
 }

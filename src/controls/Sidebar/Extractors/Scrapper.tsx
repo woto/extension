@@ -1,21 +1,22 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 
 import { Tab } from '../../../../main';
-import { appUrl } from '../../../Utils';
+import { appUrl, GlobalContext } from '../../../Utils';
 import DotFlasing from '../../DotFlashing';
 
 export default function Scrapper(props: {
-    apiKey: string,
     setIsBusy: React.Dispatch<React.SetStateAction<boolean>>,
     currentTab: Tab | null,
     q: string,
+    refetchClicked: boolean,
+    setRefetchClicked: React.Dispatch<React.SetStateAction<boolean>>,
 }) {
-  const {
-    isLoading, error, data, isFetching,
-  } = useQuery(`Scrapper ${props.q}`, () => {
-    props.setIsBusy(true);
+  const globalContext = useContext(GlobalContext);
 
+  const {
+    isLoading, error, data, refetch, isFetching
+  } = useQuery(`Scrapper:${props.q}:${globalContext.apiKey}`, () => {
     const query = new URLSearchParams({
       url: props.q,
     });
@@ -26,40 +27,57 @@ export default function Scrapper(props: {
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        'Api-Key': props.apiKey,
+        'Api-Key': globalContext.apiKey,
       },
-    }).then((result) => {
-      if (!result.ok) throw new Error(result.statusText);
-      props.setIsBusy(false);
-      return result.json();
+    }).then((res) => {
+
+      if (res.status === 401) {
+        chrome.runtime.sendMessage({ message: 'request-auth' });
+      }
+
+      if (!res.ok) throw new Error(res.statusText);
+
+      return res.json();
     }).catch((reason) => {
-      // console.log(reason);
-      props.setIsBusy(false);
+      console.error(reason);
     });
-  });
+  }, {enabled: false});
+
+  useEffect(() => {
+    refetch()
+  }, [])
+
+  useEffect(() => {
+    props.setIsBusy(isFetching);
+  }, [isFetching])
+
+  useEffect(() => {
+    props.setRefetchClicked(false);
+    refetch().then()
+  }, [props.refetchClicked])
 
   if (isLoading) return <DotFlasing />;
 
   if (error) return `An error has occurred: ${(error as Record<string, string>).message}`;
 
   return (
-    <div className="overflow-auto p-3 space-y-3 break-all">
-      <p className="text-sm">
-        {' '}
-        {data && data.title }
-        {' '}
-      </p>
-      <p className="text-sm">
-        {' '}
-        {data && data.excerpt }
-        {' '}
-      </p>
-      <p className="text-sm">
-        {' '}
-        {data && data.siteName }
-        {' '}
-      </p>
-      { data && <img className="border border-slate-300" src={data.image} /> }
+    <div className="py-3 space-y-7 break-all">
+      <div>
+
+        <p className="text-sm font-medium mb-1">
+          {data && data.title }
+        </p>
+
+        <p className="text-sm mb-1">
+          {data && data.article && data.article.excerpt }
+        </p>
+
+        <p className="text-sm mb-1">
+          {data && data.siteName }
+        </p>
+
+        { data && <img className="border border-slate-300" src={data.image} /> }
+      </div>
     </div>
   );
 }

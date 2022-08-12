@@ -5,6 +5,10 @@
   "description": "Chrome Extension, TypeScript, Visual Studio Code",
   "version": "1.0.1",
 
+  "externally_connectable": {
+    "matches": ["http://mentions.lvh.me/*", "http://localhost/*"]
+  },
+
   "web_accessible_resources": [{
     "resources": [ "logo.png" ],
     "matches": ["<all_urls>"]
@@ -22,6 +26,7 @@
   "content_scripts": [
       {
           "matches": ["<all_urls>"],
+          "run_at": "document_start",
           "js": ["js/context_menu.js"]
       }
   ],
@@ -34,7 +39,8 @@
     "storage",
     "contextMenus",
     "tabs",
-    "scripting"
+    "scripting",
+    "webNavigation"
   ],
 
   "host_permissions": [

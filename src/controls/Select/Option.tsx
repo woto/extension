@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { CheckIcon } from '@heroicons/react/solid';
 
-type Item = {id: string, label: string}
+type Item = {id: string, title: string}
 
 export default function Option(props: {
     option: Item,
@@ -26,9 +26,7 @@ export default function Option(props: {
     >
 
       <span className={`${props.isSelected ? 'font-semibold' : 'font-normal'} block truncate`}>
-        {' '}
-        {props.option.label}
-        {' '}
+        {props.option.title}
       </span>
 
       <span className={`${isHighlight ? 'text-white' : 'text-indigo-600'} absolute inset-y-0 right-0 flex items-center pr-4`}>

@@ -1,31 +1,38 @@
 import { Transition } from '@headlessui/react';
-import React from 'react';
+import React, { Dispatch, useCallback } from 'react';
 import Select from './controls/Select';
 import Option from './controls/Select/Option';
 
-import { Relevance } from '../main';
+import { EntityAction, Relevance } from '../main';
+import { CheckCircleIcon, XIcon } from '@heroicons/react/solid';
+import Alert from './Alert';
+import { EntityActionType } from './Utils';
 
 export default function RelevanceInput(props: {
-    priority: number,
-    relevance: Relevance | null,
-    setRelevance: React.Dispatch<React.SetStateAction<Relevance | null>>,
-    show: boolean,
-    options: Relevance[]
+  relevance: Relevance | null | undefined,
+  setRelevance: React.Dispatch<React.SetStateAction<Relevance | null | undefined>>
+  options: Relevance[],
+  toggleVisibility: any,
+  priority: number,
+  show: boolean,
 }) {
-  const handleChangeSelection = (fn: {id: string, label: string}) => {
-    // console.log('change selection');
-    const { relevance, setRelevance } = props;
-    if (relevance?.id === fn.id) {
-      setRelevance(null);
-    } else {
-      setRelevance(fn);
-    }
-  };
 
-  const labelForRelevance = () => {
+  const handleChangeRelevance = (relevance: Relevance) => {
+    let newRelevance: Relevance | null = null;
+
+    if (props.relevance?.id === relevance.id) {
+      newRelevance = null
+    } else {
+      newRelevance = relevance
+    }
+
+    props.setRelevance(newRelevance)
+  }
+
+  const titleForRelevance = () => {
     const { options } = props;
     const found = options.find((row) => props?.relevance?.id === row.id);
-    if (found) return found.label;
+    if (found) return found.title;
     return null;
   };
 
@@ -33,19 +40,25 @@ export default function RelevanceInput(props: {
     <div className={`relative priority-${props.priority * 10}`}>
       <Transition
         show={props.show}
-        enter="transition-all"
+        enter="transition-all duration-300"
         enterFrom="max-h-0 opacity-0 mt-0"
-        enterTo="max-h-60 opacity-100 mt-3"
-        leave="transition-all"
-        leaveFrom="max-h-60 opacity-100 mt-3"
+        enterTo="max-h-[500px] opacity-100 mt-3"
+        leave="transition-all duration-300"
+        leaveFrom="max-h-[500px] opacity-100 mt-3"
         leaveTo="max-h-0 opacity-0 mt-0"
       >
-        <Select label={labelForRelevance()}>
-          { props.options.map((option) => (
+
+        <Alert
+          toggleVisibility={(e: any) => props.toggleVisibility(e, 'relevance')}
+          title={"Важность"}
+          text={"Отметтье важность, с которой упоминается объект. Как правило в статье не более 2-3 основных объектов."} />
+
+        <Select title={titleForRelevance()}>
+          {props.options.map((option) => (
             <Option
               key={option.id}
-              changeSelection={() => handleChangeSelection(option)}
-              isSelected={props?.relevance?.id === option.id}
+              changeSelection={() => handleChangeRelevance(option)}
+              isSelected={props.relevance?.id === option.id}
               option={option}
             />
           ))}

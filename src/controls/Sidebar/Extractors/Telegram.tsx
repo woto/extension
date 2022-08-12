@@ -1,20 +1,23 @@
-import React, { useEffect, useState } from 'react';
+import { UserGroupIcon } from '@heroicons/react/solid';
+import React, { useContext, useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 
 import { Tab } from '../../../../main';
-import { appUrl } from '../../../Utils';
+import { appUrl, GlobalContext } from '../../../Utils';
 import DotFlasing from '../../DotFlashing';
 
 export default function Telegram(props: {
-    apiKey: string,
     setIsBusy: React.Dispatch<React.SetStateAction<boolean>>,
     currentTab: Tab | null,
-    q: string
+    q: string,
+    refetchClicked: boolean,
+    setRefetchClicked: React.Dispatch<React.SetStateAction<boolean>>,
 }) {
+  const globalContext = useContext(GlobalContext);
+
   const {
-    isLoading, error, data, isFetching,
-  } = useQuery(`Telegram ${props.q}`, () => {
-    props.setIsBusy(true);
+    isLoading, error, data, refetch, isFetching
+  } = useQuery(`Telegram:${props.q}:${globalContext.apiKey}`, () => {
 
     const query = new URLSearchParams({
       q: props.q,
@@ -26,69 +29,94 @@ export default function Telegram(props: {
       headers: {
         'Content-Type': 'application/json',
         Accept: 'application/json',
-        'Api-Key': props.apiKey,
+        'Api-Key': globalContext.apiKey,
       },
-    }).then((result) => {
-      if (!result.ok) throw new Error(result.statusText);
-      props.setIsBusy(false);
-      return result.json();
+    }).then((res) => {
+
+      if (res.status === 401) {
+        chrome.runtime.sendMessage({ message: 'request-auth' });
+      }
+
+      if (!res.ok) throw new Error(res.statusText);
+
+      return res.json();
     }).catch((reason) => {
-      // console.log(reason);
-      props.setIsBusy(false);
+      console.error(reason);
     });
-  });
+  }, {enabled: false});
+
+  useEffect(() => {
+    refetch()
+  }, [])
+
+  useEffect(() => {
+    props.setIsBusy(isFetching);
+  }, [isFetching])
+
+  useEffect(() => {
+    props.setRefetchClicked(false);
+    refetch().then()
+  }, [props.refetchClicked])
 
   if (isLoading) return <DotFlasing />;
 
   if (error) return `An error has occurred: ${(error as Record<string, string>).message}`;
 
   return (
-    <div className="overflow-auto p-3 space-y-3 break-all">
+    <div className="py-3 space-y-7 break-all">
 
-      <p className="text-sm">
-        {' '}
-        { data?.kind }
-        {' '}
-      </p>
+      <div>
+        <p className="text-sm mb-1">
+          { data?.kind }
+        </p>
 
-      <p className="text-sm">
-        {' '}
-        { data?.members }
-        {' '}
-      </p>
+        <p className="text-sm font-medium mb-1">
+          {data?.title}
+        </p>
 
-      <p className="text-sm">
-        {' '}
-        { data?.online }
-        {' '}
-      </p>
+        { data?.label
+          && (
+          <p className="text-sm mb-1">
+            <a href={`https://t.me/${data.label}`}>
+              { `https://t.me/${data.label}` }
+            </a>
+          </p>
+          )}
 
-      <p className="text-sm">
-        {' '}
-        { data?.subscribers }
-        {' '}
-      </p>
+        <div className="text-sm mb-1 space-x-2">
 
-      <p className="text-sm">
-        {' '}
-        { data?.label }
-        {' '}
-      </p>
+          { data?.members
+            && (
+            <div className="inline-flex items-center">
+              <UserGroupIcon className="w-4 h-4 mr-1" />
+              { data?.members }
+            </div>
+            )}
 
-      <p className="text-sm">
-        {' '}
-        { data?.title }
-        {' '}
-      </p>
+          { data?.online
+            && (
+            <div className="inline-flex items-center">
+              <UserGroupIcon className="w-4 h-4 mr-1" />
+              { data?.online }
+            </div>
+            )}
 
-      <p className="text-sm" dangerouslySetInnerHTML={{ __html: data?.description || '' }} />
+          { data?.subscribers
+            && (
+            <div className="inline-flex items-center">
+              <UserGroupIcon className="w-4 h-4 mr-1" />
+              { data?.subscribers }
+            </div>
+            )}
+        </div>
 
-      <p className="text-sm">
-        {' '}
-        <img src={data?.image} />
-        {' '}
-      </p>
+        <p className="text-sm mb-1" dangerouslySetInnerHTML={{ __html: data?.description || '' }} />
 
+        <p className="text-sm mb-1">
+          <img src={data?.image} />
+        </p>
+
+      </div>
     </div>
   );
 }

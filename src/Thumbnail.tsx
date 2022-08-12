@@ -1,52 +1,140 @@
-import React, { useState } from 'react';
+import React, { Dispatch, Fragment, useCallback, useMemo, useState } from 'react';
 import { TrashIcon } from '@heroicons/react/outline';
 import { Transition } from '@headlessui/react';
-import { Image } from '../main';
+import { EntityAction, Image } from '../main';
+import { EntityActionType } from './Utils';
+import { MoonIcon, SunIcon } from '@heroicons/react/outline';
 
-export default function Thumbnail(props: {image: Image, removeImage: any}) {
-  const objectUrl = props.image.url || URL.createObjectURL(props.image.file);
+function Thumbnail(props: {
+  image: Image,
+  dispatch: Dispatch<EntityAction>,
+}) {
 
-  const [showItem, setShowItem] = useState(true);
+  const [showImage, setShowImage] = useState(true)
+  const { image } = props;
 
-  const hideImage = (event: any) => {
-    event.preventDefault();
-    setShowItem(false);
-  };
+  // URL.revokeObjectURL(objectUrl);
+
+  let objectUrl = useMemo(() => {
+    if (image.destroy) return;
+
+    if (image.video_url) {
+      return { video_url: image.video_url };
+    }
+
+    if (image.image_url) {
+      return { image_url: image.image_url };
+    }
+
+    if (image.file instanceof File) {
+      try {
+        const image_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/vnd.microsoft.icon', 'image/svg+xml']
+        const video_types = ['video/mp4', 'video/webm', 'application/mp4', 'video/mp4', 'video/quicktime', 'video/avi', 'video/mpeg', 'video/x-mpeg', 'video/x-msvideo', 'video/m4v', 'video/x-m4v', 'video/vnd.objectvideo']
+
+        const object_url = URL.createObjectURL(image.file);
+        if (image_types.includes(image.file.type)) {
+          return { image_url: object_url }
+        } else {
+          return { video_url: object_url }
+        }
+      } catch (error) {
+        console.warn(error)
+      }
+    }
+  }, [image]);
 
   const removeImage = () => {
-    props.removeImage(props.image);
+    props.dispatch({ type: EntityActionType.REMOVE_IMAGE, payload: { image: image } })
   };
+
+  const toggleBackground = () => {
+    props.dispatch({ type: EntityActionType.TOGGLE_IMAGE_BACKGROUND, payload: { image: image } })
+  }
+
+  const hideImage = () => {
+    setShowImage(false)
+  }
+
+  const displaySpinner = !image.id && !image.json
 
   return (
     <Transition
-      show={showItem}
+      show={showImage}
       appear
-      enter="transition-opacity"
-      enterFrom="opacity-0"
-      enterTo="opacity-100"
-      leave="transition-opacity"
-      leaveFrom="opacity-100"
-      leaveTo="opacity-0"
+      as={Fragment}
+      enter="duration-300 transition-all"
+      enterFrom="opacity-0 scale-75"
+      enterTo="opacity-100 sclale-100"
+      leave="duration-300 transition-all"
+      leaveFrom="opacity-100 scale-100"
+      leaveTo="opacity-0 scale-75"
       afterLeave={removeImage}
     >
-      <div className="border border-slate-200 group transition relative bg-gray-50 flex justify-center items-center">
-        <div className="absolute inset-0 group-hover:backdrop-brightness-[0.8] group-hover:bg-white/10" />
-        <img className="object-contain h-20" src={objectUrl} alt="" />
+      <div className={`
+        rounded border p-0.5 h-full w-full group transition relative flex justify-center items-center
+        ${image.dark ? 'bg-slate-800 border-black' : 'bg-slate-50 border-slate-200'}
+      `}>
+        <div className="rounded absolute inset-0 group-hover:backdrop-brightness-[0.7] duration-150" />
+        {objectUrl?.image_url &&
+          <img
+          className="object-scale-down h-full p-0.5"
+          src={objectUrl.image_url} />
+        }
 
-        <div className="flex flex-col top-0 right-0 absolute opacity-0 group-hover:opacity-100 transition">
+        {objectUrl?.video_url &&
+          <video
+            autoPlay={true}
+            muted={true}
+            loop={true}
+            className={``}
+            src={objectUrl.video_url} />
+
+        }
+
+        <Transition
+          show={displaySpinner}
+          leave="transition duration-300"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="rounded absolute inset-0">
+            <div className="absolute inset-0 bg-slate-500/90" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="dot-flashing" />
+            </div>
+          </div>
+        </Transition>
+
+        <div className="rounded flex flex-col top-0 right-0 absolute opacity-0 group-hover:opacity-100 transition">
           <button
             type="button"
             onClick={hideImage}
-            className="backdrop-saturate-50 drop-shadow absolute top-1 right-1 items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-red-400/30 hover:bg-red-700/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-300/30"
+            className="shadow-sm absolute top-1 right-1 items-center p-1 border border-transparent rounded-full
+            text-white hover:bg-red-700/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-300/30"
           >
             <TrashIcon className="h-4 w-4 text-white" />
           </button>
         </div>
+
+        <div className="rounded flex flex-col top-0 left-0 absolute opacity-0 group-hover:opacity-100 transition">
+          <button
+            type="button"
+            onClick={toggleBackground}
+            className="shadow-sm absolute top-1 left-1 items-center p-1 border border-transparent rounded-full
+            text-white hover:bg-blue-700/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-300/30"
+          >
+
+            {image.dark ?
+              <SunIcon className="h-4 w-4 text-white" />
+              :
+              <MoonIcon className="h-4 w-4 text-white" />}
+
+          </button>
+        </div>
+
       </div>
     </Transition>
   );
 }
 
-//         <div className="mt-3 h-20 bg-gray-200  overflow-hidden">
-//             <img alt="" src={objectUrl} className="w-full h-full" />
-// URL.revokeObjectURL(objectUrl);
+export default React.memo(Thumbnail);

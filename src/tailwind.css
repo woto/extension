@@ -75,6 +75,10 @@
 
 /* SCROLLBARS */
 
+.hide-scrollbar::-webkit-scrollbar {
+    display:none;
+}
+
 /* https://stackoverflow.com/a/59244343/237090 */
 
 textarea {
@@ -121,29 +125,49 @@ textarea {
     }
   }
 
-  /* INPUTS PRIORITIES */
+/* INPUTS PRIORITIES */
 
-.priority-10 {
-    z-index: 10;
-}
+/* TODO: remove if not needed */
 
-.priority-20 {
-    z-index: 20;
-}
+/*.priority-10 {*/
+/*    z-index: 10;*/
+/*}*/
 
-.priority-30 {
-    z-index: 30;
-}
+/*.priority-20 {*/
+/*    z-index: 20;*/
+/*}*/
 
+/*.priority-30 {*/
+/*    z-index: 30;*/
+/*}*/
 
-/* .border-colorfull {
-  border: double 4px transparent;
-  @apply rounded-lg;
-  background-image: linear-gradient(white, white), 
-                    linear-gradient(to right, rgb(0, 89, 255), gold);
-  background-origin: border-box;
-  background-clip: content-box, border-box;
-} */
+/*.priority-40 {*/
+/*    z-index: 40;*/
+/*}*/
+
+/*.priority-50 {*/
+/*    z-index: 50;*/
+/*}*/
+
+/*.priority-60 {*/
+/*    z-index: 60;*/
+/*}*/
+
+/*.priority-70 {*/
+/*    z-index: 70;*/
+/*}*/
+
+/*.priority-80 {*/
+/*    z-index: 80;*/
+/*}*/
+
+/*.priority-90 {*/
+/*    z-index: 90;*/
+/*}*/
+
+/*.priority-100 {*/
+/*    z-index: 100;*/
+/*}*/
 
 .svg-pattern {
     background-color: #f1f5f9;
@@ -172,8 +196,40 @@ a {
 
 /* REPLACE PREFLIGHT TAILWIND REM TO PX */
 
-[type='text'], [type='email'], [type='url'], [type='password'], [type='number'], [type='date'], [type='datetime-local'], 
+[type='text'], [type='email'], [type='url'], [type='password'], [type='number'], [type='date'], [type='datetime-local'],
 [type='month'], [type='search'], [type='tel'], [type='time'], [type='week'], [multiple], textarea, select {
     @apply py-2;
     @apply px-3;
+}
+
+/* COLORFUL BORDER */
+
+/* .border-colorfull {
+    border: double 4px transparent;
+    @apply rounded-lg;
+    background-image: linear-gradient(white, white),
+                      linear-gradient(to right, rgb(0, 89, 255), gold);
+    background-origin: border-box;
+    background-clip: content-box, border-box;
+  } */
+
+
+/* HACK USED FOR CHILD TRANSITION IN THE SIDEBAR */
+
+@layer base, special;
+
+@layer special {
+    .c1 {
+        @apply !translate-x-0;
+    }
+
+    .c2 {
+        @apply !translate-x-11;
+    }
+}
+
+@layer base {
+    .c3 {
+        @apply !translate-x-full;
+    }
 }

@@ -4,7 +4,7 @@ module.exports = {
   theme: {
     // transitionDuration: {
     //   DEFAULT: '1000ms'
-    // },  
+    // },
     /**
      * Default tailwind values converted from rem to px:
      * */
@@ -141,4 +141,3 @@ module.exports = {
     require('@tailwindcss/forms'),
   ],
 }
-
