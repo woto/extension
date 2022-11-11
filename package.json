@@ -1,7 +1,7 @@
 {
-  "name": "chrome-extension-typescript-starter",
-  "version": "1.0.0",
-  "description": "chrome-extension-typescript-starter",
+  "name": "roastme.ru",
+  "version": "0.0.1",
+  "description": "A companion tool for adding data to roastme.ru",
   "main": "index.js",
   "scripts": {
     "watch": "webpack --config webpack/webpack.dev.js --watch",
@@ -27,6 +27,7 @@
     "dayjs": "^1.11.3",
     "framer-motion": "^7.0.0",
     "github-markdown-css": "^5.1.0",
+    "lodash": "^4.17.21",
     "postcss-scss": "^4.0.4",
     "react": "^17.0.1",
     "react-devtools": "^4.25.0",
@@ -36,6 +37,7 @@
     "react-grid-dnd": "^2.1.2",
     "react-hook-form": "^7.30.0",
     "react-query": "^3.39.1",
+    "react-use": "^17.4.0",
     "uuid": "^8.3.2",
     "yup": "^0.32.11"
   },

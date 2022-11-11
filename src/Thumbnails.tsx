@@ -1,30 +1,39 @@
-import React, { Dispatch } from 'react'
-import { EntityAction, Image } from '../main';
-import Thumbnail from './Thumbnail';
-
+import React, { Dispatch } from "react";
 import {
   GridContextProvider,
   GridDropZone,
   GridItem,
-  swap
+  swap,
 } from "react-grid-dnd";
-import { EntityActionType } from './Utils';
+import { EntityAction, Image } from "../main";
+import Thumbnail from "./Thumbnail";
 
+import { EntityActionType } from "./Utils";
 
-export default function Thumbnails(
-  props: {
-    images: Image[],
-    dispatch: Dispatch<EntityAction>
-  }) {
-
-  const images = props.images.filter((image) => !image.destroy)
+export default function Thumbnails(props: {
+  images: Image[];
+  dispatch: Dispatch<EntityAction>;
+}) {
+  const images = props.images.filter((image) => !image.destroy);
 
   // target id will only be set if dragging from one dropzone to another.
-  function onChange(sourceId: string, sourceIndex: number, targetIndex: number, targetId?: string | undefined) {
-    const realSourceIndex = props.images.findIndex((el) => el.index === images[sourceIndex].index)
-    const realTargetIndex = props.images.findIndex((el) => el.index === images[targetIndex].index)
+  function onChange(
+    sourceId: string,
+    sourceIndex: number,
+    targetIndex: number,
+    targetId?: string | undefined
+  ) {
+    const realSourceIndex = props.images.findIndex(
+      (el) => el.index === images[sourceIndex].index
+    );
+    const realTargetIndex = props.images.findIndex(
+      (el) => el.index === images[targetIndex].index
+    );
     const newImages = swap(props.images, realSourceIndex, realTargetIndex);
-    props.dispatch({ type: EntityActionType.SET_IMAGES, payload: { images: newImages } })
+    props.dispatch({
+      type: EntityActionType.SET_IMAGES,
+      payload: { images: newImages },
+    });
   }
 
   return (
@@ -36,7 +45,7 @@ export default function Thumbnails(
         rowHeight={100}
         style={{ height: `${Math.ceil(images.length / 3) * 100}px` }}
       >
-        {images.map(item => (
+        {images.map((item) => (
           <GridItem
             key={item.index}
             className="flex justify-center items-center p-0.5"
@@ -46,5 +55,5 @@ export default function Thumbnails(
         ))}
       </GridDropZone>
     </GridContextProvider>
-  )
+  );
 }

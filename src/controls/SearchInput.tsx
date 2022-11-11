@@ -7,12 +7,12 @@ import { Entity } from '../../main';
 import { stopPropagation } from '../Utils';
 
 export default function SearchInput(props: {
-  searchString: string,
-  setSearchString: Dispatch<SetStateAction<string>>,
-  setPage: Dispatch<SetStateAction<number>>,
-  setEntities: Dispatch<SetStateAction<Entity[] | null>>,
-  setScrollPosition: React.Dispatch<React.SetStateAction<number>>,
- }) {
+  searchString: string;
+  setSearchString: Dispatch<SetStateAction<string>>;
+  setPage: Dispatch<SetStateAction<number>>;
+  setEntities: Dispatch<SetStateAction<Entity[] | null>>;
+  setScrollPosition: React.Dispatch<React.SetStateAction<number>>;
+}) {
   const { searchString } = props;
 
   const handleChange = (event: any) => {
@@ -41,7 +41,6 @@ export default function SearchInput(props: {
         <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
           <SearchIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
         </div>
-
       </div>
     </div>
   );

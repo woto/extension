@@ -1,13 +1,15 @@
-import Alert from './Alert';
-import { EntityAction, Kind } from "../main";
-import _ from "lodash";
-import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/solid";
-import { Menu, Transition } from '@headlessui/react'
-import React, { Dispatch, useEffect, useReducer, useState } from 'react';
-import dayjs from "dayjs";
+import _ from 'lodash';
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/solid';
+import { Menu, Transition } from '@headlessui/react';
+import React, {
+  Dispatch, useEffect, useReducer, useState,
+} from 'react';
+import dayjs from 'dayjs';
 import weekOfYear from 'dayjs/plugin/weekOfYear';
 import isToday from 'dayjs/plugin/isToday';
 import utc from 'dayjs/plugin/utc';
+import { EntityAction, Kind } from '../main';
+import Alert from './Alert';
 import { EntityActionType } from './Utils';
 
 dayjs.extend(weekOfYear);
@@ -15,12 +17,12 @@ dayjs.extend(isToday);
 dayjs.extend(utc);
 
 function classNames(...classes: any[]) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(' ');
 }
 
 const initialState = {
   year: dayjs().year(),
-  month: dayjs().month()
+  month: dayjs().month(),
 };
 
 function reducer(state: any, action: any) {
@@ -29,49 +31,48 @@ function reducer(state: any, action: any) {
       if (state.month === 11) {
         return {
           year: state.year + 1,
-          month: 0
-        }
-      } else {
-        return {
-          year: state.year,
-          month: state.month + 1
-        }
+          month: 0,
+        };
       }
+      return {
+        year: state.year,
+        month: state.month + 1,
+      };
+
     case 'decrement':
       if (state.month === 0) {
         return {
           year: state.year - 1,
-          month: 11
-        }
-      } else {
-        return {
-          year: state.year,
-          month: state.month - 1
-        }
+          month: 11,
+        };
       }
+      return {
+        year: state.year,
+        month: state.month - 1,
+      };
+
     default:
       throw new Error();
   }
 }
 
 function MentionDateInput(props: {
-  mentionDate: Date | null | undefined,
-  setMentionDate: React.Dispatch<React.SetStateAction<Date | null | undefined>>
-  toggleVisibility: any,
-  priority: number,
-  show: boolean,
+  mentionDate: Date | null | undefined;
+  setMentionDate: React.Dispatch<React.SetStateAction<Date | null | undefined>>;
+  toggleVisibility: any;
+  priority: number;
+  show: boolean;
 }) {
-
   const [state, dispatch] = useReducer(reducer, initialState);
 
   type CalendarDay = {
-    date: Date,
-    isCurrentMonth: boolean,
-    isToday: boolean,
-    isSelected: boolean
-  }
+    date: Date;
+    isCurrentMonth: boolean;
+    isToday: boolean;
+    isSelected: boolean;
+  };
 
-  const [days, setDays] = useState<CalendarDay[]>([])
+  const [days, setDays] = useState<CalendarDay[]>([]);
 
   const setMentionDate = (mentionDate: Date) => {
     let newMentionDate: Date | null = null;
@@ -85,10 +86,10 @@ function MentionDateInput(props: {
     props.setMentionDate(newMentionDate);
 
     // props.dispatch({ type: EntityActionType.SET_MENTION_DATE, payload: { mentionDate: mentionDate } })
-  }
+  };
 
   useEffect(() => {
-    const firstDayOfMonth = dayjs(new Date(state.year, state.month, 0)).day()
+    const firstDayOfMonth = dayjs(new Date(state.year, state.month, 0)).day();
     let currentMonthCount = 0 - firstDayOfMonth;
     let days: CalendarDay[] = [];
 
@@ -97,17 +98,19 @@ function MentionDateInput(props: {
     new Array(6).fill([]).map(() => {
       new Array(7).fill(null).map(() => {
         currentMonthCount++;
-        const date = new Date(Date.UTC(state.year, state.month, currentMonthCount));
-        const date2 = dayjs(date)
+        const date = new Date(
+          Date.UTC(state.year, state.month, currentMonthCount),
+        );
+        const date2 = dayjs(date);
         days.push({
-          date: date, //`${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`,
+          date, // `${date.getFullYear()}-${date.getMonth()}-${date.getDate()}`,
           isCurrentMonth: date.getMonth() === state.month,
           isToday: dayjs(date).isToday(),
-          isSelected: date1.isSame(date2)
-        })
+          isSelected: date1.isSame(date2),
+        });
         // dayjs(new Date(year, month, currentMonthCount))
-      })
-    })
+      });
+    });
 
     for (let i = 0; i < 2; i++) {
       if (days.slice(-7).every((day) => day.isCurrentMonth == false)) {
@@ -116,15 +119,15 @@ function MentionDateInput(props: {
     }
 
     setDays(days);
-  }, [state.month, props.mentionDate])
+  }, [state.month, props.mentionDate]);
 
   const monthInLocale = (month: number) => {
-    var date = new Date();
+    const date = new Date();
     date.setDate(1);
     date.setMonth(month);
-    const str = date.toLocaleString('ru-RU', { month: "long" });
+    const str = date.toLocaleString('ru-RU', { month: 'long' });
     return _.startCase(str);
-  }
+  };
 
   return (
     <div className={`relative priority-${props.priority * 10}`}>
@@ -137,15 +140,19 @@ function MentionDateInput(props: {
         leaveFrom="max-h-[500px] opacity-100 mt-3"
         leaveTo="max-h-0 opacity-0 mt-0"
       >
-
-        <Alert toggleVisibility={(e: any) => props.toggleVisibility(e, 'mentionDate')}
-          title={"Дата"}
-          text={"Например дата статьи в которой упоминается объект или дата комментария."} />
-
+        <Alert
+          toggleVisibility={(e: any) => props.toggleVisibility(e, 'mentionDate')}
+          title="Дата"
+          text="Например дата статьи в которой упоминается объект или дата комментария."
+        />
 
         <div>
           <div className="flex items-center">
-            <div className="flex-auto text-sm font-semibold text-gray-900">{monthInLocale(state.month)} {state.year}</div>
+            <div className="flex-auto text-sm font-semibold text-gray-900">
+              {monthInLocale(state.month)}
+              {' '}
+              {state.year}
+            </div>
             <button
               onClick={() => dispatch({ type: 'decrement' })}
               type="button"
@@ -173,32 +180,45 @@ function MentionDateInput(props: {
             <div>Вс</div>
           </div>
           <div className="mt-2 grid grid-cols-7 text-sm bg-white rounded-md shadow ring-1 ring-gray-200">
-            {days && days.map((day, dayIdx) => (
-              <div key={day.date.toLocaleDateString("en-US")}
-                className={classNames(dayIdx > 6 && 'border-t border-gray-200', 'py-2')}>
-                <button
-                  onClick={() => setMentionDate(day.date)}
-                  type="button"
+            {days
+              && days.map((day, dayIdx) => (
+                <div
+                  key={day.date.toLocaleDateString('en-US')}
                   className={classNames(
-                    day.isSelected && 'text-white',
-                    !day.isSelected && day.isToday && 'text-indigo-600',
-                    !day.isSelected && !day.isToday && day.isCurrentMonth && 'text-gray-900',
-                    !day.isSelected && !day.isToday && !day.isCurrentMonth && 'text-gray-400',
-                    day.isSelected && day.isToday && 'bg-indigo-600',
-                    day.isSelected && !day.isToday && 'bg-gray-600',
-                    !day.isSelected && 'hover:bg-gray-200',
-                    (day.isSelected || day.isToday) && 'font-semibold',
-                    'mx-auto flex h-7 w-7 items-center justify-center rounded-full'
+                    dayIdx > 6 && 'border-t border-gray-200',
+                    'py-2',
                   )}
                 >
-                  {/*<time dateTime={day.date.toString()}>{day.date.toString().replace(/^0/, '')}</time>*/}
-                  <time dateTime={day.date.getDate().toString()}>{day.date.getDate().toString().replace(/^0/, '')}</time>
-                </button>
-              </div>
-            ))}
+                  <button
+                    onClick={() => setMentionDate(day.date)}
+                    type="button"
+                    className={classNames(
+                      day.isSelected && 'text-white',
+                      !day.isSelected && day.isToday && 'text-indigo-600',
+                      !day.isSelected
+                        && !day.isToday
+                        && day.isCurrentMonth
+                        && 'text-gray-900',
+                      !day.isSelected
+                        && !day.isToday
+                        && !day.isCurrentMonth
+                        && 'text-gray-400',
+                      day.isSelected && day.isToday && 'bg-indigo-600',
+                      day.isSelected && !day.isToday && 'bg-gray-600',
+                      !day.isSelected && 'hover:bg-gray-200',
+                      (day.isSelected || day.isToday) && 'font-semibold',
+                      'mx-auto flex h-7 w-7 items-center justify-center rounded-full',
+                    )}
+                  >
+                    {/* <time dateTime={day.date.toString()}>{day.date.toString().replace(/^0/, '')}</time> */}
+                    <time dateTime={day.date.getDate().toString()}>
+                      {day.date.getDate().toString().replace(/^0/, '')}
+                    </time>
+                  </button>
+                </div>
+              ))}
           </div>
         </div>
-
       </Transition>
     </div>
   );

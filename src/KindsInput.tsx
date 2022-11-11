@@ -1,7 +1,14 @@
-import React, { Dispatch, useContext, useEffect, useState, MouseEvent } from 'react';
+import React, {
+  Dispatch,
+  useContext,
+  useEffect,
+  useState,
+  MouseEvent,
+} from 'react';
 import { Transition } from '@headlessui/react';
 import { v4 as uuidv4 } from 'uuid';
 
+import { CheckCircleIcon, XIcon } from '@heroicons/react/solid';
 import Combobox from './controls/Combobox';
 import Option from './controls/Combobox/Option';
 
@@ -9,16 +16,17 @@ import Tags from './controls/Tags';
 import Item from './controls/Tags/Item';
 
 import { EntityAction, Kind } from '../main';
-import { appUrl, EntityActionType, GlobalContext, newKind } from './Utils';
-import { CheckCircleIcon, XIcon } from '@heroicons/react/solid';
+import {
+  appUrl, EntityActionType, GlobalContext, newKind,
+} from './Utils';
 import Alert from './Alert';
 
 export default function KindsInput(props: {
-  toggleVisibility: any,
-  priority: number,
-  show: boolean,
-  kinds: Kind[],
-  dispatch: Dispatch<EntityAction>,
+  toggleVisibility: any;
+  priority: number;
+  show: boolean;
+  kinds: Kind[];
+  dispatch: Dispatch<EntityAction>;
 }) {
   const [highlightedIndex, setHighlightedIndex] = useState<number | null>(-1);
   const [searchString, setSearchString] = useState('');
@@ -42,7 +50,6 @@ export default function KindsInput(props: {
       },
     })
       .then((res) => {
-
         if (res.status === 401) {
           chrome.runtime.sendMessage({ message: 'request-auth' });
         }
@@ -64,12 +71,10 @@ export default function KindsInput(props: {
         });
         return res;
       })
-      .then(
-        (result) => {
-          // props.setIsBusy(false);
-          setOptions(result);
-        },
-      )
+      .then((result) => {
+        // props.setIsBusy(false);
+        setOptions(result);
+      })
       .catch((reason) => {
         // props.setIsBusy(false);
         console.error(reason);
@@ -95,11 +100,15 @@ export default function KindsInput(props: {
 
   const setKinds = (kind: Kind) => {
     setSearchString('');
-    props.dispatch({type: EntityActionType.SET_KINDS, payload: {kind: kind}})
+    props.dispatch({ type: EntityActionType.SET_KINDS, payload: { kind } });
     // e.preventDefault(); removeKind(kind);
-  }
+  };
 
-  const mergeByProperty = (target: Kind[], source: Kind[], prop: keyof Kind) => {
+  const mergeByProperty = (
+    target: Kind[],
+    source: Kind[],
+    prop: keyof Kind,
+  ) => {
     const result: Kind[] = [];
 
     for (const kind of source) {
@@ -127,10 +136,14 @@ export default function KindsInput(props: {
     return result;
   };
 
-  const mergedOptions: any = mergeByProperty(options || [], props.kinds || [], 'index');
+  const mergedOptions: any = mergeByProperty(
+    options || [],
+    props.kinds || [],
+    'index',
+  );
 
   const isSelected = (option: Kind) => props.kinds.some(
-    (row) => row.id === option.id && row.title === option.title && !row.destroy
+    (row) => row.id === option.id && row.title === option.title && !row.destroy,
   );
 
   const titleForKinds = () => {
@@ -153,10 +166,13 @@ export default function KindsInput(props: {
         leaveFrom="max-h-[500px] opacity-100 mt-3"
         leaveTo="max-h-0 opacity-0 mt-0"
       >
-
-        <Alert toggleVisibility={(e: any) => props.toggleVisibility(e, 'kinds')}
-          title={"Теги"}
-          text={'Старайтесь указывать теги в соответствии с правилами языка, например, "SaaS" или "Ruby on Rails".'} />
+        <Alert
+          toggleVisibility={(e: any) => props.toggleVisibility(e, 'kinds')}
+          title="Теги"
+          text={
+            'Старайтесь указывать теги в соответствии с правилами языка, например, "SaaS" или "Ruby on Rails".'
+          }
+        />
 
         <Combobox
           searchString={searchString}
@@ -164,18 +180,23 @@ export default function KindsInput(props: {
           title={titleForKinds()}
           setHighlightedIndex={setHighlightedIndex}
         >
-
-          {searchString && searchString !== '' && !(mergedOptions.some((option: Kind) => option.title === searchString))
-            && (
+          {searchString
+            && searchString !== ''
+            && !mergedOptions.some(
+              (option: Kind) => option.title === searchString,
+            ) && (
               <Option
                 highlightedIndex={highlightedIndex}
                 setHighlightedIndex={setHighlightedIndex}
                 key={createOption.index}
                 changeSelection={() => setKinds(createOption)}
                 isSelected={isSelected(createOption)}
-                option={{ ...createOption, ...{ title: `Добавить: ${searchString}` } }}
+                option={{
+                  ...createOption,
+                  ...{ title: `Добавить: ${searchString}` },
+                }}
               />
-            )}
+          )}
 
           {mergedOptions.map((option: Kind) => (
             <Option
@@ -190,18 +211,18 @@ export default function KindsInput(props: {
         </Combobox>
 
         <Tags>
-          {props.kinds.map((kind: Kind) => (
-            !kind.destroy
-            && (
-              <Item
-                handleClick={() => { setKinds(kind) }}
-                key={kind.index}
-                item={kind}
-              />
-            )
-          ))}
+          {props.kinds.map(
+            (kind: Kind) => !kind.destroy && (
+            <Item
+              handleClick={() => {
+                setKinds(kind);
+              }}
+              key={kind.index}
+              item={kind}
+            />
+            ),
+          )}
         </Tags>
-
       </Transition>
     </div>
   );

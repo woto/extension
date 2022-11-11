@@ -1,23 +1,25 @@
-import React, { MouseEventHandler } from "react";
+import React, { MouseEventHandler, ReactNode } from "react";
+import { motion } from "framer-motion";
 import { ToastContextInterface, ToastType } from "../main";
 import Toast from "./Toast";
-import { motion } from "framer-motion";
 
-const Ctx = React.createContext<ToastContextInterface>({ add: null, remove: null });
+const Ctx = React.createContext({} as ToastContextInterface);
 
 // Styled Components
 // ==============================
 
-const ToastContainer = (props: { children: React.ReactNode }) => (
-  <div
-    aria-live="assertive"
-    className="fixed inset-0 flex items-end px-4 py-6 pointer-events-none sm:p-6 sm:items-start"
-  >
-    <div className="w-full flex flex-col items-center space-y-4 sm:items-end">
-      {props.children}
+function ToastContainer(props: { children: React.ReactNode }) {
+  return (
+    <div
+      aria-live="assertive"
+      className="fixed inset-0 flex items-end px-4 py-6 pointer-events-none sm:p-6 sm:items-start"
+    >
+      <div className="w-full flex flex-col items-center space-y-4 sm:items-end">
+        {props.children}
+      </div>
     </div>
-  </div>
-);
+  );
+}
 
 // const TmpToast = (props: { children: React.ReactNode, onDismiss: MouseEventHandler<HTMLDivElement> | undefined }) => (
 //   <div
@@ -44,7 +46,7 @@ let toastCount = 0;
 export function ToastProvider(props: { children: React.ReactNode }) {
   const [toasts, setToasts] = React.useState<ToastType[]>([]);
 
-  const add = (content: string) => {
+  const add = (content: string | ReactNode) => {
     const id = toastCount++;
     const toast = { content, id };
     setToasts((prevToasts) => [...prevToasts, toast]);

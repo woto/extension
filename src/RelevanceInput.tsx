@@ -1,33 +1,34 @@
 import { Transition } from '@headlessui/react';
 import React, { Dispatch, useCallback } from 'react';
+import { CheckCircleIcon, XIcon } from '@heroicons/react/solid';
 import Select from './controls/Select';
 import Option from './controls/Select/Option';
 
 import { EntityAction, Relevance } from '../main';
-import { CheckCircleIcon, XIcon } from '@heroicons/react/solid';
 import Alert from './Alert';
 import { EntityActionType } from './Utils';
 
 export default function RelevanceInput(props: {
-  relevance: Relevance | null | undefined,
-  setRelevance: React.Dispatch<React.SetStateAction<Relevance | null | undefined>>
-  options: Relevance[],
-  toggleVisibility: any,
-  priority: number,
-  show: boolean,
+  relevance: Relevance | null | undefined;
+  setRelevance: React.Dispatch<
+    React.SetStateAction<Relevance | null | undefined>
+  >;
+  options: Relevance[];
+  toggleVisibility: any;
+  priority: number;
+  show: boolean;
 }) {
-
   const handleChangeRelevance = (relevance: Relevance) => {
     let newRelevance: Relevance | null = null;
 
     if (props.relevance?.id === relevance.id) {
-      newRelevance = null
+      newRelevance = null;
     } else {
-      newRelevance = relevance
+      newRelevance = relevance;
     }
 
-    props.setRelevance(newRelevance)
-  }
+    props.setRelevance(newRelevance);
+  };
 
   const titleForRelevance = () => {
     const { options } = props;
@@ -47,11 +48,11 @@ export default function RelevanceInput(props: {
         leaveFrom="max-h-[500px] opacity-100 mt-3"
         leaveTo="max-h-0 opacity-0 mt-0"
       >
-
         <Alert
           toggleVisibility={(e: any) => props.toggleVisibility(e, 'relevance')}
-          title={"Важность"}
-          text={"Отметтье важность, с которой упоминается объект. Как правило в статье не более 2-3 основных объектов."} />
+          title="Важность"
+          text="Отметтье важность, с которой упоминается объект. Как правило в статье не более 2-3 основных объектов."
+        />
 
         <Select title={titleForRelevance()}>
           {props.options.map((option) => (

@@ -1,15 +1,20 @@
-import React, { Dispatch, SetStateAction, useContext, useEffect, useState } from 'react'
-import { Image, Entity, EntityAction } from '../main'
-import { appUrl, EntityActionType, GlobalContext, newImage, preventDefault } from './Utils';
+import React, { Dispatch, useContext, useState } from "react";
+import { Image, Entity, EntityAction } from "../main";
+import {
+  appUrl,
+  EntityActionType,
+  GlobalContext,
+  newImage,
+  preventDefault,
+} from "./Utils";
 
 export default function FileInput(props: {
-  entity: Entity,
-  dispatch: Dispatch<EntityAction>
+  entity: Entity;
+  dispatch: Dispatch<EntityAction>;
 }) {
-
   const globalContext = useContext(GlobalContext);
 
-  const [filesError, setFilesError] = useState<string>('');
+  const [filesError, setFilesError] = useState<string>("");
   const [isDragging, setIsDragging] = useState(false);
 
   const onDragEnter = (e: any) => {
@@ -25,15 +30,14 @@ export default function FileInput(props: {
   const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
     // let errorMessage = 'изображение не найдено';
 
-    const clipboardData = e.clipboardData;
-    const text = clipboardData.getData('text')
-    const files = clipboardData.files;
+    const { clipboardData } = e;
+    const text = clipboardData.getData("text");
+    const { files } = clipboardData;
 
-    console.log(files);
-    console.log(text);
-
-    Array.from(files).forEach((file) => uploadFile({ file: file }));
-    if (text) { uploadFile({ image_src: text }) }
+    Array.from(files).forEach((file) => uploadFile({ file }));
+    if (text) {
+      uploadFile({ image_src: text });
+    }
   };
 
   const handleDrop = (e: React.DragEvent<HTMLTextAreaElement>) => {
@@ -46,16 +50,21 @@ export default function FileInput(props: {
     const { files } = data;
 
     if (files.length > 0) {
-      Array.from(files).forEach((file) => uploadFile({ file: file }));
+      Array.from(files).forEach((file) => uploadFile({ file }));
     } else {
       const domParser = new DOMParser();
-      const fragment = domParser.parseFromString(data.getData('text/html'), 'text/html');
+      const fragment = domParser.parseFromString(
+        data.getData("text/html"),
+        "text/html"
+      );
 
-      let image_src = fragment.querySelector('img')?.src;
-      let video_src = fragment.querySelector('video')?.src || fragment.querySelector('source')?.src;
+      const image_src = fragment.querySelector("img")?.src;
+      const video_src =
+        fragment.querySelector("video")?.src ||
+        fragment.querySelector("source")?.src;
 
       if (image_src || video_src) {
-        uploadFile({ image_src: image_src, video_src: video_src })
+        uploadFile({ image_src, video_src });
         // // const finalUrl = `${imgproxyUrl}/AfrOrF3gWeDA6VOlDG4TzxMv39O7MXnF4CXpKUwGqRM/background:FFF/rs:fit:400:400:1/ex:0/el:0/g:sm/plain/${encodeURIComponent(img.src)}@png`;
         // // const finalUrl = `${imgproxyUrl}/AfrOrF3gWeDA6VOlDG4TzxMv39O7MXnF4CXpKUwGqRM/plain/${encodeURIComponent(img.src)}`;
         // const finalUrl = `${imgproxyUrl}/AfrOrF3gWeDA6VOlDG4TzxMv39O7MXnF4CXpKUwGqRM/background:FFF/rs:fit:400:400:1/ex:0/el:0/g:sm/plain/${encodeURIComponent(img.src)}`;
@@ -73,45 +82,47 @@ export default function FileInput(props: {
         //     alert(reason);
         //   });
       } else {
-        setFilesError('изображение не найдено');
+        setFilesError("изображение не найдено");
       }
     }
   };
 
-  const uploadFile = async (params: { file?: File, image_src?: string, video_src?: string }) => {
-
+  const uploadFile = async (params: {
+    file?: File;
+    image_src?: string;
+    video_src?: string;
+  }) => {
     const upload = (image: Image) => {
       if (image.json) {
-        return image
+        return image;
       }
 
       const formData = new FormData();
 
       if (image.file) {
-        formData.append('file', image.file);
+        formData.append("file", image.file);
       }
 
       if (image.image_src) {
-        formData.append('src', image.image_src);
+        formData.append("src", image.image_src);
       }
 
       if (image.video_src) {
-        formData.append('src', image.video_src);
+        formData.append("src", image.video_src);
       }
 
       return fetch(`${appUrl}/api/uploads`, {
-        credentials: 'omit',
-        method: 'POST',
+        credentials: "omit",
+        method: "POST",
         body: formData,
         headers: {
           // 'Content-Type': 'multipart/form-data',
           // 'Accept': 'application/json',
-          'Api-Key': globalContext.apiKey,
+          "Api-Key": globalContext.apiKey,
         },
       }).then((res) => {
-
         if (res.status === 401) {
-          chrome.runtime.sendMessage({ message: 'request-auth' });
+          chrome.runtime.sendMessage({ message: "request-auth" });
         }
 
         if (!res.ok) throw new Error(res.statusText);
@@ -120,9 +131,12 @@ export default function FileInput(props: {
       });
     };
 
-    const image = newImage({ file: params.file, image_src: params.image_src, video_src: params.video_src });
-    props.dispatch({ type: EntityActionType.APPEND_IMAGE, payload: { image: image } })
-
+    const image = newImage({
+      file: params.file,
+      image_src: params.image_src,
+      video_src: params.video_src,
+    });
+    props.dispatch({ type: EntityActionType.APPEND_IMAGE, payload: { image } });
 
     const file = await upload(image!);
 
@@ -137,15 +151,17 @@ export default function FileInput(props: {
       file: image.file,
       dark: false,
       destroy: image.destroy,
-    }
+    };
 
-    props.dispatch({ type: EntityActionType.REPLACE_IMAGE, payload: { oldImage: image, newImage: result } })
+    props.dispatch({
+      type: EntityActionType.REPLACE_IMAGE,
+      payload: { oldImage: image, newImage: result },
+    });
   };
-
 
   const handleInputFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
-      Array.from(e.target.files).forEach((file) => uploadFile({ file: file }));
+      Array.from(e.target.files).forEach((file) => uploadFile({ file }));
       cleanInputFile(e);
     }
   };
@@ -155,11 +171,12 @@ export default function FileInput(props: {
     e.target.files = container.files;
   };
 
-  const draggingClass = isDragging ? 'bg-yellow-50' : 'bg-white';
+  const draggingClass = isDragging ? "bg-yellow-50" : "bg-white";
 
   return (
-
-    <div className={`relative mt-3 rounded-md transition-colors ${draggingClass}`}>
+    <div
+      className={`relative mt-3 rounded-md transition-colors ${draggingClass}`}
+    >
       <textarea
         onDragEnter={onDragEnter}
         onDragLeave={onDragLeave}
@@ -170,9 +187,7 @@ export default function FileInput(props: {
         tabIndex={-1}
       />
 
-      <div
-        className="shadow-sm peer-focus:ring-indigo-500 peer-focus:border-indigo-500 text-sm max-w-lg flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md block w-full"
-      >
+      <div className="shadow-sm peer-focus:ring-indigo-500 peer-focus:border-indigo-500 text-sm max-w-lg flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md block w-full">
         <div className="space-y-1 text-center">
           <svg
             className="mx-auto h-12 w-12 text-gray-400"
@@ -204,9 +219,11 @@ export default function FileInput(props: {
             </label>
             <span className="pl-1">перетащите или вставьте</span>
           </div>
-          <p className="text-xs text-gray-500">картинку или видео размером до 10Мб</p>
+          <p className="text-xs text-gray-500">
+            картинку или видео размером до 10Мб
+          </p>
         </div>
       </div>
     </div>
-  )
+  );
 }

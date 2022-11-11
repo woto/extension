@@ -1,21 +1,22 @@
-import React, { Dispatch, Fragment, useCallback, useMemo, useState } from 'react';
-import { TrashIcon } from '@heroicons/react/outline';
+import React, {
+  Dispatch,
+  Fragment,
+  useCallback,
+  useMemo,
+  useState,
+} from 'react';
+import { TrashIcon, MoonIcon, SunIcon } from '@heroicons/react/outline';
 import { Transition } from '@headlessui/react';
 import { EntityAction, Image } from '../main';
-import { EntityActionType } from './Utils';
-import { MoonIcon, SunIcon } from '@heroicons/react/outline';
+import { appUrl, EntityActionType } from './Utils';
 
-function Thumbnail(props: {
-  image: Image,
-  dispatch: Dispatch<EntityAction>,
-}) {
-
-  const [showImage, setShowImage] = useState(true)
+function Thumbnail(props: { image: Image; dispatch: Dispatch<EntityAction> }) {
+  const [showImage, setShowImage] = useState(true);
   const { image } = props;
 
   // URL.revokeObjectURL(objectUrl);
 
-  let objectUrl = useMemo(() => {
+  const objectUrl = useMemo(() => {
     if (image.destroy) return;
 
     if (image.video_url) {
@@ -28,34 +29,57 @@ function Thumbnail(props: {
 
     if (image.file instanceof File) {
       try {
-        const image_types = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp', 'image/vnd.microsoft.icon', 'image/svg+xml']
-        const video_types = ['video/mp4', 'video/webm', 'application/mp4', 'video/mp4', 'video/quicktime', 'video/avi', 'video/mpeg', 'video/x-mpeg', 'video/x-msvideo', 'video/m4v', 'video/x-m4v', 'video/vnd.objectvideo']
+        const image_types = [
+          'image/jpeg',
+          'image/jpg',
+          'image/png',
+          'image/gif',
+          'image/webp',
+          'image/vnd.microsoft.icon',
+          'image/svg+xml',
+        ];
+        const video_types = [
+          'video/mp4',
+          'video/webm',
+          'application/mp4',
+          'video/mp4',
+          'video/quicktime',
+          'video/avi',
+          'video/mpeg',
+          'video/x-mpeg',
+          'video/x-msvideo',
+          'video/m4v',
+          'video/x-m4v',
+          'video/vnd.objectvideo',
+        ];
 
         const object_url = URL.createObjectURL(image.file);
         if (image_types.includes(image.file.type)) {
-          return { image_url: object_url }
-        } else {
-          return { video_url: object_url }
+          return { image_url: object_url };
         }
+        return { video_url: object_url };
       } catch (error) {
-        console.warn(error)
+        console.warn(error);
       }
     }
   }, [image]);
 
   const removeImage = () => {
-    props.dispatch({ type: EntityActionType.REMOVE_IMAGE, payload: { image: image } })
+    props.dispatch({ type: EntityActionType.REMOVE_IMAGE, payload: { image } });
   };
 
   const toggleBackground = () => {
-    props.dispatch({ type: EntityActionType.TOGGLE_IMAGE_BACKGROUND, payload: { image: image } })
-  }
+    props.dispatch({
+      type: EntityActionType.TOGGLE_IMAGE_BACKGROUND,
+      payload: { image },
+    });
+  };
 
   const hideImage = () => {
-    setShowImage(false)
-  }
+    setShowImage(false);
+  };
 
-  const displaySpinner = !image.id && !image.json
+  const displaySpinner = !image.id && !image.json;
 
   return (
     <Transition
@@ -70,26 +94,34 @@ function Thumbnail(props: {
       leaveTo="opacity-0 scale-75"
       afterLeave={removeImage}
     >
-      <div className={`
+      <div
+        className={`
         rounded border p-0.5 h-full w-full group transition relative flex justify-center items-center
-        ${image.dark ? 'bg-slate-800 border-black' : 'bg-slate-50 border-slate-200'}
-      `}>
+        ${
+          image.dark
+            ? 'bg-slate-800 border-black'
+            : 'bg-slate-50 border-slate-200'
+        }
+      `}
+      >
         <div className="rounded absolute inset-0 group-hover:backdrop-brightness-[0.7] duration-150" />
-        {objectUrl?.image_url &&
+        {objectUrl?.image_url && (
           <img
-          className="object-scale-down h-full p-0.5"
-          src={objectUrl.image_url} />
-        }
+            alt=""
+            className="object-scale-down h-full p-0.5"
+            src={`${appUrl}/${objectUrl.image_url}`}
+          />
+        )}
 
-        {objectUrl?.video_url &&
+        {objectUrl?.video_url && (
           <video
-            autoPlay={true}
-            muted={true}
-            loop={true}
-            className={``}
-            src={objectUrl.video_url} />
-
-        }
+            autoPlay
+            muted
+            loop
+            className=""
+            src={`${appUrl}/${objectUrl.video_url}`}
+          />
+        )}
 
         <Transition
           show={displaySpinner}
@@ -123,15 +155,13 @@ function Thumbnail(props: {
             className="shadow-sm absolute top-1 left-1 items-center p-1 border border-transparent rounded-full
             text-white hover:bg-blue-700/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-300/30"
           >
-
-            {image.dark ?
+            {image.dark ? (
               <SunIcon className="h-4 w-4 text-white" />
-              :
-              <MoonIcon className="h-4 w-4 text-white" />}
-
+            ) : (
+              <MoonIcon className="h-4 w-4 text-white" />
+            )}
           </button>
         </div>
-
       </div>
     </Transition>
   );

@@ -1,13 +1,23 @@
 import { Transition } from '@headlessui/react';
-import React, { ChangeEvent, Dispatch, Fragment, useCallback, useEffect, useState } from 'react';
-import { PlusIcon, MinusIcon, XIcon, CheckCircleIcon } from '@heroicons/react/solid';
+import React, {
+  ChangeEvent,
+  Dispatch,
+  Fragment,
+  useCallback,
+  useEffect,
+  useState,
+} from 'react';
+import {
+  PlusIcon,
+  MinusIcon,
+  XIcon,
+  CheckCircleIcon,
+} from '@heroicons/react/solid';
 import { EntityAction, Lookup } from '../main';
 import { EntityActionType, newLookup } from './Utils';
 import Alert from './Alert';
 
-function AddButton(props: {
-  onClick: any
-}) {
+function AddButton(props: { onClick: any }) {
   return (
     <button
       onClick={props.onClick}
@@ -19,9 +29,7 @@ function AddButton(props: {
   );
 }
 
-function RemoveButton(props: {
-  onClick: any
-}) {
+function RemoveButton(props: { onClick: any }) {
   return (
     <button
       onClick={props.onClick}
@@ -34,12 +42,12 @@ function RemoveButton(props: {
 }
 
 function Input(props: {
-  lookup: Lookup,
-  isFirst: boolean,
-  isLast: boolean,
-  appendLookup: () => void
-  removeLookup: (lookup: Lookup) => void
-  handleChange: (lookup: Lookup, newTitle: string) => void
+  lookup: Lookup;
+  isFirst: boolean;
+  isLast: boolean;
+  appendLookup: () => void;
+  removeLookup: (lookup: Lookup) => void;
+  handleChange: (lookup: Lookup, newTitle: string) => void;
 }) {
   const [showItem, setShowItem] = useState(false);
 
@@ -51,9 +59,9 @@ function Input(props: {
     e.stopPropagation();
   };
 
-  const handleChange = ((event: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     props.handleChange(props.lookup, event.target.value);
-  });
+  };
 
   const hideItem = (event: any) => {
     event.preventDefault();
@@ -90,40 +98,47 @@ function Input(props: {
           />
         </div>
 
-        {props.isLast
-          ? <AddButton onClick={props.appendLookup} />
-          : <RemoveButton onClick={hideItem} />}
-
+        {props.isLast ? (
+          <AddButton onClick={props.appendLookup} />
+        ) : (
+          <RemoveButton onClick={hideItem} />
+        )}
       </div>
 
-      {!props.isLast &&
-        <div className="mb-3"></div>}
-
+      {!props.isLast && <div className="mb-3" />}
     </Transition>
   );
 }
 
 export default function LookupsInput(props: {
-  toggleVisibility: any,
-  priority: number,
-  show: boolean,
-  lookups: Lookup[],
-  dispatch: Dispatch<EntityAction>,
+  toggleVisibility: any;
+  priority: number;
+  show: boolean;
+  lookups: Lookup[];
+  dispatch: Dispatch<EntityAction>;
 }) {
-
   const handleAppend = useCallback(() => {
-    props.dispatch({ type: EntityActionType.APPEND_LOOKUP, payload: {lookup: newLookup()} })
+    props.dispatch({
+      type: EntityActionType.APPEND_LOOKUP,
+      payload: { lookup: newLookup() },
+    });
   }, []);
 
   const handleRemove = useCallback((lookup: Lookup) => {
-    props.dispatch({ type: EntityActionType.REMOVE_LOOKUP, payload: {lookup: lookup} })
+    props.dispatch({
+      type: EntityActionType.REMOVE_LOOKUP,
+      payload: { lookup },
+    });
   }, []);
 
   const handleChange = useCallback((lookup: Lookup, newTitle: string) => {
-    props.dispatch({ type: EntityActionType.SET_LOOKUP_TITLE, payload: { lookup: lookup, newTitle: newTitle } })
+    props.dispatch({
+      type: EntityActionType.SET_LOOKUP_TITLE,
+      payload: { lookup, newTitle },
+    });
   }, []);
 
-  const visibleLookups = props.lookups.filter((item) => !item.destroy)
+  const visibleLookups = props.lookups.filter((item) => !item.destroy);
 
   return (
     <div className={`relative priority-${props.priority * 10}`}>
@@ -136,25 +151,26 @@ export default function LookupsInput(props: {
         leaveFrom="max-h-[500px] opacity-100 mt-3"
         leaveTo="max-h-0 opacity-0 mt-0"
       >
-
         <Alert
           toggleVisibility={(e: any) => props.toggleVisibility(e, 'lookups')}
-          title={"Синонимы"}
-          text={"Например добавляя упоминание Evernote, можно добавить синонимы Эверноут и Эвернот."} />
+          title="Синонимы"
+          text="Например добавляя упоминание Evernote, можно добавить синонимы Эверноут и Эвернот."
+        />
 
         <div className="flex flex-col">
-          {visibleLookups && visibleLookups.length > 0 && visibleLookups.map((lookup, index) => (
-            <Input
-              key={lookup.index}
-              appendLookup={handleAppend}
-              removeLookup={handleRemove}
-              handleChange={handleChange}
-              lookup={lookup}
-              isFirst={index === 0}
-              isLast={index === visibleLookups.length - 1}
-            />
-          )
-          )}
+          {visibleLookups
+            && visibleLookups.length > 0
+            && visibleLookups.map((lookup, index) => (
+              <Input
+                key={lookup.index}
+                appendLookup={handleAppend}
+                removeLookup={handleRemove}
+                handleChange={handleChange}
+                lookup={lookup}
+                isFirst={index === 0}
+                isLast={index === visibleLookups.length - 1}
+              />
+            ))}
         </div>
       </Transition>
     </div>

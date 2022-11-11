@@ -5,11 +5,11 @@ import { stopPropagation } from '../../Utils';
 import Options from './Options';
 
 export default function Combobox(props: {
-  children: React.ReactNode,
-  title: string,
-  searchString: string,
-  setSearchString: React.Dispatch<React.SetStateAction<string>>,
-  setHighlightedIndex: React.Dispatch<React.SetStateAction<number | null>>
+  children: React.ReactNode;
+  title: string;
+  searchString: string;
+  setSearchString: React.Dispatch<React.SetStateAction<string>>;
+  setHighlightedIndex: React.Dispatch<React.SetStateAction<number | null>>;
 }) {
   const [isOpen, setIsOpen] = useState(false);
 
@@ -24,8 +24,15 @@ export default function Combobox(props: {
   let counter = 0;
   const filteredOptions = React.Children.map(props.children, (child) => {
     if (React.isValidElement(child)) {
-      if (child.props.option.title.toLowerCase().includes(props.searchString.toLowerCase())) {
-        const element = React.cloneElement(child, { index: counter, isHighlighted: counter === child.props.highlightedIndex });
+      if (
+        child.props.option.title
+          .toLowerCase()
+          .includes(props.searchString.toLowerCase())
+      ) {
+        const element = React.cloneElement(child, {
+          index: counter,
+          isHighlighted: counter === child.props.highlightedIndex,
+        });
         counter++;
         return element;
       }
@@ -39,11 +46,15 @@ export default function Combobox(props: {
       e.preventDefault();
       setIsOpen(true);
     } else if (['ArrowUp'].includes(e.key)) {
-      props.setHighlightedIndex((prevVal) => (Number(prevVal) > 0 ? Number(prevVal) - 1 : Number(filteredOptions?.length) - 1));
+      props.setHighlightedIndex((prevVal) => (Number(prevVal) > 0
+        ? Number(prevVal) - 1
+        : Number(filteredOptions?.length) - 1));
       e.preventDefault();
       setIsOpen(true);
     } else if (['ArrowDown'].includes(e.key)) {
-      props.setHighlightedIndex((prevVal) => (Number(prevVal) < Number(filteredOptions?.length) - 1 ? Number(prevVal) + 1 : 0));
+      props.setHighlightedIndex((prevVal) => (Number(prevVal) < Number(filteredOptions?.length) - 1
+        ? Number(prevVal) + 1
+        : 0));
       e.preventDefault();
       setIsOpen(true);
     } else if (['Tab', 'Escape'].includes(e.key)) {
@@ -63,7 +74,6 @@ export default function Combobox(props: {
 
   return (
     <div ref={menuRef} className="relative">
-
       <input
         placeholder={props.title !== '' ? props.title : 'Выберите тип...'}
         onKeyDown={handleKeyDown}
@@ -80,7 +90,11 @@ export default function Combobox(props: {
         aria-expanded="false"
       />
 
-      <button type="button" tabIndex={-1} className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none">
+      <button
+        type="button"
+        tabIndex={-1}
+        className="absolute inset-y-0 right-0 flex items-center rounded-r-md px-2 focus:outline-none"
+      >
         <SelectorIcon className="h-5 w-5 text-gray-400" />
       </button>
 
@@ -88,13 +102,11 @@ export default function Combobox(props: {
         <SelectorIcon className="h-5 w-5 text-gray-400" />
       </span>
 
-      {filteredOptions && filteredOptions.length > 0
-        && (
-          <Options isOpen={isOpen} setIsOpen={setIsOpen}>
-            {filteredOptions}
-          </Options>
-        )}
-
+      {filteredOptions && filteredOptions.length > 0 && (
+        <Options isOpen={isOpen} setIsOpen={setIsOpen}>
+          {filteredOptions}
+        </Options>
+      )}
     </div>
   );
 }

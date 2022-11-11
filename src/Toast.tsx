@@ -2,9 +2,13 @@ import React, { MouseEventHandler, useEffect } from 'react';
 /* This example requires Tailwind CSS v2.0+ */
 import { Fragment, useState } from 'react';
 import { Transition } from '@headlessui/react';
-import { CheckCircleIcon } from '@heroicons/react/outline';
 import { XIcon } from '@heroicons/react/solid';
-import { AnimatePresence, motion, useAnimation, useAnimationControls } from 'framer-motion';
+import {
+  AnimatePresence,
+  motion,
+  useAnimation,
+  useAnimationControls,
+} from 'framer-motion';
 
 const draw = {
   hidden: { pathLength: 0, opacity: 0 },
@@ -13,30 +17,30 @@ const draw = {
     opacity: 1,
     transition: {
       opacity: { duration: 1 },
-      pathLength: { duration: 5, bounce: 0 }
-    }
-  }
+      pathLength: { duration: 5, bounce: 0 },
+    },
+  },
 };
 
-
 export default function Toast(props: {
-  children: React.ReactNode,
-  onDismiss: MouseEventHandler<HTMLDivElement> | undefined
+  children: React.ReactNode;
+  onDismiss: MouseEventHandler<HTMLDivElement> | undefined;
 }) {
-
   const [show, setShow] = useState(true);
   const [showCircle, setShowCircle] = useState(false);
 
   const controls = useAnimationControls();
 
   useEffect(() => {
-    controls.start("visible");
-  }, [showCircle])
+    controls.start('visible');
+  }, [showCircle]);
 
   return (
     <Transition
-      afterEnter={() => { setShowCircle(true); }}
-      appear={true}
+      afterEnter={() => {
+        setShowCircle(true);
+      }}
+      appear
       show={show}
       as={Fragment}
       enter="transform ease-out duration-300 transition"
@@ -47,12 +51,16 @@ export default function Toast(props: {
       leaveTo="opacity-0"
     >
       <div
-        onMouseEnter={() => { controls.stop() }}
-        onMouseLeave={() => { controls.start('visible') }}
-        className="max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden">
+        onMouseEnter={() => {
+          controls.stop();
+        }}
+        onMouseLeave={() => {
+          controls.start('visible');
+        }}
+        className="max-w-sm w-full bg-white shadow-lg rounded-lg pointer-events-auto ring-1 ring-black ring-opacity-5 overflow-hidden"
+      >
         <div className="p-4">
           <div className="flex items-center">
-
             {props.children}
 
             <div className="ml-4 relative p-1 flex-shrink-0 flex">
@@ -62,9 +70,8 @@ export default function Toast(props: {
                   setShow(false);
                 }}
               >
-
                 <AnimatePresence>
-                  {showCircle &&
+                  {showCircle && (
                     <svg
                       className="h-16 w-16 absolute left-1/2 -translate-x-1/2 top-1/2 -translate-y-1/2"
                       viewBox="0 0 40 40"
@@ -87,11 +94,10 @@ export default function Toast(props: {
                         variants={draw}
                       />
                     </svg>
-                  }
+                  )}
                 </AnimatePresence>
 
                 <XIcon className="h-5 w-5" aria-hidden="true" />
-
               </button>
             </div>
           </div>

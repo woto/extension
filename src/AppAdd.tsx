@@ -8,27 +8,29 @@
 // https://github.com/satendra02/react-chrome-extension/blob/master/src/App.test.js
 
 import React, {
-  Dispatch,
-  Fragment, ReducerWithoutAction, useCallback, useEffect, useReducer, useRef, useState,
+  useCallback, useEffect, useReducer, useState,
 } from 'react';
 import { Transition } from '@headlessui/react';
 import Draggable, { DraggableData, DraggableEvent } from 'react-draggable';
 
-import { ChevronDownIcon, ChevronUpIcon, XIcon } from '@heroicons/react/solid';
+import { ChevronUpIcon, XIcon } from '@heroicons/react/solid';
 import { CogIcon } from '@heroicons/react/outline';
+import { useDebounce } from 'react-use';
 import Form from './Form';
 import List from './List';
 import SearchInput from './controls/SearchInput';
-import Toast from './Toast';
 import logo from './logo.svg';
 
 import type {
-  FragmentHash, Entity, Kind, GlobalContextInterface, EntityAction, Lookup, Relevance, Sentiment,
+  FragmentHash, Entity, Relevance, Sentiment,
 } from '../main';
-import { appUrl, EntityActionType, GlobalContext, newEntity, stopPropagation } from './Utils';
-import { useToasts } from "./ToastManager";
-import { url } from 'inspector';
-import { lookup } from 'dns';
+import {
+  EntityActionType,
+  GlobalContext,
+  newEntity,
+  stopPropagation,
+} from './Utils';
+import { useToasts } from './ToastManager';
 import { entityReducer, initEntity } from './entityReducer';
 
 const createTextFragment = () => {
@@ -48,28 +50,36 @@ const createTextFragment = () => {
     ? `,-${encodeURIComponent(fragmentHash.suffix)}`
     : '';
 
-  const textStart = encodeURIComponent(fragmentHash.textStart)
-    .replace('-', '%2D');
+  const textStart = encodeURIComponent(fragmentHash.textStart).replace(
+    '-',
+    '%2D',
+  );
 
   const textEnd = fragmentHash.textEnd
     ? `,${encodeURIComponent(fragmentHash.textEnd)}`
     : '';
 
-  const hash = location.hash
-    ? `${location.hash}:~:text=`
-    : '#:~:text='
+  const hash = location.hash ? `${location.hash}:~:text=` : '#:~:text=';
 
   const hashValue = `${prefix}${textStart}${textEnd}${suffix}`;
 
-  let url = new URL(window.location.href);
+  const url = new URL(window.location.href);
 
   if (hashValue) url.hash = `${hash}${hashValue}`;
 
-  return { selection: selection!, url: url.toString(), fragmentHash: fragmentHash! };
+  return {
+    selection: selection!,
+    url: url.toString(),
+    fragmentHash: fragmentHash!,
+  };
 };
 
 function AppAdd() {
-  const [entity, dispatch] = useReducer(entityReducer, newEntity(''), initEntity)
+  const [entity, dispatch] = useReducer(
+    entityReducer,
+    newEntity(''),
+    initEntity,
+  );
 
   const nodeRef = React.useRef(null);
   const [fragmentUrl, setFragmentUrl] = useState('');
@@ -88,16 +98,17 @@ function AppAdd() {
   const [positionX, setPositionX] = useState(5);
   const [positionY, setPositionY] = useState(5);
 
-  const [relevance, setRelevance] = useState<Relevance | null | undefined>()
-  const [sentiment, setSentiment] = useState<Sentiment | null | undefined>()
-  const [mentionDate, setMentionDate] = useState<Date | null | undefined>()
+  const [relevance, setRelevance] = useState<Relevance | null | undefined>();
+  const [sentiment, setSentiment] = useState<Sentiment | null | undefined>();
+  const [mentionDate, setMentionDate] = useState<Date | null | undefined>();
 
-  const [operation, setOperation] = useState<'add' | 'edit'>('add')
+  const [operation, setOperation] = useState<'add' | 'edit'>('add');
   const { add } = useToasts();
 
   const [showWindow, setShowWindow] = useState(false);
   const [collapseWindow, setCollapseWindow] = useState(false);
   const [apiKey, setApiKey] = useState<string>('');
+  const [pageLanguage, setPageLanguage] = useState<string | undefined>();
 
   useEffect(() => {
     const fn = async () => {
@@ -111,33 +122,33 @@ function AppAdd() {
   useEffect(() => {
     const subscription = function (
       changes: { [key: string]: chrome.storage.StorageChange },
-      areaName: "sync" | "local" | "managed" | "session") {
-
+      areaName: 'sync' | 'local' | 'managed' | 'session',
+    ) {
       if (changes?.apiKey?.newValue) {
-        setApiKey(changes.apiKey.newValue)
+        setApiKey(changes.apiKey.newValue);
         setShowWindow(true);
       }
 
       // for (let [key, { oldValue, newValue }] of Object.entries(changes)) {
-      //   console.log(
+      //   // console.log(
       //     `Storage key "${key}" in namespace "${areaName}" changed.`,
       //     `Old value was "${JSON.stringify(oldValue)}", new value is "${JSON.stringify(newValue)}".`
       //   );
       // }
-    }
+    };
 
     chrome.storage.onChanged.addListener(subscription);
 
     return () => {
       chrome.storage.onChanged.removeListener(subscription);
     };
-  })
+  });
 
   const setPreserveWidget = async () => {
-    console.log('sendMessage', 'preserve-widget');
+    // // console.log('sendMessage', 'preserve-widget');
 
     chrome.runtime.sendMessage({
-      message: "preserve-widget",
+      message: 'preserve-widget',
       fragmentUrl,
       linkUrl,
       imageSrc,
@@ -157,30 +168,55 @@ function AppAdd() {
       positionX,
       positionY,
       operation,
-    })
-  }
+      pageLanguage,
+    });
+  };
 
   useEffect(() => {
     setPreserveWidget();
-  }, [fragmentUrl, linkUrl, imageSrc, fragmentHash, searchString, showForm, showWindow, collapseWindow,
-    entity, entities, page, scrollPosition, showDebug, positionX, positionY, mentionDate, relevance, sentiment,
-    operation])
+  }, [
+    fragmentUrl,
+    linkUrl,
+    imageSrc,
+    fragmentHash,
+    searchString,
+    showForm,
+    showWindow,
+    collapseWindow,
+    entity,
+    entities,
+    page,
+    scrollPosition,
+    showDebug,
+    positionX,
+    positionY,
+    mentionDate,
+    relevance,
+    sentiment,
+    operation,
+    pageLanguage,
+  ]);
 
   useEffect(() => {
     const subscription = (
       request: any,
       sender: chrome.runtime.MessageSender,
-      sendResponse: (response?: any) => void
+      sendResponse: (response?: any) => void,
     ) => {
+      // console.log('received message');
       const { message, feature } = request;
 
       if (message === 'edit-entity') {
-        dispatch({ type: EntityActionType.INIT, payload: newEntity('', request.entityId) });
+        dispatch({
+          type: EntityActionType.INIT,
+          payload: newEntity('', request.entityId),
+        });
 
         // setPositionX(request.positionX);
         // setPositionY(request.positionY);
         // setSearchString(request.searchString);
         setCollapseWindow(false);
+        setDelayCollapseWindow(false);
         // setFragmentUrl(request.fragmentUrl);
         // setFragmentHash(request.fragmentHash);
         // setLinkUrl(request.linkUrl);
@@ -205,10 +241,11 @@ function AppAdd() {
         // dispatch({ type: EntityActionType.INIT, payload: newEntity('') });
 
         setOperation('edit');
+        setPageLanguage(request.pageLanguage);
 
         return sendResponse();
       }
-    }
+    };
 
     chrome.runtime.onMessage.addListener(subscription);
 
@@ -218,17 +255,14 @@ function AppAdd() {
   }, []);
 
   useEffect(() => {
-
     const subscription = (
       request: any,
       sender: chrome.runtime.MessageSender,
-      sendResponse: (response?: any) => void
+      sendResponse: (response?: any) => void,
     ) => {
-
       const { message, feature } = request;
 
       if (message === 'restore-widget') {
-
         if (showWindow) return sendResponse();
 
         setPositionX(request.positionX);
@@ -250,10 +284,11 @@ function AppAdd() {
         setSentiment(request.sentiment);
         setShowDebug(request.showDebug);
         setShowForm(request.showForm);
+        setPageLanguage(request.pageLanguage);
 
         return sendResponse();
       }
-    }
+    };
 
     chrome.runtime.onMessage.addListener(subscription);
 
@@ -263,13 +298,11 @@ function AppAdd() {
   }, []);
 
   useEffect(() => {
-
     const subscription = (
       request: any,
       sender: chrome.runtime.MessageSender,
-      sendResponse: (response?: any) => void
+      sendResponse: (response?: any) => void,
     ) => {
-
       const { message, feature } = request;
 
       if (message === 'create-fragment') {
@@ -287,14 +320,16 @@ function AppAdd() {
         setScrollPosition(0);
         setPage(1);
         setCollapseWindow(false);
+        setDelayCollapseWindow(false);
         dispatch({ type: EntityActionType.INIT, payload: newEntity('') });
         setMentionDate(null);
         setRelevance(null);
         setSentiment(null);
+        setPageLanguage(request.pageLanguage);
 
         return sendResponse();
       }
-    }
+    };
 
     chrome.runtime.onMessage.addListener(subscription);
 
@@ -302,8 +337,6 @@ function AppAdd() {
       chrome.runtime.onMessage.removeListener(subscription);
     };
   }, []);
-
-
 
   const handleBackButtonClick = useCallback((event: any) => {
     event.preventDefault();
@@ -314,7 +347,7 @@ function AppAdd() {
     event.preventDefault();
     setShowForm(true);
     dispatch({ type: EntityActionType.INIT, payload: newEntity(searchString) });
-  }
+  };
 
   const handleStart = () => {
     setIsDragging(true);
@@ -331,8 +364,28 @@ function AppAdd() {
     dispatch({ type: EntityActionType.INIT, payload: entity });
   };
 
+  const [delayCollapseWindow, setDelayCollapseWindow] = useState(false);
+
+  const [, cancelDelayCollapseWindow] = useDebounce(
+    () => {
+      if (delayCollapseWindow && !collapseWindow) setCollapseWindow(true);
+    },
+    300,
+    [delayCollapseWindow, collapseWindow],
+  );
+
   return (
-    <GlobalContext.Provider value={{ apiKey, setApiKey, showWindow, setShowWindow, collapseWindow, setCollapseWindow }}>
+    <GlobalContext.Provider
+      value={{
+        apiKey,
+        setApiKey,
+        showWindow,
+        setShowWindow,
+        collapseWindow,
+        setCollapseWindow,
+        pageLanguage,
+      }}
+    >
       <Transition
         show={showWindow}
         appear
@@ -359,17 +412,64 @@ function AppAdd() {
           bounds="html"
         >
           <div
+            role="dialog"
             ref={nodeRef}
+            onMouseUp={(e) => {
+              // console.log('onMouseUp');
+            }}
+            onMouseMove={(e) => {
+              // console.log('onMouseMove');
+            }}
+            onMouseDown={(e) => {
+              // console.log('onMouseDown');
+            }}
+            onBlur={(e) => {
+              // console.log('onBlur');
+            }}
+            onDragLeave={(e) => {
+              // console.log('onDragLeave');
+              //   setDelayCollapseWindow(true)
+            }}
+            onDragExit={() => {
+              // console.log('onDragExit');
+            }}
+            onDragEnd={() => {
+              // console.log('onDragEnd');
+            }}
+            onMouseOut={() => {
+              // console.log('onMouseOut');
+            }}
+            onDragOver={() => {
+              // console.log('onDragOver');
+              setDelayCollapseWindow(false);
+              cancelDelayCollapseWindow();
+              setCollapseWindow(false);
+            }}
+            onMouseLeave={() => {
+              // console.log('onMouseLeave');
+              setDelayCollapseWindow(true);
+            }}
+            onMouseEnter={() => {
+              // console.log('onMouseEnter');
+              setDelayCollapseWindow(false);
+              cancelDelayCollapseWindow();
+              setCollapseWindow(false);
+            }}
             className={`
-            selection:bg-purple-800 selection:text-white select-none rounded-lg w-[320px] ${isDragging ? 'blur-[1px] opacity-50' : 'opacity-100'}`}
+            selection:bg-purple-800 selection:text-white select-none rounded-lg w-[320px]
+            ${isDragging ? 'blur-[1px] opacity-50' : 'opacity-100'}`}
           >
-
             <div
-              className="py-3 px-3 border-stone-700 border-t border-r border-l rounded-b-none rounded-lg flex cursor-move
-              dragHandler bg-gradient-to-b to-stone-800 from-zinc-700"
+              className={`
+              ${!collapseWindow && 'rounded-b-none'}
+              py-3 px-3 border-zinc-700 border-t border-r border-l rounded-lg flex cursor-move
+              dragHandler bg-gradient-to-b to-zinc-900 from-zinc-700`}
             >
               <span className="grow flex items-center">
-                <div className="w-5 h-5 mr-1 inline-block fill-lime-400" dangerouslySetInnerHTML={{ __html: logo }} />
+                <div
+                  className="w-5 h-5 mr-1 inline-block fill-lime-400"
+                  dangerouslySetInnerHTML={{ __html: logo }}
+                />
                 <a
                   href="https://roastme.ru"
                   onMouseDown={stopPropagation}
@@ -378,25 +478,37 @@ function AppAdd() {
                   className="select-none drag-none font-extrabold tracking-wide text-xl text-slate-50"
                   rel="noreferrer"
                 >
-                  <img className="drag-none h-6" src={chrome.runtime.getURL('logo.png')} />
+                  <img
+                    className="drag-none h-6"
+                    src={chrome.runtime.getURL('logo.png')}
+                  />
                 </a>
               </span>
 
               <div className="gap-x-2 flex">
-                {true &&
+                {false && (
                   <div className="self-center">
                     <button
-                      onClick={(e) => { e.preventDefault(); setShowDebug(!showDebug); }}
+                      type="button"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setShowDebug(!showDebug);
+                      }}
                       onMouseDown={stopPropagation}
                       onTouchStart={stopPropagation}
                       className="inline-flex items-center p-1 border border-transparent rounded-full
                                               shadow-sm text-white bg-stone-900 hover:bg-stone-800 focus:outline-none
                                               focus:ring-2 focus:ring-offset-2 focus:ring-stone-900 focus:ring-offset-stone-500"
                     >
-                      <CogIcon className={`h-4 w-4 transition duration-300 ${showDebug ? '' : 'rotate-90'}`} aria-hidden="true" />
+                      <CogIcon
+                        className={`h-4 w-4 transition duration-300 ${
+                          showDebug ? '' : 'rotate-90'
+                        }`}
+                        aria-hidden="true"
+                      />
                     </button>
                   </div>
-                }
+                )}
 
                 <div className="self-center">
                   <button
@@ -408,7 +520,11 @@ function AppAdd() {
                                             shadow-sm text-white bg-stone-900 hover:bg-stone-800 focus:outline-none
                                             focus:ring-2 focus:ring-offset-2 focus:ring-stone-900 focus:ring-offset-stone-500"
                   >
-                    <ChevronUpIcon className={`h-4 w-4 transition duration-300 ${collapseWindow ? '' : 'rotate-180'} `} />
+                    <ChevronUpIcon
+                      className={`h-4 w-4 transition duration-300 ${
+                        collapseWindow ? '' : 'rotate-180'
+                      } `}
+                    />
                   </button>
                 </div>
 
@@ -422,13 +538,17 @@ function AppAdd() {
                                             shadow-sm text-white bg-stone-900 hover:bg-stone-800 focus:outline-none
                                             focus:ring-2 focus:ring-offset-2 focus:ring-stone-900 focus:ring-offset-stone-500"
                   >
-                    <XIcon className={`h-4 w-4 transition duration-75 ${showWindow ? '' : 'rotate-45'} `} />
+                    <XIcon
+                      className={`h-4 w-4 transition duration-75 ${
+                        showWindow ? '' : 'rotate-45'
+                      } `}
+                    />
                   </button>
                 </div>
               </div>
             </div>
 
-            <div className={`relative z-30 ${isBusy ? 'background-animate from-indigo-500 via-lime-400 to-indigo-500 bg-gradient-to-r bg-orange-400' : 'bg-slate-600'} transition-all h-1`} />
+            {/* <div className={`relative z-30 ${isBusy ? 'background-animate from-indigo-500 via-lime-400 to-indigo-500 bg-gradient-to-r bg-orange-400' : 'bg-slate-600'} transition-all h-1`} /> */}
             {/* <div className={`${isBusy ? 'background-animate from-indigo-500 via-lime-400 to-indigo-500 bg-gradient-to-r bg-orange-400' : 'from-lime-400 to-indigo-500 bg-gradient-to-r bg-orange-400'} transition-all h-2`} /> */}
             {/* <div className={`${isBusy ? 'background-animate from-indigo-500 via-lime-400 to-indigo-500 bg-gradient-to-r bg-orange-400' : 'bg-slate-400'} transition-all h-2`} /> */}
 
@@ -444,7 +564,6 @@ function AppAdd() {
               leaveTo="opacity-0"
             >
               <div className="flex flex-col h-full">
-
                 <div className="content-center flex flex-col relative">
                   <Transition
                     show={!showForm}
@@ -496,7 +615,10 @@ function AppAdd() {
                     leaveFrom="opacity-100"
                     leaveTo="opacity-0"
                     afterLeave={() => {
-                      dispatch({ type: EntityActionType.INIT, payload: newEntity(searchString) })
+                      dispatch({
+                        type: EntityActionType.INIT,
+                        payload: newEntity(searchString),
+                      });
                     }}
                   >
                     <div className="absolute w-full">

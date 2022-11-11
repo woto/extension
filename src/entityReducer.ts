@@ -1,20 +1,26 @@
 import dayjs from "dayjs";
-import { Entity, EntityAction, Kind, Relevance, Sentiment, Image } from "../main";
+import {
+  Entity,
+  EntityAction,
+  Kind,
+  Relevance,
+  Sentiment,
+  Image,
+} from "../main";
 import { EntityActionType, newImage } from "./Utils";
 
 export function initEntity(entity: Entity) {
-  return entity
+  return entity;
 }
 
 export function entityReducer(entity: Entity, action: EntityAction): Entity {
   switch (action.type) {
-
     case EntityActionType.INIT: {
       return initEntity(action.payload);
     }
 
     case EntityActionType.APPEND_LOOKUP: {
-      let newLookups = [...entity.lookups, action.payload.lookup]
+      const newLookups = [...entity.lookups, action.payload.lookup];
       return { ...entity, lookups: newLookups };
     }
 
@@ -27,36 +33,42 @@ export function entityReducer(entity: Entity, action: EntityAction): Entity {
             return { ...action.payload.lookup, ...{ destroy: true } };
           }
           return item;
-        })
+        });
       } else {
-        newLookups = entity.lookups.filter((item) => item !== action.payload.lookup);
+        newLookups = entity.lookups.filter(
+          (item) => item !== action.payload.lookup
+        );
       }
 
-      return { ...entity, lookups: newLookups }
+      return { ...entity, lookups: newLookups };
     }
 
     case EntityActionType.SET_LOOKUP_TITLE: {
-      const foundIndex = entity.lookups.findIndex((l) => l == action.payload.lookup);
+      const foundIndex = entity.lookups.findIndex(
+        (l) => l == action.payload.lookup
+      );
       const newLookups = [
         ...entity.lookups.slice(0, foundIndex),
         { ...action.payload.lookup, ...{ title: action.payload.newTitle } },
-        ...entity.lookups.slice(foundIndex + 1)
+        ...entity.lookups.slice(foundIndex + 1),
       ];
 
-      return { ...entity, lookups: newLookups }
+      return { ...entity, lookups: newLookups };
     }
 
     case EntityActionType.SET_TITLE: {
-      return { ...entity, title: action.payload.title }
+      return { ...entity, title: action.payload.title };
     }
 
     case EntityActionType.SET_INTRO: {
-      return { ...entity, intro: action.payload.intro }
+      return { ...entity, intro: action.payload.intro };
     }
 
     case EntityActionType.SET_KINDS: {
       let newKinds = [];
-      const found = entity.kinds.find((item: Kind) => item.title === action.payload.kind.title);
+      const found = entity.kinds.find(
+        (item: Kind) => item.title === action.payload.kind.title
+      );
 
       // props.setKinds((kinds: Kind[]) => {
       //   const found = kinds.find((item: Kind) => item.title === kind.title);
@@ -76,42 +88,41 @@ export function entityReducer(entity: Entity, action: EntityAction): Entity {
       //   return [kind, ...kinds];
       // });
 
-
       if (found) {
         if (action.payload.kind.id) {
           newKinds = entity.kinds.map((item: Kind) => {
             if (item.title == action.payload.kind.title) {
-              return { ...item, ...{ destroy: !item.destroy } }
-            } else {
-              return item;
+              return { ...item, ...{ destroy: !item.destroy } };
             }
+            return item;
           });
         } else {
-          newKinds = entity.kinds.filter((item) => item !== action.payload.kind);
+          newKinds = entity.kinds.filter(
+            (item) => item !== action.payload.kind
+          );
         }
 
-        return { ...entity, kinds: newKinds }
-
+        return { ...entity, kinds: newKinds };
       }
       newKinds = [action.payload.kind, ...entity.kinds];
 
-      return { ...entity, kinds: newKinds }
+      return { ...entity, kinds: newKinds };
     }
 
     case EntityActionType.SET_IMAGES: {
-      let newImages = [];
+      const newImages = [];
 
       // newImages = [...entity.images, ...action.payload.images]
       // return { ...entity, images: newImages };
 
-      return { ...entity, images: action.payload.images }
+      return { ...entity, images: action.payload.images };
     }
 
     case EntityActionType.APPEND_IMAGE: {
       let newImages = [];
-      newImages = [...entity.images, action.payload.image]
+      newImages = [...entity.images, action.payload.image];
 
-      return { ...entity, images: newImages }
+      return { ...entity, images: newImages };
     }
 
     case EntityActionType.REMOVE_IMAGE: {
@@ -129,7 +140,6 @@ export function entityReducer(entity: Entity, action: EntityAction): Entity {
       // }
 
       return { ...entity, images: newImages };
-
     }
 
     case EntityActionType.REPLACE_IMAGE: {
@@ -138,26 +148,30 @@ export function entityReducer(entity: Entity, action: EntityAction): Entity {
       newImages = entity.images.map((val) => {
         if (val.index === action.payload.oldImage.index) {
           return action.payload.newImage;
-        } else {
-          return val;
         }
-      })
+        return val;
+      });
 
-      return { ...entity, images: newImages }
+      return { ...entity, images: newImages };
     }
 
     case EntityActionType.TOGGLE_IMAGE_BACKGROUND: {
       const newImages = entity.images.map((item) => {
         if (item === action.payload.image) {
-          return { ...action.payload.image, ...{ dark: !action.payload.image.dark } };
+          return {
+            ...action.payload.image,
+            ...{ dark: !action.payload.image.dark },
+          };
         }
         return item;
-      })
+      });
 
-      return { ...entity, images: newImages }
+      return { ...entity, images: newImages };
     }
 
     default:
-      throw new Error(`There is no such action type. Check reducer. ${JSON.stringify(action)}`)
+      throw new Error(
+        `There is no such action type. Check reducer. ${JSON.stringify(action)}`
+      );
   }
 }

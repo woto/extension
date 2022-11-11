@@ -9,7 +9,7 @@
             "url": "http://json.schemastore.org/chrome-manifest"
         }
     ],
-    "workbench.colorTheme": "Quiet Light",
+    "workbench.colorTheme": "Solarized Light",
     "files.watcherExclude": {
         "**/dist": true,
         "**/dist/**": true,

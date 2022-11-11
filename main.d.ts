@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import { tabs } from './src/controls/Sidebar';
 import { EntityActionType } from './src/Utils';
-type Tab = typeof tabs[number];
 
+type Tab = typeof tabs[number];
 
 export type Image = {
   index: string,
@@ -29,16 +29,6 @@ export type Image = {
   },
   dark: boolean,
   destroy: boolean,
-}
-
-export type Entity = {
-  entity_id: string,
-  title: string,
-  intro: string,
-  lookups: Lookup[],
-  kinds: Kind[],
-  images: Image[],
-  entities_mentions_count: number,
 }
 
 export type OptionalComponent = {
@@ -93,22 +83,33 @@ interface GlobalContextInterface {
   setShowWindow: React.Dispatch<React.SetStateAction<boolean>>,
   collapseWindow: boolean,
   setCollapseWindow: React.Dispatch<React.SetStateAction<boolean>>,
+  pageLanguage: string | undefined,
 }
 
 interface ToastContextInterface {
-  add: any,
-  remove: any
+  add: (content: string | ReactNode) => void,
+  remove: (id: number) => void
 }
 
 export type ToastType = {
   id: number,
-  content: string
+  content: string | ReactNode
 }
 
 // export interface EntityAction {
 //   type: EntityActionType,
 //   payload: any
 // }
+
+export type Entity = {
+  entity_id: string,
+  title: string,
+  intro: string,
+  lookups: Lookup[],
+  kinds: Kind[],
+  images: Image[],
+  entities_mentions_count: number,
+}
 
 export type EntityAction =
   {
