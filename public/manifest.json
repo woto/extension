@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Extension for roastme.ru",
   "description": "A companion tool for adding data to roastme.ru",
-  "version": "0.0.0.17",
+  "version": "0.0.0.19",
   "icons": {
     "16": "icon-16.png",
     "32": "icon-32.png",
@@ -11,7 +11,7 @@
   },
 
   "externally_connectable": {
-    "matches": ["http://mentions.lvh.me/*", "http://localhost/*"]
+    "matches": ["http://mentions.lvh.me/*", "http://localhost/*", "https://roastme.ru/*"]
   },
 
   "web_accessible_resources": [{
