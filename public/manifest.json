@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Extension for roastme.ru",
   "description": "A companion tool for adding data to roastme.ru",
-  "version": "0.0.0.19",
+  "version": "0.0.0.23",
   "icons": {
     "16": "icon-16.png",
     "32": "icon-32.png",
