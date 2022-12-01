@@ -20,6 +20,7 @@ import Form from './Form';
 import List from './List';
 import SearchInput from './controls/SearchInput';
 import logo from './logo.svg';
+import { appUrl } from './Utils';
 
 import type {
   FragmentHash, Entity, Relevance, Sentiment,
@@ -471,7 +472,7 @@ function AppAdd() {
                   dangerouslySetInnerHTML={{ __html: logo }}
                 />
                 <a
-                  href="https://roastme.ru"
+                  href={appUrl}
                   onMouseDown={stopPropagation}
                   onTouchStart={stopPropagation}
                   target="_blank"
