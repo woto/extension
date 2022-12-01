@@ -1,12 +1,12 @@
-import React, { Dispatch, useContext, useState } from "react";
-import { Image, Entity, EntityAction } from "../main";
+import React, { Dispatch, useContext, useState } from 'react';
+import { Image, Entity, EntityAction } from '../main';
 import {
   appUrl,
   EntityActionType,
   GlobalContext,
   newImage,
   preventDefault,
-} from "./Utils";
+} from './Utils';
 
 export default function FileInput(props: {
   entity: Entity;
@@ -14,7 +14,7 @@ export default function FileInput(props: {
 }) {
   const globalContext = useContext(GlobalContext);
 
-  const [filesError, setFilesError] = useState<string>("");
+  const [filesError, setFilesError] = useState<string>('');
   const [isDragging, setIsDragging] = useState(false);
 
   const onDragEnter = (e: any) => {
@@ -25,66 +25,6 @@ export default function FileInput(props: {
   const onDragLeave = (e: any) => {
     setIsDragging(false);
     e.preventDefault();
-  };
-
-  const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
-    // let errorMessage = 'изображение не найдено';
-
-    const { clipboardData } = e;
-    const text = clipboardData.getData("text");
-    const { files } = clipboardData;
-
-    Array.from(files).forEach((file) => uploadFile({ file }));
-    if (text) {
-      uploadFile({ image_src: text });
-    }
-  };
-
-  const handleDrop = (e: React.DragEvent<HTMLTextAreaElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    setIsDragging(false);
-
-    const data = e.dataTransfer;
-    const { files } = data;
-
-    if (files.length > 0) {
-      Array.from(files).forEach((file) => uploadFile({ file }));
-    } else {
-      const domParser = new DOMParser();
-      const fragment = domParser.parseFromString(
-        data.getData("text/html"),
-        "text/html"
-      );
-
-      const image_src = fragment.querySelector("img")?.src;
-      const video_src =
-        fragment.querySelector("video")?.src ||
-        fragment.querySelector("source")?.src;
-
-      if (image_src || video_src) {
-        uploadFile({ image_src, video_src });
-        // // const finalUrl = `${imgproxyUrl}/AfrOrF3gWeDA6VOlDG4TzxMv39O7MXnF4CXpKUwGqRM/background:FFF/rs:fit:400:400:1/ex:0/el:0/g:sm/plain/${encodeURIComponent(img.src)}@png`;
-        // // const finalUrl = `${imgproxyUrl}/AfrOrF3gWeDA6VOlDG4TzxMv39O7MXnF4CXpKUwGqRM/plain/${encodeURIComponent(img.src)}`;
-        // const finalUrl = `${imgproxyUrl}/AfrOrF3gWeDA6VOlDG4TzxMv39O7MXnF4CXpKUwGqRM/background:FFF/rs:fit:400:400:1/ex:0/el:0/g:sm/plain/${encodeURIComponent(img.src)}`;
-
-        // fetch(finalUrl, {
-        //   credentials: 'omit',
-        // })
-        //   .then(async (res) => {
-        //     if (!res.ok) throw new Error(res.statusText);
-
-        //     const blob = await res.blob();
-        //     const file = new File([blob], new Date().toISOString());
-        //     uploadFile({ file: file });
-        //   }).catch((reason) => {
-        //     alert(reason);
-        //   });
-      } else {
-        setFilesError("изображение не найдено");
-      }
-    }
   };
 
   const uploadFile = async (params: {
@@ -100,29 +40,29 @@ export default function FileInput(props: {
       const formData = new FormData();
 
       if (image.file) {
-        formData.append("file", image.file);
+        formData.append('file', image.file);
       }
 
       if (image.image_src) {
-        formData.append("src", image.image_src);
+        formData.append('src', image.image_src);
       }
 
       if (image.video_src) {
-        formData.append("src", image.video_src);
+        formData.append('src', image.video_src);
       }
 
       return fetch(`${appUrl}/api/uploads`, {
-        credentials: "omit",
-        method: "POST",
+        credentials: 'omit',
+        method: 'POST',
         body: formData,
         headers: {
           // 'Content-Type': 'multipart/form-data',
           // 'Accept': 'application/json',
-          "Api-Key": globalContext.apiKey,
+          'Api-Key': globalContext.apiKey,
         },
       }).then((res) => {
         if (res.status === 401) {
-          chrome.runtime.sendMessage({ message: "request-auth" });
+          chrome.runtime.sendMessage({ message: 'request-auth' });
         }
 
         if (!res.ok) throw new Error(res.statusText);
@@ -159,6 +99,65 @@ export default function FileInput(props: {
     });
   };
 
+  const handlePaste = (e: React.ClipboardEvent<HTMLTextAreaElement>) => {
+    // let errorMessage = 'изображение не найдено';
+
+    const { clipboardData } = e;
+    const text = clipboardData.getData('text');
+    const { files } = clipboardData;
+
+    Array.from(files).forEach((file) => uploadFile({ file }));
+    if (text) {
+      uploadFile({ image_src: text });
+    }
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLTextAreaElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    setIsDragging(false);
+
+    const data = e.dataTransfer;
+    const { files } = data;
+
+    if (files.length > 0) {
+      Array.from(files).forEach((file) => uploadFile({ file }));
+    } else {
+      const domParser = new DOMParser();
+      const fragment = domParser.parseFromString(
+        data.getData('text/html'),
+        'text/html',
+      );
+
+      const image_src = fragment.querySelector('img')?.src;
+      const video_src = fragment.querySelector('video')?.src
+        || fragment.querySelector('source')?.src;
+
+      if (image_src || video_src) {
+        uploadFile({ image_src, video_src });
+        // // const finalUrl = `${imgproxyUrl}/AfrOrF3gWeDA6VOlDG4TzxMv39O7MXnF4CXpKUwGqRM/background:FFF/rs:fit:400:400:1/ex:0/el:0/g:sm/plain/${encodeURIComponent(img.src)}@png`;
+        // // const finalUrl = `${imgproxyUrl}/AfrOrF3gWeDA6VOlDG4TzxMv39O7MXnF4CXpKUwGqRM/plain/${encodeURIComponent(img.src)}`;
+        // const finalUrl = `${imgproxyUrl}/AfrOrF3gWeDA6VOlDG4TzxMv39O7MXnF4CXpKUwGqRM/background:FFF/rs:fit:400:400:1/ex:0/el:0/g:sm/plain/${encodeURIComponent(img.src)}`;
+
+        // fetch(finalUrl, {
+        //   credentials: 'omit',
+        // })
+        //   .then(async (res) => {
+        //     if (!res.ok) throw new Error(res.statusText);
+
+        //     const blob = await res.blob();
+        //     const file = new File([blob], new Date().toISOString());
+        //     uploadFile({ file: file });
+        //   }).catch((reason) => {
+        //     alert(reason);
+        //   });
+      } else {
+        setFilesError('изображение не найдено');
+      }
+    }
+  };
+
   const handleInputFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       Array.from(e.target.files).forEach((file) => uploadFile({ file }));
@@ -171,7 +170,7 @@ export default function FileInput(props: {
     e.target.files = container.files;
   };
 
-  const draggingClass = isDragging ? "bg-yellow-50" : "bg-white";
+  const draggingClass = isDragging ? 'bg-yellow-50' : 'bg-white';
 
   return (
     <div
