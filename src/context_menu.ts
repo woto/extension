@@ -1,33 +1,33 @@
 let rightClickedElement: Element | null;
 
 // NOTE: test
-window.addEventListener("message", (event) => {
+window.addEventListener('message', (event) => {
   // console.log(event);
 
   if (
-    event.source == window &&
-    event.data &&
-    event.data.direction == "from-page-script"
+    event.source == window
+    && event.data
+    && event.data.direction == 'from-page-script'
   ) {
     alert(`Content script received message: "${event.data.message}"`);
   }
 });
 
-document.addEventListener("contextmenu", (e) => {
+document.addEventListener('contextmenu', (e) => {
   rightClickedElement = e.target as Element;
 });
 
-document.addEventListener("click", (e) => {
+document.addEventListener('click', (e) => {
   // console.debug('link click');
 
   if (e.target instanceof HTMLElement) {
     if (e.target.dataset.entityId) {
       e.preventDefault();
 
-      alert("link click");
+      alert('link click');
 
-      chrome.runtime.sendMessage({ message: "edit-entity" }, () => {
-        alert("link click");
+      chrome.runtime.sendMessage({ message: 'edit-entity' }, () => {
+        alert('link click');
       });
     }
   }
@@ -39,18 +39,18 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   let linkUrl: string | null = null;
   let imageSrc: string | null = null;
 
-  if (message === "select-element") {
+  if (message === 'select-element') {
     switch (request.selectionType) {
-      case "select-text": {
+      case 'select-text': {
         break;
       }
-      case "select-image": {
+      case 'select-image': {
         const selection = window.getSelection();
 
         for (let i = 0; i < 10; i++) {
           if (!rightClickedElement) break;
 
-          imageSrc = rightClickedElement.getAttribute("src");
+          imageSrc = rightClickedElement.getAttribute('src');
 
           if (!imageSrc) {
             rightClickedElement = rightClickedElement.parentElement;
@@ -70,13 +70,13 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
         break;
       }
-      case "select-link": {
+      case 'select-link': {
         const selection = window.getSelection();
 
         for (let i = 0; i < 10; i++) {
           if (!rightClickedElement) break;
 
-          linkUrl = rightClickedElement.getAttribute("href");
+          linkUrl = rightClickedElement.getAttribute('href');
 
           if (!linkUrl) {
             rightClickedElement = rightClickedElement.parentElement;
@@ -100,7 +100,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
 
     return sendResponse({
-      message: "element-selected-successfully",
+      message: 'element-selected-successfully',
       linkUrl,
       imageSrc,
     });
