@@ -1,25 +1,27 @@
 import React, {
   SetStateAction, Dispatch, useState, useEffect,
 } from 'react';
-import { SearchIcon } from '@heroicons/react/solid';
+import { XIcon } from '@heroicons/react/solid';
 
 import { Entity } from '../../main';
 import { stopPropagation } from '../Utils';
 
-export default function SearchInput(props: {
+export default function SearchInput(
+  {
+    searchString, setSearchString, setPage, setEntities, setScrollPosition,
+  }: {
   searchString: string;
   setSearchString: Dispatch<SetStateAction<string>>;
   setPage: Dispatch<SetStateAction<number>>;
   setEntities: Dispatch<SetStateAction<Entity[] | null>>;
   setScrollPosition: React.Dispatch<React.SetStateAction<number>>;
-}) {
-  const { searchString } = props;
-
-  const handleChange = (event: any) => {
-    props.setEntities(null);
-    props.setScrollPosition(0);
-    props.setPage(1);
-    props.setSearchString(event.target.value);
+},
+) {
+  const handleChange = (q: string) => {
+    setEntities(null);
+    setScrollPosition(0);
+    setPage(1);
+    setSearchString(q);
   };
 
   return (
@@ -35,11 +37,17 @@ export default function SearchInput(props: {
           onKeyDown={stopPropagation}
           onKeyPress={stopPropagation}
           onKeyUp={stopPropagation}
-          onChange={handleChange}
+          onChange={(event) => handleChange(event.target.value)}
         />
 
-        <div className="absolute inset-y-0 right-0 pr-3 flex items-center pointer-events-none">
-          <SearchIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+        <div className="absolute inset-y-0 right-2 flex py-1.5 pr-0.5">
+          <button
+            type="button"
+            onClick={() => handleChange('')}
+            className="inline-flex items-center rounded px-1.5 text-gray-400 hover:text-gray-600"
+          >
+            <XIcon className="h-4 w-4" aria-hidden="true" />
+          </button>
         </div>
       </div>
     </div>
