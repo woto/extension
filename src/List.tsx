@@ -4,17 +4,19 @@ import React, {
   useRef,
   useCallback,
   useContext,
-} from "react";
-import AwesomeDebouncePromise from "awesome-debounce-promise";
-import { abort } from "process";
-import EmptyList from "./EmptyList";
-import FullList from "./FullList";
-import NothingFound from "./NothingFound";
+} from 'react';
+import AwesomeDebouncePromise from 'awesome-debounce-promise';
+import { abort } from 'process';
+import EmptyList from './EmptyList';
+import FullList from './FullList';
+import NothingFound from './NothingFound';
 
-import { appUrl, GlobalContext } from "./Utils";
+import { appUrl, GlobalContext } from './Utils';
 
-import { Entity, Image, Kind, Lookup } from "../main";
-import DotFlasing from "./controls/DotFlashing";
+import {
+  Entity, Image, Kind, Lookup,
+} from '../main';
+import DotFlasing from './controls/DotFlashing';
 
 function DetermineList(props: {
   entities: Entity[] | null;
@@ -88,6 +90,7 @@ export default function List(props: {
     imageSrc,
     setPage,
     setEntities,
+    setIsBusy,
   } = props;
 
   const { apiKey } = globalContext;
@@ -95,8 +98,8 @@ export default function List(props: {
   const abortController = useRef<AbortController>();
 
   const fetchData = useCallback(() => {
-    if (!globalContext.apiKey) return null;
-    props.setIsBusy(true);
+    if (!apiKey) return null;
+    setIsBusy(true);
     setError(null);
 
     // console.log('%cFETCHING!', 'color: Orange');
@@ -110,26 +113,26 @@ export default function List(props: {
     };
 
     const params: RequestInit = {
-      credentials: "omit",
-      method: "POST",
+      credentials: 'omit',
+      method: 'POST',
       body: JSON.stringify(data),
       headers: {
-        "Content-Type": "application/json",
-        Accept: "application/json",
-        "Api-Key": globalContext.apiKey,
+        'Content-Type': 'application/json',
+        Accept: 'application/json',
+        'Api-Key': apiKey,
       },
     };
 
     if (abortController.current) {
       params.signal = abortController.current.signal;
     } else {
-      console.error("some error");
+      console.error('some error');
     }
 
     fetch(`${appUrl}/api/entities/seek`, params)
       .then((res) => {
         if (res.status === 401) {
-          chrome.runtime.sendMessage({ message: "request-auth" });
+          chrome.runtime.sendMessage({ message: 'request-auth' });
         }
 
         if (!res.ok) throw new Error(res.statusText);
@@ -165,20 +168,21 @@ export default function List(props: {
         return res;
       })
       .then((res: Entity[]) => {
-        props.setIsBusy(false);
+        setIsBusy(false);
         setEntities((prevEntities) => [...(prevEntities || []), ...res]);
         if (res.length > 0) {
           setPage((page) => page + 1);
         }
       })
       .catch((reason) => {
-        props.setIsBusy(false);
-        if (reason.name === "AbortError") return;
+        setIsBusy(false);
+        if (reason.name === 'AbortError') return;
 
         console.error(reason);
         setError(reason.message);
       });
   }, [
+    setIsBusy,
     fragmentUrl,
     searchString,
     page,
@@ -196,7 +200,7 @@ export default function List(props: {
       if (abortController.current) {
         abortController.current.abort();
       } else {
-        alert("b");
+        alert('b');
       }
     };
   }, [fragmentUrl, searchString, page, linkUrl, imageSrc, fetchData, apiKey]);
@@ -222,8 +226,8 @@ export default function List(props: {
     asyncFunctionDebounced(e.target.scrollTop);
 
     if (
-      Math.floor(e.target.scrollHeight - e.target.scrollTop) <=
-      Math.floor(e.target.clientHeight)
+      Math.floor(e.target.scrollHeight - e.target.scrollTop)
+      <= Math.floor(e.target.clientHeight)
     ) {
       fetchData();
     }
