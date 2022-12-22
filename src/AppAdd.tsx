@@ -429,13 +429,16 @@ function AppAdd() {
             }}
             onDragLeave={(e) => {
               // console.log('onDragLeave');
-              //   setDelayCollapseWindow(true)
+              setDelayCollapseWindow(true)
             }}
             onDragExit={() => {
               // console.log('onDragExit');
             }}
             onDragEnd={() => {
               // console.log('onDragEnd');
+              setDelayCollapseWindow(false);
+              cancelDelayCollapseWindow();
+              setCollapseWindow(false);
             }}
             onMouseOut={() => {
               // console.log('onMouseOut');
