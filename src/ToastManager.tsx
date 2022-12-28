@@ -1,12 +1,9 @@
-import React, { MouseEventHandler, ReactNode } from "react";
-import { motion } from "framer-motion";
-import { ToastContextInterface, ToastType } from "../main";
-import Toast from "./Toast";
+import React, { MouseEventHandler, ReactNode, useCallback, useMemo } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
+import { ToastContextInterface, ToastType } from '../main';
+import Toast from './Toast';
 
 const Ctx = React.createContext({} as ToastContextInterface);
-
-// Styled Components
-// ==============================
 
 function ToastContainer(props: { children: React.ReactNode }) {
   return (
@@ -21,56 +18,38 @@ function ToastContainer(props: { children: React.ReactNode }) {
   );
 }
 
-// const TmpToast = (props: { children: React.ReactNode, onDismiss: MouseEventHandler<HTMLDivElement> | undefined }) => (
-//   <div
-//     style={{
-//       background: "LemonChiffon",
-//       cursor: "pointer",
-//       fontSize: 14,
-//       margin: 10,
-//       padding: 10,
-//       display: 'flex'
-//     }}
-//     onClick={props.onDismiss}
-//   >
-//     <Toast></Toast>
-//     {props.children}
-//   </div>
-// );
-
-// Provider
-// ==============================
-
 let toastCount = 0;
 
 export function ToastProvider(props: { children: React.ReactNode }) {
   const [toasts, setToasts] = React.useState<ToastType[]>([]);
 
-  const add = (content: string | ReactNode) => {
-    const id = toastCount++;
+  const add = useCallback((content: string | ReactNode) => {
+    toastCount += 1;
+    const id = toastCount;
     const toast = { content, id };
     setToasts((prevToasts) => [...prevToasts, toast]);
-  };
+  }, []);
 
-  const remove = (id: number) => {
+  const remove = useCallback((id: number) => {
     const newToasts = toasts.filter((t: ToastType) => t.id !== id);
     setToasts(newToasts);
-  };
+  }, [toasts]);
 
-  // avoid creating a new fn on every render
-  const onDismiss = (id: number) => () => remove(id);
+  const value = useMemo(() => ({ add, remove }), [add, remove]);
 
   return (
-    <Ctx.Provider value={{ add, remove }}>
+    <Ctx.Provider value={value}>
       {props.children}
       <ToastContainer>
-        {toasts.map(({ content, id, ...rest }) => (
-          <Toast key={id} onDismiss={onDismiss(id)} {...rest}>
-            <div className="ml-3 font-medium flex-1 pt-0.5 text-sm text-gray-900">
-              {content}
-            </div>
-          </Toast>
-        ))}
+        <AnimatePresence>
+          {toasts.map(({ content, id }) => (
+            <Toast key={id} id={id} remove={remove}>
+              <div className="ml-3 font-medium flex-1 pt-0.5 text-sm text-gray-900">
+                {content}
+              </div>
+            </Toast>
+          ))}
+        </AnimatePresence>
       </ToastContainer>
     </Ctx.Provider>
   );
