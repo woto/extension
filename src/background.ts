@@ -3,8 +3,9 @@ import { loginUrl } from './Utils';
 
 const sendMessageToPage = (data: {}, tab?: chrome.tabs.Tab | undefined) => {
 // console.log(data);
-  console.log(data);
-  if (tab) console.log(tab);
+  // console.log(data);
+
+  // if (tab) console.log(tab);
 
   return new Promise((resolve, reject) => {
     if (!tab || !tab.id) return;
@@ -88,10 +89,10 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-const showAppAdd = async (selectionType: string, tab: chrome.tabs.Tab) => {
+const showAppAdd = async (menuItemId: string, tab: chrome.tabs.Tab) => {
   await injectContentScripts('add', 'js/content_script.js', tab);
   const result = await sendMessageToPage(
-    { message: 'select-element', selectionType },
+    { message: 'select-element', menuItemId },
     tab,
   );
   const pageLanguage = await chrome.tabs.detectLanguage();
@@ -103,6 +104,7 @@ const showAppAdd = async (selectionType: string, tab: chrome.tabs.Tab) => {
       linkUrl: (result as Record<'linkUrl', string>).linkUrl,
       imageSrc: (result as Record<'imageSrc', string>).imageSrc,
       pageLanguage,
+      menuItemId,
     },
     tab,
   );

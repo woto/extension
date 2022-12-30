@@ -1,4 +1,5 @@
-import _ from 'lodash';
+// import {startCase} from 'lodash';
+import startCase from 'lodash/fp/startCase';
 import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/solid';
 import { Menu, Transition } from '@headlessui/react';
 import React, {
@@ -126,7 +127,7 @@ function MentionDateInput(props: {
     date.setDate(1);
     date.setMonth(month);
     const str = date.toLocaleString('ru-RU', { month: 'long' });
-    return _.startCase(str);
+    return startCase(str);
   };
 
   return (

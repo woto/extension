@@ -1,15 +1,25 @@
 {
     "compilerOptions": {
-        "strict": true,
-        "module": "commonjs",
-        "target": "es6",
-        "esModuleInterop": true,
-        "sourceMap": false,
-        "rootDir": "src",
-        "outDir": "dist/js",
-        "noEmitOnError": true,
-        "jsx": "react",
-        "typeRoots": [ "node_modules/@types", "./types" ],
-        "lib": ["dom"],
-    }
+    "declaration": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "lib": ["es6", "dom"],
+    "strict": true,
+    "module": "es2020",
+    "moduleResolution": "node",
+    "target": "es6",
+    "esModuleInterop": true,
+    "sourceMap": false,
+    "rootDir": "src",
+    "outDir": "dist/js",
+    "noEmitOnError": true,
+    "jsx": "react",
+    "typeRoots": [ "node_modules/@types", "./types" ],
+    },
+  "exclude": [ "**/*.spec.ts",
+    "node_modules",
+    "vendor",
+    "public"
+  ],
+  "compileOnSave": false
 }

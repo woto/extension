@@ -1,7 +1,8 @@
+import { InformationCircleIcon, XIcon } from '@heroicons/react/solid';
 import React from 'react';
 
 /* This example requires Tailwind CSS v2.0+ */
-import { InformationCircleIcon, XIcon } from '@heroicons/react/solid';
+// import { InformationCircleIcon, XIcon } from '@heroicons/react/solid';
 
 export default function Alert(props: {
   title: string;

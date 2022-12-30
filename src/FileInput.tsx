@@ -1,4 +1,6 @@
 import React, { Dispatch, useContext, useState } from 'react';
+import { useMutation } from 'react-query';
+import axios from 'axios';
 import { Image, Entity, EntityAction } from '../main';
 import {
   appUrl,
@@ -27,12 +29,25 @@ export default function FileInput(props: {
     e.preventDefault();
   };
 
+  const fetchYoutube = useMutation({
+    mutationFn: (url: string) => (
+      axios.get(`${appUrl}/api/tools/youtube`, {
+        params: { q: url },
+        headers: {
+          'Api-Key': globalContext.apiKey,
+        },
+      }).then((response) => (
+        response.data.video.items[0].snippet.thumbnails.high.url)
+      )
+    ),
+  });
+
   const uploadFile = async (params: {
     file?: File;
     image_src?: string;
     video_src?: string;
   }) => {
-    const upload = (image: Image) => {
+    const upload = async (image: Image) => {
       if (image.json) {
         return image;
       }
@@ -44,7 +59,12 @@ export default function FileInput(props: {
       }
 
       if (image.image_src) {
-        formData.append('src', image.image_src);
+        if (image.image_src?.startsWith('https://youtu.be')) {
+          const data = await fetchYoutube.mutateAsync(image.image_src);
+          formData.append('src', data);
+        } else {
+          formData.append('src', image.image_src);
+        }
       }
 
       if (image.video_src) {
@@ -79,6 +99,8 @@ export default function FileInput(props: {
     props.dispatch({ type: EntityActionType.APPEND_IMAGE, payload: { image } });
 
     const file = await upload(image!);
+
+    debugger
 
     const result: Image = {
       index: image.index,

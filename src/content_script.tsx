@@ -1,7 +1,7 @@
 import 'react-devtools';
 import '@webcomponents/webcomponentsjs/webcomponents-bundle.js';
 import React, { useEffect, useState } from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import {
   // useQuery,
   // useMutation,
@@ -38,13 +38,15 @@ class AddPopupComponent extends HTMLElement {
     // mountPoint.style.transform = 'translate(-10%, -10%)';
     // mountPoint.className = 'w-[320px]';
 
+    const root = ReactDOM.createRoot(mountPoint);
+
     if (!this.shadowRoot) return;
 
     this.shadowRoot.appendChild(mountPoint);
 
     tailwind.use({ target: this.shadowRoot });
 
-    ReactDOM.render(
+    root.render(
       <React.StrictMode>
         <QueryClientProvider client={queryClient}>
           <ToastProvider>
@@ -54,7 +56,6 @@ class AddPopupComponent extends HTMLElement {
           </ToastProvider>
         </QueryClientProvider>
       </React.StrictMode>,
-      mountPoint,
     );
   }
 }
@@ -89,6 +90,8 @@ const subscription = (
   }
 };
 
-placement.insertAdjacentElement('afterbegin', component);
+// The beforeend is due the fact of using #:~:text=...
+// If 'afterbegin' used then it will highlight text in widget. Not in the document.
+placement.insertAdjacentElement('beforeend', component);
 
 chrome.runtime.onMessage.addListener(subscription);

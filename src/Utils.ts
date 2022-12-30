@@ -13,8 +13,12 @@ import { Entity, GlobalContextInterface } from '../main';
 //    alert('hello');
 // };
 
-export const appUrl = 'https://roastme.ru';
-export const loginUrl = 'https://roastme.ru/auth/login';
+// export const appUrl = 'https://roastme.ru';
+// export const loginUrl = 'https://roastme.ru/auth/login';
+
+export const appUrl = 'http://localhost:3000';
+export const loginUrl = 'http://localhost:3000/auth/login';
+
 // export const imgproxyUrl = 'http://localhost:8080';
 
 export const GlobalContext = React.createContext<GlobalContextInterface>({

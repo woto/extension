@@ -246,7 +246,7 @@ export default function List(props: {
         <div
           onScroll={handleScroll}
           ref={scrollRef}
-          className="h-[346px] overscroll-contain p-1 overflow-auto"
+          className="h-[450px] overscroll-contain p-1 overflow-auto"
         >
           <DetermineList
             onSelectItem={props.onSelectItem}
@@ -274,6 +274,8 @@ export default function List(props: {
           >
             Добавить новый объект
           </a>
+          <a href="#:~:text=is">111</a>
+          <a href="#:~:text=in">222</a>
         </div>
       </div>
     </>

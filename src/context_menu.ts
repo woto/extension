@@ -34,13 +34,15 @@ document.addEventListener('click', (e) => {
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  const { message } = request;
+  const { message, intent } = request;
 
   let linkUrl: string | null = null;
   let imageSrc: string | null = null;
 
+  // console.log(request);
+
   if (message === 'select-element') {
-    switch (request.selectionType) {
+    switch (request.menuItemId) {
       case 'select-text': {
         break;
       }
@@ -106,3 +108,25 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     });
   }
 });
+
+const options = {
+  root: document.body,
+  // rootMargin: '0px',
+  // threshold: 1.0
+};
+
+const callback = (el: any) => {
+  console.log(el.href);
+};
+
+// const observer = new IntersectionObserver(callback, options);
+
+// window.addEventListener('load', () => {
+//   // alert('2222222222222222222222');
+
+//   document.querySelectorAll('a').forEach((el) => {
+//     // alert('2222222222222222222222');
+//     // console.log(el);
+//     // observer.observe(el);
+//   });
+// });

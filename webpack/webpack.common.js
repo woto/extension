@@ -17,14 +17,19 @@ module.exports = {
     path: path.join(__dirname, '../dist/js'),
     filename: '[name].js',
   },
-  // optimization: {
-  //     splitChunks: {
-  //         name: "vendor",
-  //         chunks(chunk) {
-  //           return chunk.name !== 'background';
-  //         }
-  //     },
-  // },
+  optimization: {
+      // usedExports: true,
+      // runtimeChunk: 'single',
+      // splitChunks: {
+        // chunks: 'all',
+      // },
+      // splitChunks: {
+      //     name: "vendor",
+      //     chunks(chunk) {
+      //       return chunk.name !== 'background';
+      //     }
+      // },
+  },
   module: {
     rules: [
       {
@@ -63,11 +68,14 @@ module.exports = {
     extensions: ['.ts', '.tsx', '.js', '.css'],
   },
   plugins: [
+    new webpack.optimize.LimitChunkCountPlugin({
+      maxChunks: 1,
+    }),
     new CopyPlugin({
       patterns: [{ from: '.', to: '../', context: 'public' }],
       options: {},
     }),
-    // new BundleAnalyzerPlugin({analyzerMode: 'server'})
     new BundleAnalyzerPlugin({ analyzerMode: 'disabled' }),
+    // new BundleAnalyzerPlugin({ analyzerMode: 'server' }),
   ],
 };

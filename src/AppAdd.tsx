@@ -20,17 +20,17 @@ import Form from './Form';
 import List from './List';
 import SearchInput from './controls/SearchInput';
 import logo from './logo.svg';
-import { appUrl } from './Utils';
-
-import type {
-  FragmentHash, Entity, Relevance, Sentiment,
-} from '../main';
 import {
+  appUrl,
   EntityActionType,
   GlobalContext,
   newEntity,
   stopPropagation,
 } from './Utils';
+
+import type {
+  FragmentHash, Entity, Relevance, Sentiment,
+} from '../main';
 import { useToasts } from './ToastManager';
 import { entityReducer, initEntity } from './entityReducer';
 
@@ -91,7 +91,7 @@ function AppAdd() {
   const [showForm, setShowForm] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [isBusy, _setIsBusy] = useState(false);
-  const setIsBusy = useCallback((num) => _setIsBusy(num), []);
+  const setIsBusy = useCallback((num: any) => _setIsBusy(num), []);
   const [entities, setEntities] = useState<Entity[] | null>(null);
   const [page, setPage] = useState<number>(1);
   const [scrollPosition, setScrollPosition] = useState(0);
@@ -304,11 +304,96 @@ function AppAdd() {
       sender: chrome.runtime.MessageSender,
       sendResponse: (response?: any) => void,
     ) => {
-      const { message, feature } = request;
+      const { message, menuItemId } = request;
 
       if (message === 'create-fragment') {
         const { url, selection, fragmentHash: fHash } = createTextFragment();
-        setSearchString(selection!.toString() || document.title);
+
+        let selectedText = '';
+
+        switch (menuItemId) {
+          case 'select-page': {
+            selectedText = document.title;
+            break;
+          }
+          default: {
+            selectedText = selection!.toString();
+          }
+        }
+
+        setSearchString(selectedText);
+
+        // console.dir(selection);
+        // console.dir(selection.anchorNode);
+        // console.dir(selection.focusNode);
+        // if (selection.rangeCount) {
+        //   const range = selection.getRangeAt(0);
+        //   console.dir(range);
+        // }
+
+
+        // if (selection.rangeCount) {
+        //   let range = selection.getRangeAt(0);
+        //   // let result = range.extractContents();
+        //   let result = range.cloneRange();
+        //   console.dir(result);
+        //   range.insertNode(result);
+        // }
+
+
+        // if (selection.rangeCount) {
+        //   let range = selection.getRangeAt(0);
+        //   range.deleteContents();
+        //   range.insertNode(document.createTextNode(`-> ${selectedText} <-`));
+        // }
+
+
+        // try {
+        //   (selection.focusNode as HTMLElement).style.textDecoration = 'underline';
+        //   (selection.focusNode as HTMLElement).style.backgroundColor = 'blue';
+        //   (selection.focusNode as HTMLElement).style.color = 'white';
+        // } catch (error) {
+        //   console.error(error);
+        // }
+
+
+        // if (selection.rangeCount) {
+        //   const range = selection.getRangeAt(0);
+        //   const rectList = range.getClientRects();
+        //   const rectArr = Array.from(rectList);
+
+        //   // eslint-disable-next-line no-restricted-syntax
+        //   for (let i = 0; i < rectArr.length; i += 1) {
+        //     const highlight = document.createElement('div');
+
+        //     highlight.id = `i${i}`;
+        //     highlight.style.backgroundColor = 'orange';
+        //     highlight.style.position = 'fixed';
+        //     highlight.style.opacity = '0.3';
+        //     // highlight.style.pointerEvents = 'none';
+        //     highlight.style.zIndex = '2147483646';
+
+        //     const windowScrollY = window.scrollY;
+
+        //     highlight.style.left = `${rectArr[i].x}px`;
+        //     highlight.style.top = `${rectArr[i].y}px`;
+        //     highlight.style.width = `${rectArr[i].width}px`;
+        //     highlight.style.height = `${rectArr[i].height}px`;
+
+        //     highlight.addEventListener('click', () => {
+        //       alert('Removing highlight');
+        //       highlight.remove();
+        //     });
+
+        //     document.addEventListener('scroll', () => {
+        //       highlight.style.top = `${rectArr[i].y - window.scrollY + windowScrollY}px`;
+        //       console.log('scroll event');
+        //     });
+
+        //     document.body.appendChild(highlight);
+        //   }
+        // }
+
         selection.removeAllRanges();
 
         setFragmentUrl(url!);
@@ -429,7 +514,7 @@ function AppAdd() {
             }}
             onDragLeave={(e) => {
               // console.log('onDragLeave');
-              setDelayCollapseWindow(true)
+              setDelayCollapseWindow(true);
             }}
             onDragExit={() => {
               // console.log('onDragExit');
@@ -460,33 +545,38 @@ function AppAdd() {
               setCollapseWindow(false);
             }}
             className={`
-            selection:bg-purple-800 selection:text-white select-none rounded-lg w-[320px]
-            ${isDragging ? 'blur-[1px] opacity-50' : 'opacity-100'}`}
+            selection:bg-purple-800 selection:text-white select-none rounded-lg w-[350px]
+            ${isDragging ? 'blur-[1px] opacity-50' : 'opacity-100 drop-shadow-md'}`}
           >
             <div
               className={`
-              ${!collapseWindow && 'rounded-b-none'}
-              py-3 px-3 border-zinc-700 border-t border-r border-l rounded-lg flex cursor-move
-              dragHandler bg-gradient-to-b to-zinc-900 from-zinc-700`}
+              ${!collapseWindow && 'rounded-b-none border-b-0'}
+              from-slate-600 to-zinc-800 border-slate-600 via-stone-800
+              py-3.5 px-3 border rounded-lg flex cursor-move
+              dragHandler bg-gradient-to-b`}
             >
               <span className="grow flex items-center">
-                <div
-                  className="w-5 h-5 mr-1 inline-block fill-lime-400"
-                  dangerouslySetInnerHTML={{ __html: logo }}
-                />
                 <a
                   href={appUrl}
                   onMouseDown={stopPropagation}
                   onTouchStart={stopPropagation}
                   target="_blank"
-                  className="select-none drag-none font-extrabold tracking-wide text-xl text-slate-50"
-                  rel="noreferrer"
+                  className="select-none drag-none"
                 >
-                  <img
-                    className="drag-none h-6"
-                    src={chrome.runtime.getURL('logo.png')}
+
+                  <div
+                    className={`
+                    w-5 h-5 mr-1 inline-block?
+                    fill-yellow-300
+                  `}
+                    dangerouslySetInnerHTML={{ __html: logo }}
                   />
                 </a>
+                <img
+                  alt="roastme.ru"
+                  className="drag-none h-6"
+                  src={chrome.runtime.getURL('logo.png')}
+                />
               </span>
 
               <div className="gap-x-2 flex">
@@ -526,7 +616,7 @@ function AppAdd() {
                   >
                     <ChevronUpIcon
                       className={`h-4 w-4 transition duration-300 ${
-                        collapseWindow ? '' : 'rotate-180'
+                        collapseWindow ? 'rotate-180' : ''
                       } `}
                     />
                   </button>
