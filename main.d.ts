@@ -12,6 +12,8 @@ export type Image = {
   file?: File | null,
   image_src?: string,
   video_src?: string,
+  width: number,
+  height: number,
   // NOTE: It doesn't validates. May be later add something like yup.
   json?: {
     data: {

@@ -513,8 +513,8 @@ export default function Form(props: {
           entity={props.entity}
           dispatch={props.dispatch}
         />
-        <FileInput entity={props.entity} dispatch={props.dispatch} />
-        <Thumbnails images={_images} dispatch={props.dispatch} />
+
+        <Thumbnails images={_images} dispatch={props.dispatch} entity={props.entity} />
 
         <button
           type="submit"

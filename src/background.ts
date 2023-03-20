@@ -90,6 +90,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 });
 
 const showAppAdd = async (menuItemId: string, tab: chrome.tabs.Tab) => {
+  // debugger
   await injectContentScripts('add', 'js/content_script.js', tab);
   const result = await sendMessageToPage(
     { message: 'select-element', menuItemId },
@@ -111,6 +112,7 @@ const showAppAdd = async (menuItemId: string, tab: chrome.tabs.Tab) => {
 };
 
 const showAppEdit = async (entityId: string, tab: chrome.tabs.Tab) => {
+  // debugger
   await injectContentScripts('add', 'js/content_script.js', tab);
   const pageLanguage = await chrome.tabs.detectLanguage();
   // console.log(pageLanguage);
@@ -171,7 +173,7 @@ chrome.runtime.onMessageExternal.addListener(
   (request, sender, sendResponse) => {
     const { message, apiKey } = request;
 
-    debugger;
+    // debugger;
 
     if (message === 'api-token-obtained') {
       if (authWindowId) {
@@ -297,6 +299,7 @@ async function restoreWidget() {
       tab = await chrome.tabs.get(parseInt(item));
 
       try {
+        // debugger
         await injectContentScripts('add', 'js/content_script.js', tab);
 
         // debugger

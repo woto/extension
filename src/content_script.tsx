@@ -93,5 +93,6 @@ const subscription = (
 // The beforeend is due the fact of using #:~:text=...
 // If 'afterbegin' used then it will highlight text in widget. Not in the document.
 placement.insertAdjacentElement('beforeend', component);
+// placement.insertAdjacentElement('afterbegin', component);
 
 chrome.runtime.onMessage.addListener(subscription);

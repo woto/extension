@@ -1,6 +1,7 @@
 import React, { Dispatch, useContext, useState } from 'react';
 import { useMutation } from 'react-query';
 import axios from 'axios';
+import { PlusIcon } from '@heroicons/react/solid';
 import { Image, Entity, EntityAction } from '../main';
 import {
   appUrl,
@@ -37,8 +38,7 @@ export default function FileInput(props: {
           'Api-Key': globalContext.apiKey,
         },
       }).then((response) => (
-        response.data.video.items[0].snippet.thumbnails.high.url)
-      )
+        response.data.video.items[0].snippet.thumbnails.high.url))
     ),
   });
 
@@ -100,7 +100,7 @@ export default function FileInput(props: {
 
     const file = await upload(image!);
 
-    debugger
+    debugger;
 
     const result: Image = {
       index: image.index,
@@ -110,6 +110,8 @@ export default function FileInput(props: {
       video_url: file.video_url,
       image_src: image.image_src,
       video_src: image.video_src,
+      width: image.width,
+      height: image.height,
       file: image.file,
       dark: false,
       destroy: image.destroy,
@@ -192,11 +194,11 @@ export default function FileInput(props: {
     e.target.files = container.files;
   };
 
-  const draggingClass = isDragging ? 'bg-yellow-50' : 'bg-white';
+  const draggingClass = isDragging ? 'bg-yellow-50' : 'bg-white?';
 
   return (
     <div
-      className={`relative mt-3 rounded-md transition-colors ${draggingClass}`}
+      className={`relative mt-3? rounded-md transition-colors ${draggingClass}`}
     >
       <textarea
         onDragEnter={onDragEnter}
@@ -204,11 +206,11 @@ export default function FileInput(props: {
         onDragOver={preventDefault}
         onDrop={handleDrop}
         onPaste={handlePaste}
-        className="cursor-default peer absolute inset-3 opacity-0"
+        className="cursor-default peer absolute inset-0 opacity-0? bg-red-300"
         tabIndex={-1}
       />
 
-      <div className="shadow-sm peer-focus:ring-indigo-500 peer-focus:border-indigo-500 text-sm max-w-lg flex justify-center px-6 pt-5 pb-6 border-2 border-gray-300 border-dashed rounded-md block w-full">
+      <div className="shadow-sm peer-focus:ring-indigo-500 peer-focus:border-indigo-500 text-sm max-w-lg flex justify-center px-6? pt-5? pb-6? border-2 border-gray-300 border-dashed rounded-md block w-full h-full">
         <div className="space-y-1 text-center">
           <svg
             className="mx-auto h-12 w-12 text-gray-400"
@@ -224,10 +226,17 @@ export default function FileInput(props: {
               strokeLinejoin="round"
             />
           </svg>
+          {/* <button
+            type="button"
+            className="inline-flex items-center p-1 border border-transparent rounded-full shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+          >
+            <PlusIcon className="h-5 w-5" aria-hidden="true" />
+          </button> */}
+
           <div className="inline-block text-sm text-gray-600">
             <label
               htmlFor="file-upload"
-              className="relative cursor-pointer bg-white font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
+              className="relative cursor-pointer bg-white? font-medium text-indigo-600 hover:text-indigo-500 focus-within:outline-none focus-within:ring-2 focus-within:ring-offset-2 focus-within:ring-indigo-500"
             >
               <span>Загрузите</span>
               <input
@@ -238,11 +247,11 @@ export default function FileInput(props: {
                 multiple
               />
             </label>
-            <span className="pl-1">перетащите или вставьте</span>
+            {/* <span className="pl-1">перетащите или вставьте</span> */}
           </div>
-          <p className="text-xs text-gray-500">
-            картинку или видео размером до 10Мб
-          </p>
+          {/* <p className="text-xs text-gray-500"> */}
+          {/* картинку или видео размером до 10Мб */}
+          {/* </p> */}
         </div>
       </div>
     </div>

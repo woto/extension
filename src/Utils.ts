@@ -47,6 +47,8 @@ export const newImage = (params: {
   ...params,
   image_url: params.image_src!,
   video_url: params.video_src!,
+  width: 0,
+  height: 0,
   dark: false,
   destroy: false,
 });
@@ -90,3 +92,43 @@ export const stopPropagation = (e: any) => {
 export const preventDefault = (e: any) => {
   e.preventDefault();
 };
+
+// function objectSize(
+//   {
+//     width, height, minWidth, maxWidth,
+//   }:
+//   {width: number, height: number, minWidth: number, maxWidth: number},
+// ) {
+//   try {
+//     const ratio = width / height || 1;
+//     // const height = type === 'single' ? 250 : 120;
+//     let newWidth = 0;
+
+//     if (height * ratio >= maxWidth) {
+//       newWidth = maxWidth;
+//     } else if (height * ratio <= minWidth) {
+//       newWidth = minWidth;
+//     } else {
+//       newWidth = height * ratio;
+//     }
+
+//     return { width: newWidth, height };
+//   } catch {
+//     return {};
+//   }
+// }
+
+export function objectSize(
+  {
+    width, height, maxWidth, maxHeight,
+  }:
+  {
+    width: number, height: number, maxWidth: number, maxHeight: number
+  },
+) {
+  const ratio = Math.min(maxWidth / width, maxHeight / height);
+  return {
+    width: Math.round(width * ratio * 100) / 100,
+    height: Math.round(height * ratio * 100) / 100,
+  };
+}

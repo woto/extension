@@ -23,22 +23,20 @@ export default function Combobox(props: {
 
   let counter = 0;
   const filteredOptions = React.Children.map(props.children, (child) => {
-    return child;
-
-    // if (React.isValidElement(child)) {
-    //   if (
-    //     child.props.option.title
-    //       .toLowerCase()
-    //       .includes(props.searchString.toLowerCase())
-    //   ) {
-    //     const element = React.cloneElement(child, {
-    //       index: counter,
-    //       isHighlighted: counter === child.props.highlightedIndex,
-    //     });
-    //     counter++;
-    //     return element;
-    //   }
-    // }
+    if (React.isValidElement(child)) {
+      if (
+        child.props.option.title
+          .toLowerCase()
+          .includes(props.searchString.toLowerCase())
+      ) {
+        const element = React.cloneElement(child as React.ReactElement<any>, {
+          index: counter,
+          isHighlighted: counter === child.props.highlightedIndex,
+        });
+        counter += 1;
+        return element;
+      }
+    }
   })?.filter((val: any) => val);
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
