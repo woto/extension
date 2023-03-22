@@ -1,9 +1,23 @@
-import React, { useState } from 'react';
-/* This example requires Tailwind CSS v2.0+ */
-import { ChevronRightIcon, ChevronDownIcon } from '@heroicons/react/solid';
+import React, { ReactNode, useRef, useState } from 'react';
 
+/* This example requires Tailwind CSS v2.0+ */
+import { ChevronRightIcon, ChevronDownIcon, InformationCircleIcon } from '@heroicons/react/solid';
+import { Disclosure, Popover, Transition } from '@headlessui/react';
+import {
+  useFloating,
+  useHover,
+  useInteractions,
+  offset,
+  autoUpdate,
+  FloatingArrow,
+  arrow,
+} from '@floating-ui/react';
+
+import { ExclamationCircleIcon, MailIcon } from '@heroicons/react/outline';
+import ReactDOM from 'react-dom';
 import { Entity } from '../main';
 import { appUrl } from './Utils';
+import WidgetPortal from './WidgetPortal'
 
 export default function FullListItem(props: {
   entity: Entity;
@@ -11,6 +25,30 @@ export default function FullListItem(props: {
 }) {
   const image = props.entity.images[0];
   const [entityCollapsed, setEntityCollapsed] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
+  const arrowRef = useRef(null);
+  const {
+    x, y, strategy, refs, context,
+  } = useFloating({
+    placement: 'right',
+    open: isOpen,
+    onOpenChange: setIsOpen,
+    whileElementsMounted: autoUpdate,
+    middleware: [offset(10),
+      arrow({
+        element: arrowRef,
+      }),
+    ],
+  });
+
+  const hover = useHover(context, {
+    delay: {
+      open: 200,
+      close: 0,
+    },
+  });
+
+  const { getReferenceProps, getFloatingProps } = useInteractions([hover]);
 
   return (
     <li className="">
@@ -57,13 +95,14 @@ export default function FullListItem(props: {
                   </span>
                 </p>
                 <p className="mt-2 flex items-center text-sm text-gray-500">
-                  {/* <MailIcon className="flex-shrink-0 mr-1.5 h-5 w-5 text-gray-400" aria-hidden="true" /> */}
                   <span className="truncate">{props.entity.intro}</span>
                 </p>
               </div>
             </div>
           </div>
-          <div className="delay-100 group-hover:relative absolute"
+          <button
+            type="button"
+            className="group-hover:relative absolute"
             onClick={
               (e) => {
                 e.stopPropagation();
@@ -71,17 +110,58 @@ export default function FullListItem(props: {
               }
             }
           >
-            <div className="opacity-0 hidden group-hover:block group-hover:opacity-100 delay-300">
-              <div className="bg-slate-100 hover:bg-slate-200 hover:scale-105 transition-all
-                                origin-center p-2 rounded-full"
-              >
-                <ChevronDownIcon
-                  className="h-5 w-5 text-gray-400 group-hover:text-gray-500"
-                  aria-hidden="true"
-                />
+
+            <div className="opacity-0 group-hover:opacity-100 delay-150" ref={refs.setReference} {...getReferenceProps()}>
+              <div className="hidden group-hover:block">
+                <div className="bg-slate-100 hover:bg-slate-200 hover:scale-105 transition-all origin-center p-2 rounded-full">
+                  <ExclamationCircleIcon
+                    className="h-5 w-5 text-gray-400 group-hover:text-gray-500"
+                    aria-hidden="true"
+                  />
+                </div>
               </div>
             </div>
-          </div>
+
+            {isOpen && (
+            <WidgetPortal>
+              <div
+                className="bg-gray-800 text-gray-50 rounded p-2 border-blue-500 w-96 max-w-xs"
+                ref={refs.setFloating}
+                style={{
+                  position: strategy,
+                  top: y ?? 0,
+                  left: x ?? 0,
+                }}
+                {...getFloatingProps()}
+              >
+                <FloatingArrow ref={arrowRef} context={context} />
+                <p className="mb-1">
+                  <span className="text-yellow-50 text-base">
+                    {props.entity.title}
+                  </span>
+                  {' '}
+                  <span className="text-sm">
+                    {props.entity.intro}
+                  </span>
+                </p>
+                <p className="text-xs">
+                  {props.entity.lookups.map((obj, i) => [
+                    obj.title,
+                    i === 0 && props.entity.lookups.length > 1 && ', ',
+                  ])}
+                </p>
+                <p className="text-xs">
+                  {props.entity.kinds.map((obj, i) => [
+                    obj.title,
+                    i === 0 && props.entity.kinds.length > 1 && ', ',
+                  ])}
+                </p>
+                {/* { JSON.stringify(props.entity) } */}
+              </div>
+            </WidgetPortal>
+            )}
+
+          </button>
         </div>
       </a>
     </li>

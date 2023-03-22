@@ -10,16 +10,7 @@ import React, {
 } from "react";
 import ReactDOM from "react-dom";
 import { GlobalContext } from "../../../Utils";
-
-function Portal(props: { children: ReactNode }) {
-  const el = document
-    .querySelector("add-popup-component")!
-    .shadowRoot!.querySelector("#screenshot-portal");
-  if (el) {
-    return ReactDOM.createPortal(props.children, el);
-  }
-  return <></>;
-}
+import WidgetPortal from "../../../WidgetPortal";
 
 export default function Screenshot(props: {
   refetchClicked: boolean;
@@ -193,7 +184,7 @@ export default function Screenshot(props: {
       {image && <img className="mt-3 border rounded" src={image} />}
 
       {choosingArea && (
-        <Portal>
+        <WidgetPortal>
           {showCrosshair && (
             <>
               <div
@@ -310,9 +301,9 @@ export default function Screenshot(props: {
                     ref={leftRef}
                   />
                 </>
-              )}
+            )}
           </div>
-        </Portal>
+        </WidgetPortal>
       )}
     </>
   );

@@ -52,7 +52,7 @@ class AddPopupComponent extends HTMLElement {
           <ToastProvider>
             <ReactQueryDevtools initialIsOpen={false} />
             <AppAdd />
-            <div id="screenshot-portal" />
+            <div id="widget-portal" />
           </ToastProvider>
         </QueryClientProvider>
       </React.StrictMode>,
