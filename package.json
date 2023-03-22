@@ -17,6 +17,7 @@
     "url": "https://github.com/chibat/chrome-extension-typescript-starter.git"
   },
   "dependencies": {
+    "@floating-ui/react": "^0.22.0",
     "@headlessui/react": "^1.7.7",
     "@heroicons/react": "^1.0.6",
     "@hookform/resolvers": "^2.8.8",
