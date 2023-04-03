@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
+import React, { useEffect } from 'react';
 
 export default function useOutsideClick(
   menuRef: React.RefObject<HTMLDivElement>,
-  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>
+  setIsOpen: React.Dispatch<React.SetStateAction<boolean>>,
 ) {
   const listener1 = (evt: any) => {
-    if ((evt.target as Node).nodeName === "ADD-POPUP-COMPONENT") return;
+    if ((evt.target as Node).nodeName === 'ADD-POPUP-COMPONENT') return;
     setIsOpen(false);
   };
 
@@ -15,16 +15,16 @@ export default function useOutsideClick(
     setIsOpen(false);
   };
 
-  const popup = document.querySelector("add-popup-component");
+  const popup = document.querySelector('add-popup-component');
 
   useEffect(() => {
-    ["click", "touchstart"].forEach((type) => {
+    ['click', 'touchstart'].forEach((type) => {
       document.addEventListener(type, listener1);
       popup?.shadowRoot?.addEventListener(type, listener2);
     });
 
     return () => {
-      ["click", "touchstart"].forEach((type) => {
+      ['click', 'touchstart'].forEach((type) => {
         document.removeEventListener(type, listener1);
         popup?.shadowRoot?.removeEventListener(type, listener2);
       });

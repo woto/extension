@@ -105,8 +105,12 @@ function Thumbnail(props: { image: Image; dispatch: Dispatch<EntityAction> }) {
             `}
         style={{
           ...objectSize({
-            width: image.width, height: image.height,
-            minHeight: 96, maxHeight: 96, minWidth: 96, maxWidth: 200,
+            width: image.width,
+            height: image.height,
+            minHeight: 96,
+            maxHeight: 96,
+            minWidth: 96,
+            maxWidth: 200,
           }),
         }}
       >

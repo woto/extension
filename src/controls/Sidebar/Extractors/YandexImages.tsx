@@ -1,5 +1,5 @@
-import React from "react";
-import { Tab } from "../../../../main";
+import React from 'react';
+import { Tab } from '../../../../main';
 
 export default function YandexImages(props: {
   setIsBusy: React.Dispatch<React.SetStateAction<boolean>>;

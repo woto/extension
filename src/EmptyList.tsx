@@ -1,5 +1,5 @@
-import React from "react";
-import EmptyListItem from "./EmptyListItem";
+import React from 'react';
+import EmptyListItem from './EmptyListItem';
 
 export default function EmptyList() {
   return (

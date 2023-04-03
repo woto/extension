@@ -1,4 +1,4 @@
-import dayjs from "dayjs";
+import dayjs from 'dayjs';
 import {
   Entity,
   EntityAction,
@@ -6,8 +6,8 @@ import {
   Relevance,
   Sentiment,
   Image,
-} from "../main";
-import { EntityActionType, newImage } from "./Utils";
+} from '../main';
+import { EntityActionType, newImage } from './Utils';
 
 export function initEntity(entity: Entity) {
   return entity;
@@ -36,7 +36,7 @@ export function entityReducer(entity: Entity, action: EntityAction): Entity {
         });
       } else {
         newLookups = entity.lookups.filter(
-          (item) => item !== action.payload.lookup
+          (item) => item !== action.payload.lookup,
         );
       }
 
@@ -45,7 +45,7 @@ export function entityReducer(entity: Entity, action: EntityAction): Entity {
 
     case EntityActionType.SET_LOOKUP_TITLE: {
       const foundIndex = entity.lookups.findIndex(
-        (l) => l == action.payload.lookup
+        (l) => l == action.payload.lookup,
       );
       const newLookups = [
         ...entity.lookups.slice(0, foundIndex),
@@ -67,7 +67,7 @@ export function entityReducer(entity: Entity, action: EntityAction): Entity {
     case EntityActionType.SET_KINDS: {
       let newKinds = [];
       const found = entity.kinds.find(
-        (item: Kind) => item.title === action.payload.kind.title
+        (item: Kind) => item.title === action.payload.kind.title,
       );
 
       // props.setKinds((kinds: Kind[]) => {
@@ -98,7 +98,7 @@ export function entityReducer(entity: Entity, action: EntityAction): Entity {
           });
         } else {
           newKinds = entity.kinds.filter(
-            (item) => item !== action.payload.kind
+            (item) => item !== action.payload.kind,
           );
         }
 
@@ -171,7 +171,7 @@ export function entityReducer(entity: Entity, action: EntityAction): Entity {
 
     default:
       throw new Error(
-        `There is no such action type. Check reducer. ${JSON.stringify(action)}`
+        `There is no such action type. Check reducer. ${JSON.stringify(action)}`,
       );
   }
 }

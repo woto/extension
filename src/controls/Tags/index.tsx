@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 export default function Tags(props: { children: React.ReactNode }) {
   // console.log(props.children);

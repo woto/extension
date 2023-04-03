@@ -7,18 +7,17 @@ import React, {
   useEffect,
   useRef,
   useState,
-} from "react";
-import ReactDOM from "react-dom";
-import { GlobalContext } from "../../../Utils";
-import WidgetPortal from "../../../WidgetPortal";
+} from 'react';
+import ReactDOM from 'react-dom';
+import { GlobalContext } from '../../../Utils';
+import WidgetPortal from '../../../WidgetPortal';
 
 export default function Screenshot(props: {
   refetchClicked: boolean;
   setRefetchClicked: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const globalContext = useContext(GlobalContext);
-  const [rectangle, setRectangle] =
-    useState<{
+  const [rectangle, setRectangle] = useState<{
       top: number;
       right: number;
       bottom: number;
@@ -26,12 +25,9 @@ export default function Screenshot(props: {
       width: number;
       height: number;
     }>();
-  const [initialPosition, setInitialPosition] =
-    useState<{ top: number; left: number }>();
-  const [currentPosition, setCurrentPosition] =
-    useState<{ top: number; left: number }>();
-  const [originalOverflow, setOriginalOverflow] =
-    useState<{ html: string; body: string }>();
+  const [initialPosition, setInitialPosition] = useState<{ top: number; left: number }>();
+  const [currentPosition, setCurrentPosition] = useState<{ top: number; left: number }>();
+  const [originalOverflow, setOriginalOverflow] = useState<{ html: string; body: string }>();
   const [choosingArea, setChoosingArea] = useState<boolean>(false);
   const [adjustingArea, setAdjustingArea] = useState<boolean>(false);
   const [showCrosshair, setShowCrosshair] = useState<boolean>(false);
@@ -101,7 +97,7 @@ export default function Screenshot(props: {
   const makeScreenshot = (rectangle: any) => {
     chrome.runtime.sendMessage(
       {
-        message: "take-screenshot",
+        message: 'take-screenshot',
         coordinates: {
           x: rectangle.left,
           y: rectangle.top,
@@ -110,13 +106,13 @@ export default function Screenshot(props: {
         },
       },
       ({ imageUri }: { imageUri: string }) => {
-        const canvas = document.getElementById("canvas");
+        const canvas = document.getElementById('canvas');
         if (!canvasRef.current) return;
 
         canvasRef.current.width = rectangle.width;
         canvasRef.current.height = rectangle.height;
 
-        const ctx = canvasRef.current.getContext("2d");
+        const ctx = canvasRef.current.getContext('2d');
         if (!ctx) return;
 
         const img = new Image();
@@ -130,7 +126,7 @@ export default function Screenshot(props: {
             0,
             0,
             rectangle.width,
-            rectangle.height
+            rectangle.height,
           );
           if (!canvasRef.current) return;
 
@@ -138,7 +134,7 @@ export default function Screenshot(props: {
           setImage(base64);
         };
         img.src = imageUri;
-      }
+      },
     );
   };
 
@@ -210,11 +206,11 @@ export default function Screenshot(props: {
             onMouseUp={handleMouseUp}
             className="will-change-auto fixed inset-0 cursor-crosshair drag-none select-none"
           >
-            {rectangle &&
-              rectangle.top &&
-              rectangle.right &&
-              rectangle.bottom &&
-              rectangle.left && (
+            {rectangle
+              && rectangle.top
+              && rectangle.right
+              && rectangle.bottom
+              && rectangle.left && (
                 <>
                   <div
                     className="fixed border-2 -m-3 rounded-lg border-slate-50 border-dashed z-20"
@@ -229,20 +225,20 @@ export default function Screenshot(props: {
                       <div
                         className={`absolute translate-x-full drag-none select-none
                       ${
-                        rectangle &&
-                        currentPosition &&
-                        currentPosition.top >
-                          rectangle.top + rectangle.height / 2
-                          ? "-mb-1 bottom-0 translate-y-full"
-                          : "-mt-1 top-0 -translate-y-full"
+                        rectangle
+                        && currentPosition
+                        && currentPosition.top
+                          > rectangle.top + rectangle.height / 2
+                          ? '-mb-1 bottom-0 translate-y-full'
+                          : '-mt-1 top-0 -translate-y-full'
                       }
                       ${
-                        rectangle &&
-                        currentPosition &&
-                        currentPosition.left >
-                          rectangle.left + rectangle.width / 2
-                          ? "-mr-1 right-0"
-                          : "-ml-1 -translate-x-full"
+                        rectangle
+                        && currentPosition
+                        && currentPosition.left
+                          > rectangle.left + rectangle.width / 2
+                          ? '-mr-1 right-0'
+                          : '-ml-1 -translate-x-full'
                       }
                     `}
                       >

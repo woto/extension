@@ -1,9 +1,11 @@
-import React, { Fragment, useContext, useEffect, useState } from "react";
-import { useQuery } from "react-query";
+import React, {
+  Fragment, useContext, useEffect, useState,
+} from 'react';
+import { useQuery } from 'react-query';
 
-import { Tab } from "../../../../main";
-import { appUrl, GlobalContext } from "../../../Utils";
-import DotFlasing from "../../DotFlashing";
+import { Tab } from '../../../../main';
+import { appUrl, GlobalContext } from '../../../Utils';
+import DotFlasing from '../../DotFlashing';
 
 function ResultItem(props: { item: any }) {
   return (
@@ -32,7 +34,9 @@ export default function DuckDuckGo(props: {
 }) {
   const globalContext = useContext(GlobalContext);
 
-  const { isLoading, error, data, refetch, isFetching } = useQuery(
+  const {
+    isLoading, error, data, refetch, isFetching,
+  } = useQuery(
     `DuckDuckGo:${props.q}:${globalContext.apiKey}`,
     () => {
       const query = new URLSearchParams({
@@ -40,17 +44,17 @@ export default function DuckDuckGo(props: {
       });
 
       return fetch(`${appUrl}/api/tools/duckduckgo_instant?${query}`, {
-        credentials: "omit",
-        method: "GET",
+        credentials: 'omit',
+        method: 'GET',
         headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          "Api-Key": globalContext.apiKey,
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          'Api-Key': globalContext.apiKey,
         },
       })
         .then((res) => {
           if (res.status === 401) {
-            chrome.runtime.sendMessage({ message: "request-auth" });
+            chrome.runtime.sendMessage({ message: 'request-auth' });
           }
 
           if (!res.ok) throw new Error(res.statusText);
@@ -61,7 +65,7 @@ export default function DuckDuckGo(props: {
           console.error(reason);
         });
     },
-    { enabled: false }
+    { enabled: false },
   );
 
   useEffect(() => {
@@ -79,10 +83,11 @@ export default function DuckDuckGo(props: {
 
   if (isLoading) return <DotFlasing />;
 
-  if (error)
+  if (error) {
     return `An error has occurred: ${
       (error as Record<string, string>).message
     }`;
+  }
 
   return (
     <div className="py-3 space-y-7 break-all">

@@ -1,13 +1,13 @@
 import { Feature } from '../main';
 import { loginUrl } from './Utils';
 
-const sendMessageToPage = (data: {}, tab?: chrome.tabs.Tab | undefined) => {
+const sendMessageToPage = (data: {}, tab?: chrome.tabs.Tab | undefined) =>
 // console.log(data);
-  // console.log(data);
+// console.log(data);
 
-  // if (tab) console.log(tab);
+// if (tab) console.log(tab);
 
-  return new Promise((resolve, reject) => {
+  new Promise((resolve, reject) => {
     if (!tab || !tab.id) return;
 
     chrome.tabs.sendMessage(tab.id, data, (response) => {
@@ -16,8 +16,8 @@ const sendMessageToPage = (data: {}, tab?: chrome.tabs.Tab | undefined) => {
       }
       return resolve(response);
     });
-  });
-};
+  })
+;
 
 // manifest permissions/history
 // chrome.history.onVisited.addListener(

@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 
-import { Kind } from "../../../main";
+import { Kind } from '../../../main';
 
 export default function Item(props: { item: Kind; handleClick: any }) {
   return (
@@ -12,7 +12,8 @@ export default function Item(props: { item: Kind; handleClick: any }) {
         <div className="text-xs font-medium text-gray-900">
           {props.item.title}
         </div>
-      </a>{" "}
+      </a>
+      {' '}
     </li>
   );
 }

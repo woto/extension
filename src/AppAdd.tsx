@@ -331,7 +331,6 @@ function AppAdd() {
         //   console.dir(range);
         // }
 
-
         // if (selection.rangeCount) {
         //   let range = selection.getRangeAt(0);
         //   // let result = range.extractContents();
@@ -340,13 +339,11 @@ function AppAdd() {
         //   range.insertNode(result);
         // }
 
-
         // if (selection.rangeCount) {
         //   let range = selection.getRangeAt(0);
         //   range.deleteContents();
         //   range.insertNode(document.createTextNode(`-> ${selectedText} <-`));
         // }
-
 
         // try {
         //   (selection.focusNode as HTMLElement).style.textDecoration = 'underline';
@@ -355,7 +352,6 @@ function AppAdd() {
         // } catch (error) {
         //   console.error(error);
         // }
-
 
         // if (selection.rangeCount) {
         //   const range = selection.getRangeAt(0);
@@ -562,6 +558,7 @@ function AppAdd() {
                   onTouchStart={stopPropagation}
                   target="_blank"
                   className="select-none drag-none"
+                  rel="noreferrer"
                 >
 
                   <div

@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from "react";
-import { stopPropagation } from "../../Utils";
+import React, { useEffect, useRef, useState } from 'react';
+import { stopPropagation } from '../../Utils';
 
 export default function Textarea(props: {
   value: string;

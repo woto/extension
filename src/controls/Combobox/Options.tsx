@@ -1,6 +1,6 @@
-import { Transition } from "@headlessui/react";
-import React, { Fragment } from "react";
-import { preventDefault } from "../../Utils";
+import { Transition } from '@headlessui/react';
+import React, { Fragment } from 'react';
+import { preventDefault } from '../../Utils';
 
 export default function Options(props: {
   children: React.ReactNode;

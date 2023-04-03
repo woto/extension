@@ -17,7 +17,7 @@ import { ExclamationCircleIcon, MailIcon } from '@heroicons/react/outline';
 import ReactDOM from 'react-dom';
 import { Entity } from '../main';
 import { appUrl } from './Utils';
-import WidgetPortal from './WidgetPortal'
+import WidgetPortal from './WidgetPortal';
 
 export default function FullListItem(props: {
   entity: Entity;

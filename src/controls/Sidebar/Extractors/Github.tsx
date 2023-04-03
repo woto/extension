@@ -1,14 +1,14 @@
-import React, { useContext, useEffect, useState } from "react";
-import { useQuery } from "react-query";
+import React, { useContext, useEffect, useState } from 'react';
+import { useQuery } from 'react-query';
 
-import { Tab } from "../../../../main";
-import { appUrl, formatter, GlobalContext } from "../../../Utils";
-import DotFlasing from "../../DotFlashing";
+import { Tab } from '../../../../main';
+import { appUrl, formatter, GlobalContext } from '../../../Utils';
+import DotFlasing from '../../DotFlashing';
 
-import StarIcon from "../../../icons/github/Star.svg";
-import IssueIcon from "../../../icons/github/Issue.svg";
-import WatchIcon from "../../../icons/github/Watch.svg";
-import ForkIcon from "../../../icons/github/Fork.svg";
+import StarIcon from '../../../icons/github/Star.svg';
+import IssueIcon from '../../../icons/github/Issue.svg';
+import WatchIcon from '../../../icons/github/Watch.svg';
+import ForkIcon from '../../../icons/github/Fork.svg';
 
 export default function Github(props: {
   setIsBusy: React.Dispatch<React.SetStateAction<boolean>>;
@@ -19,7 +19,9 @@ export default function Github(props: {
 }) {
   const globalContext = useContext(GlobalContext);
 
-  const { isLoading, error, data, refetch, isFetching } = useQuery(
+  const {
+    isLoading, error, data, refetch, isFetching,
+  } = useQuery(
     `Github:${props.q}:${globalContext.apiKey}`,
     () => {
       const query = new URLSearchParams({
@@ -27,17 +29,17 @@ export default function Github(props: {
       });
 
       return fetch(`${appUrl}/api/tools/github?${query}`, {
-        credentials: "omit",
-        method: "GET",
+        credentials: 'omit',
+        method: 'GET',
         headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          "Api-Key": globalContext.apiKey,
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          'Api-Key': globalContext.apiKey,
         },
       })
         .then((res) => {
           if (res.status === 401) {
-            chrome.runtime.sendMessage({ message: "request-auth" });
+            chrome.runtime.sendMessage({ message: 'request-auth' });
           }
 
           if (!res.ok) throw new Error(res.statusText);
@@ -48,7 +50,7 @@ export default function Github(props: {
           console.error(reason);
         });
     },
-    { enabled: false }
+    { enabled: false },
   );
 
   useEffect(() => {
@@ -66,10 +68,11 @@ export default function Github(props: {
 
   if (isLoading) return <DotFlasing />;
 
-  if (error)
+  if (error) {
     return `An error has occurred: ${
       (error as Record<string, string>).message
     }`;
+  }
 
   return (
     <div className="py-3 space-y-7 break-all">
@@ -77,8 +80,8 @@ export default function Github(props: {
         <div dangerouslySetInnerHTML={{ __html: data.readme }} />
       )}
 
-      {data?.repos &&
-        data.repos.items.map((item: any) => (
+      {data?.repos
+        && data.repos.items.map((item: any) => (
           <div key={item.id}>
             <div className="font-medium text-sm mb-1">{item.full_name}</div>
 

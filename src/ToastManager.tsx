@@ -1,4 +1,6 @@
-import React, { MouseEventHandler, ReactNode, useCallback, useMemo } from 'react';
+import React, {
+  MouseEventHandler, ReactNode, useCallback, useMemo,
+} from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { ToastContextInterface, ToastType } from '../main';
 import Toast from './Toast';

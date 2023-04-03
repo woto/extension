@@ -1,9 +1,9 @@
-import React, { useContext, useEffect } from "react";
-import { useQuery } from "react-query";
+import React, { useContext, useEffect } from 'react';
+import { useQuery } from 'react-query';
 
-import { Tab } from "../../../../main";
-import { appUrl, GlobalContext } from "../../../Utils";
-import DotFlasing from "../../DotFlashing";
+import { Tab } from '../../../../main';
+import { appUrl, GlobalContext } from '../../../Utils';
+import DotFlasing from '../../DotFlashing';
 
 export default function Wikipedia(props: {
   setIsBusy: React.Dispatch<React.SetStateAction<boolean>>;
@@ -14,7 +14,9 @@ export default function Wikipedia(props: {
 }) {
   const globalContext = useContext(GlobalContext);
 
-  const { isLoading, error, data, refetch, isFetching } = useQuery(
+  const {
+    isLoading, error, data, refetch, isFetching,
+  } = useQuery(
     `Wikipedia:${props.q}:${globalContext.apiKey}`,
     () => {
       const query = new URLSearchParams({
@@ -23,17 +25,17 @@ export default function Wikipedia(props: {
       });
 
       return fetch(`${appUrl}/api/tools/wikipedia?${query}`, {
-        credentials: "omit",
-        method: "GET",
+        credentials: 'omit',
+        method: 'GET',
         headers: {
-          "Content-Type": "application/json",
-          Accept: "application/json",
-          "Api-Key": globalContext.apiKey,
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+          'Api-Key': globalContext.apiKey,
         },
       })
         .then((res) => {
           if (res.status === 401) {
-            chrome.runtime.sendMessage({ message: "request-auth" });
+            chrome.runtime.sendMessage({ message: 'request-auth' });
           }
 
           if (!res.ok) throw new Error(res.statusText);
@@ -44,7 +46,7 @@ export default function Wikipedia(props: {
           console.error(reason);
         });
     },
-    { enabled: false }
+    { enabled: false },
   );
 
   useEffect(() => {
@@ -62,16 +64,17 @@ export default function Wikipedia(props: {
 
   if (isLoading) return <DotFlasing />;
 
-  if (error)
+  if (error) {
     return `An error has occurred: ${
       (error as Record<string, string>).message
     }`;
+  }
 
   return (
     <div className="py-3 space-y-7 break-all">
-      {data &&
-        data.pages &&
-        Array.from(data.pages).map((item: any, idx) => (
+      {data
+        && data.pages
+        && Array.from(data.pages).map((item: any, idx) => (
           <div key={idx}>
             {item?.title && (
               <p className="font-medium text-sm mb-1">{item.title}</p>
@@ -84,7 +87,7 @@ export default function Wikipedia(props: {
             {item?.excerpt && (
               <p
                 className="text-sm mb-1"
-                dangerouslySetInnerHTML={{ __html: item.excerpt || "" }}
+                dangerouslySetInnerHTML={{ __html: item.excerpt || '' }}
               />
             )}
 
@@ -98,7 +101,8 @@ export default function Wikipedia(props: {
               </div>
             )}
           </div>
-        ))}{" "}
+        ))}
+      {' '}
     </div>
   );
 }

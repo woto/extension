@@ -1,7 +1,7 @@
-import { Transition } from "@headlessui/react";
-import React, { useEffect, useState } from "react";
+import { Transition } from '@headlessui/react';
+import React, { useEffect, useState } from 'react';
 
-import { Tab, SidebarButtonState } from "../../../main";
+import { Tab, SidebarButtonState } from '../../../main';
 
 export default function SlideButton(props: {
   iconName: Tab;
@@ -9,7 +9,7 @@ export default function SlideButton(props: {
   setCurrentTab: React.Dispatch<React.SetStateAction<Tab>>;
   state: SidebarButtonState;
 }) {
-  const [icon, setIcon] = useState<string>("");
+  const [icon, setIcon] = useState<string>('');
 
   useEffect(() => {
     async function loadIcon() {
@@ -28,22 +28,22 @@ export default function SlideButton(props: {
         props.setCurrentTab(props.iconName);
       }}
       className={`
-        ${props.state.disabled ? "fill-slate-500/50" : "fill-slate-500"}
+        ${props.state.disabled ? 'fill-slate-500/50' : 'fill-slate-500'}
         ${
           props.state.disabled
-            ? ""
-            : "hover:border-r-indigo-400 hover:fill-slate-700"
+            ? ''
+            : 'hover:border-r-indigo-400 hover:fill-slate-700'
         }
-        ${props.currentTab === props.iconName ? "opacity-95" : ""}
+        ${props.currentTab === props.iconName ? 'opacity-95' : ''}
         ${
           props.currentTab === props.iconName
-            ? "bg-gradient-to-br from-white/0 to-slate-600/20"
-            : ""
+            ? 'bg-gradient-to-br from-white/0 to-slate-600/20'
+            : ''
         }
         ${
           props.currentTab === props.iconName
-            ? "border-r-slate-800/50"
-            : "border-transparent"
+            ? 'border-r-slate-800/50'
+            : 'border-transparent'
         }
         group relative border-r-[3px] inline-flex items-center pl-3 py-3
       `}
