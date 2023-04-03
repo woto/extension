@@ -1,7 +1,7 @@
-import React from "react";
-import FullListItem from "./FullListItem";
+import React from 'react';
+import FullListItem from './FullListItem';
 
-import { Entity } from "../main";
+import { Entity } from '../main';
 
 export default function FullList(props: {
   entities: any[];

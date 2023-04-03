@@ -13,11 +13,11 @@ import { Entity, GlobalContextInterface } from '../main';
 //    alert('hello');
 // };
 
-// export const appUrl = 'https://roastme.ru';
-// export const loginUrl = 'https://roastme.ru/auth/login';
+export const appUrl = 'https://roastme.ru';
+export const loginUrl = 'https://roastme.ru/auth/login';
 
-export const appUrl = 'http://localhost:3000';
-export const loginUrl = 'http://localhost:3000/auth/login';
+// export const appUrl = 'http://localhost:3000';
+// export const loginUrl = 'http://localhost:3000/auth/login';
 
 // export const imgproxyUrl = 'http://localhost:8080';
 
@@ -61,11 +61,13 @@ export const newKind = (searchString: string) => ({
 });
 export const newEntity = (searchString: string, entityId?: number): Entity => ({
   entity_id: entityId?.toString() ?? '',
+  entity_url: '',
   title: searchString,
   intro: '',
   images: [],
   lookups: [],
   kinds: [],
+  links: [],
   entities_mentions_count: 0,
 });
 export const formatter = Intl.NumberFormat('ru', { notation: 'compact' });
@@ -120,15 +122,23 @@ export const preventDefault = (e: any) => {
 
 export function objectSize(
   {
-    width, height, maxWidth, maxHeight,
+    width, height, minWidth, maxWidth, minHeight, maxHeight,
   }:
   {
-    width: number, height: number, maxWidth: number, maxHeight: number
+    width: number, height: number, minWidth: number,
+    maxWidth: number, minHeight: number, maxHeight: number
   },
 ) {
   const ratio = Math.min(maxWidth / width, maxHeight / height);
+  const returnWidth = Math.round(width * ratio * 100) / 100;
+  const returnHeight = Math.round(height * ratio * 100) / 100;
+
   return {
-    width: Math.round(width * ratio * 100) / 100,
-    height: Math.round(height * ratio * 100) / 100,
+    width: Number.isFinite(returnWidth) ? returnWidth : 'auto',
+    height: Number.isFinite(returnHeight) ? returnHeight : 'auto',
+    minWidth,
+    maxWidth,
+    minHeight,
+    maxHeight,
   };
 }

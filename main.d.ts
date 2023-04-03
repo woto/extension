@@ -104,6 +104,8 @@ export type ToastType = {
 // }
 
 export type Entity = {
+  entity_url: string;
+  links: string[];
   entity_id: string,
   title: string,
   intro: string,

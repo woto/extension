@@ -106,12 +106,13 @@ export default function FullListItem(props: {
             onClick={
               (e) => {
                 e.stopPropagation();
-                setEntityCollapsed(false);
+                window.open(props.entity.entity_url, '_blank', 'popup');
+                // setEntityCollapsed(false);
               }
             }
           >
 
-            <div className="opacity-0 group-hover:opacity-100 delay-150" ref={refs.setReference} {...getReferenceProps()}>
+            <div className="opacity-0 group-hover:opacity-100 delay-100" ref={refs.setReference} {...getReferenceProps()}>
               <div className="hidden group-hover:block">
                 <div className="bg-slate-100 hover:bg-slate-200 hover:scale-105 transition-all origin-center p-2 rounded-full">
                   <ExclamationCircleIcon
@@ -125,7 +126,7 @@ export default function FullListItem(props: {
             {isOpen && (
             <WidgetPortal>
               <div
-                className="bg-gray-800 text-gray-50 rounded p-2 border-blue-500 w-96 max-w-xs"
+                className="bg-gray-800 text-gray-50 rounded p-2 border-blue-500 w-96 max-w-sm break-words"
                 ref={refs.setFloating}
                 style={{
                   position: strategy,
@@ -136,24 +137,31 @@ export default function FullListItem(props: {
               >
                 <FloatingArrow ref={arrowRef} context={context} />
                 <p className="mb-1">
-                  <span className="text-yellow-50 text-base">
+                  <span className="text-sm">
                     {props.entity.title}
                   </span>
-                  {' '}
-                  <span className="text-sm">
+                </p>
+                <p className="mb-1">
+                  <span className="text-sm text-yellow-50">
                     {props.entity.intro}
                   </span>
                 </p>
                 <p className="text-xs">
                   {props.entity.lookups.map((obj, i) => [
                     obj.title,
-                    i === 0 && props.entity.lookups.length > 1 && ', ',
+                    i !== props.entity.lookups.length - 1 && props.entity.lookups.length > 1 && ', ',
                   ])}
                 </p>
                 <p className="text-xs">
                   {props.entity.kinds.map((obj, i) => [
                     obj.title,
-                    i === 0 && props.entity.kinds.length > 1 && ', ',
+                    i !== props.entity.kinds.length - 1 && props.entity.kinds.length > 1 && ', ',
+                  ])}
+                </p>
+                <p className="text-xs">
+                  {props.entity.links.map((str, i) => [
+                    str,
+                    i !== props.entity.links.length - 1 && props.entity.links.length > 1 && ', ',
                   ])}
                 </p>
                 {/* { JSON.stringify(props.entity) } */}

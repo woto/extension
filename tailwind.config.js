@@ -3,7 +3,7 @@ module.exports = {
   content: ["./src/**/*.{html,js,jsx,ts,tsx}"],
   theme: {
     // transitionDuration: {
-    //   DEFAULT: '1000ms'
+    //   DEFAULT: '1000ms',
     // },
     /**
      * Default tailwind values converted from rem to px:

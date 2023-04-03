@@ -513,9 +513,8 @@ export default function Form(props: {
           entity={props.entity}
           dispatch={props.dispatch}
         />
-
-        <Thumbnails images={_images} dispatch={props.dispatch} entity={props.entity} />
-
+        <FileInput entity={props.entity} dispatch={props.dispatch} />
+        <Thumbnails images={_images} dispatch={props.dispatch} />
         <button
           type="submit"
           className="mt-3 w-full bg-indigo-600 border border-transparent rounded-md shadow-sm py-2 px-4 text-sm font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-50 focus:ring-indigo-500"

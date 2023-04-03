@@ -96,33 +96,30 @@ function Thumbnail(props: { image: Image; dispatch: Dispatch<EntityAction> }) {
     >
       <div
         className={`
-              rounded border p-0.5 h-full w-full group transition relative flex justify-center items-center
+              rounded border p-0.5 h-full? w-full? group transition relative flex justify-center items-center
               ${
                 image.dark
                   ? 'bg-slate-800 border-black'
                   : 'bg-slate-50 border-slate-200'
               }
             `}
+        style={{
+          ...objectSize({
+            width: image.width, height: image.height,
+            minHeight: 96, maxHeight: 96, minWidth: 96, maxWidth: 200,
+          }),
+        }}
       >
-        <div
-          style={{
-            height: '96px',
-            minWidth: '96px',
-            width: objectSize({
-              width: image.width, height: image.height, maxWidth: 120, maxHeight: 96,
-            }).width,
-          }}
-        >
-          <div className="rounded absolute inset-0 group-hover:backdrop-brightness-[0.7] duration-150" />
-          {objectUrl?.image_url && (
+        <div className="rounded absolute inset-0 group-hover:backdrop-brightness-[0.7] duration-150" />
+        {objectUrl?.image_url && (
           <img
             alt=""
             className="object-scale-down h-full p-0.5"
             src={`${appUrl}/${objectUrl.image_url}`}
           />
-          )}
+        )}
 
-          {objectUrl?.video_url && (
+        {objectUrl?.video_url && (
           <video
             autoPlay
             muted
@@ -130,47 +127,46 @@ function Thumbnail(props: { image: Image; dispatch: Dispatch<EntityAction> }) {
             className=""
             src={`${appUrl}/${objectUrl.video_url}`}
           />
-          )}
+        )}
 
-          <Transition
-            show={displaySpinner}
-            leave="transition duration-300"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="rounded absolute inset-0">
-              <div className="absolute inset-0 bg-slate-500/90" />
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="dot-flashing" />
-              </div>
+        <Transition
+          show={displaySpinner}
+          leave="transition duration-300"
+          leaveFrom="opacity-100"
+          leaveTo="opacity-0"
+        >
+          <div className="rounded absolute inset-0">
+            <div className="absolute inset-0 bg-slate-500/90" />
+            <div className="absolute inset-0 flex items-center justify-center">
+              <div className="dot-flashing" />
             </div>
-          </Transition>
+          </div>
+        </Transition>
 
-          <div className="rounded flex flex-col top-0 right-0 absolute opacity-0 group-hover:opacity-100 transition">
-            <button
-              type="button"
-              onClick={hideImage}
-              className="shadow-sm absolute top-1 right-1 items-center p-1 border border-transparent rounded-full
+        <div className="rounded flex flex-col top-0 right-0 absolute opacity-0 group-hover:opacity-100 transition">
+          <button
+            type="button"
+            onClick={hideImage}
+            className="shadow-sm absolute top-1 right-1 items-center p-1 border border-transparent rounded-full
             text-white hover:bg-red-700/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-300/30"
-            >
-              <TrashIcon className="h-4 w-4 text-white" />
-            </button>
-          </div>
+          >
+            <TrashIcon className="h-4 w-4 text-white" />
+          </button>
+        </div>
 
-          <div className="rounded flex flex-col top-0 left-0 absolute opacity-0 group-hover:opacity-100 transition">
-            <button
-              type="button"
-              onClick={toggleBackground}
-              className="shadow-sm absolute top-1 left-1 items-center p-1 border border-transparent rounded-full
+        <div className="rounded flex flex-col top-0 left-0 absolute opacity-0 group-hover:opacity-100 transition">
+          <button
+            type="button"
+            onClick={toggleBackground}
+            className="shadow-sm absolute top-1 left-1 items-center p-1 border border-transparent rounded-full
             text-white hover:bg-blue-700/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-300/30"
-            >
-              {image.dark ? (
-                <SunIcon className="h-4 w-4 text-white" />
-              ) : (
-                <MoonIcon className="h-4 w-4 text-white" />
-              )}
-            </button>
-          </div>
+          >
+            {image.dark ? (
+              <SunIcon className="h-4 w-4 text-white" />
+            ) : (
+              <MoonIcon className="h-4 w-4 text-white" />
+            )}
+          </button>
         </div>
       </div>
     </Transition>

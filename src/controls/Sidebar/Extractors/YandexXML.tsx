@@ -101,8 +101,8 @@ export default function YandexXML(props: {
               {item.querySelector("passages")?.textContent!}
             </p>
           </div>
-        ))}{" "}
-        </>
+        ))}
+      </>
     </div>
   );
 }
