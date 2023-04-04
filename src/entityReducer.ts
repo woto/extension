@@ -7,7 +7,7 @@ import {
   Sentiment,
   Image,
 } from '../main';
-import { EntityActionType, newImage } from './Utils';
+import { EntityActionType, FirstLookupIndex, newImage } from './Utils';
 
 export function initEntity(entity: Entity) {
   return entity;
@@ -20,6 +20,9 @@ export function entityReducer(entity: Entity, action: EntityAction): Entity {
     }
 
     case EntityActionType.APPEND_LOOKUP: {
+      const index = entity.lookups.findIndex((lookup) => lookup.index === FirstLookupIndex);
+      if (index !== -1) { return entity; }
+
       const newLookups = [...entity.lookups, action.payload.lookup];
       return { ...entity, lookups: newLookups };
     }

@@ -87,6 +87,7 @@ export default function YandexXML(props: {
 
   return (
     <div className="py-3 space-y-7 break-all">
+      <>
       {data
         && Array.from(data).map((item, idx) => (
           <div key={idx}>
@@ -105,7 +106,8 @@ export default function YandexXML(props: {
               {item.querySelector('passages')?.textContent!}
             </p>
           </div>
-        ))}
+        ))}{" "}
+        </>
     </div>
   );
 }

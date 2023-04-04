@@ -31,8 +31,10 @@ export const GlobalContext = React.createContext<GlobalContextInterface>({
   pageLanguage: undefined,
 });
 
-export const newLookup = () => ({
-  index: uuidv4(),
+export const FirstLookupIndex = 'FirstLookupIndex';
+
+export const newLookup = (index?: string) => ({
+  index: index || uuidv4(),
   id: null,
   title: '',
   destroy: false,

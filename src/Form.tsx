@@ -29,6 +29,7 @@ import {
   newLookup,
   EntityActionType,
   newEntity,
+  FirstLookupIndex,
 } from './Utils';
 
 import SentimentInput from './SentimentInput';
@@ -118,12 +119,10 @@ export default function Form(props: {
   ];
 
   useEffect(() => {
-    if (_lookups.length === 0) {
-      props.dispatch({
-        type: EntityActionType.APPEND_LOOKUP,
-        payload: { lookup: newLookup() },
-      });
-    }
+    props.dispatch({
+      type: EntityActionType.APPEND_LOOKUP,
+      payload: { lookup: newLookup(FirstLookupIndex) },
+    });
   }, []);
 
   const {
