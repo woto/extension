@@ -34,7 +34,7 @@ document.addEventListener('click', (e) => {
 });
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  const { message, intent } = request;
+  const { message, menuItemId } = request;
 
   let linkUrl: string | null = null;
   let imageSrc: string | null = null;

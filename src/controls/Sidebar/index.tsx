@@ -18,7 +18,7 @@ import Textarea from '../Textarea';
 
 import { Tab, SidebarButtonState } from '../../../main';
 import search = chrome.bookmarks.search;
-import { url } from 'inspector';
+import { IntentType } from '../../Utils';
 
 export const tabs = [
   'Wikipedia',
@@ -39,6 +39,7 @@ export const tabs = [
 ] as const;
 
 function Sidebar(props: {
+  intent: IntentType;
   searchString: string;
   linkUrl: string;
   imageSrc: string;
@@ -58,178 +59,409 @@ function Sidebar(props: {
 
   const SidebarButtonsStates: { [key in Tab]: SidebarButtonState } = {
     Wikipedia: {
-      q: searchString,
-      bell() {
-        return !!searchString;
+      analyze() {
+        return {
+          bell: !!searchString,
+          q: searchString,
+        };
       },
       disabled: false,
     },
     YandexMicrodata: {
-      q: linkUrl || fragmentUrl,
-      bell() {
-        try {
-          new URL(linkUrl);
-          return true;
-        } catch {}
+      analyze() {
+        let bell = false;
+        let q = '';
 
-        try {
-          new URL(fragmentUrl);
-          return true;
-        } catch {}
+        switch (props.intent) {
+          case IntentType.SelectLink: {
+            try {
+              bell = new URL(linkUrl) && true;
+              q = linkUrl;
+            } catch { /* empty */ }
+
+            break;
+          }
+
+          case IntentType.SelectPage: {
+            try {
+              bell = new URL(fragmentUrl) && true;
+              q = fragmentUrl;
+            } catch { /* empty */ }
+
+            break;
+          }
+
+          default: { /* empty */ }
+        }
+
+        return {
+          bell,
+          q,
+        };
       },
       disabled: false,
     },
     YandexXML: {
-      q: searchString,
-      bell() {
-        return !!searchString;
+      analyze() {
+        return {
+          bell: !!searchString,
+          q: searchString,
+        };
       },
       disabled: false,
     },
     YandexImages: {
-      q: searchString,
-      bell() {
-        return false;
+      analyze() {
+        return {
+          bell: false,
+          q: '',
+        };
       },
       disabled: true,
     },
     GoogleGraph: {
-      q: searchString,
-      bell() {
-        return !!searchString;
+      analyze() {
+        return {
+          bell: !!searchString,
+          q: searchString,
+        };
       },
       disabled: false,
     },
     GoogleCustomSearch: {
-      q: searchString,
-      bell() {
-        return !!searchString;
+      analyze() {
+        return {
+          bell: !!searchString,
+          q: searchString,
+        };
       },
       disabled: false,
     },
     DuckDuckGo: {
-      q: searchString,
-      bell() {
-        return !!searchString;
+      analyze() {
+        return {
+          bell: !!searchString,
+          q: searchString,
+        };
       },
       disabled: false,
     },
     Iframely: {
-      q: linkUrl || fragmentUrl,
-      bell() {
-        try {
-          new URL(linkUrl);
-          return true;
-        } catch {}
+      analyze() {
+        let bell = false;
+        let q = '';
 
-        try {
-          new URL(fragmentUrl);
-          return true;
-        } catch {}
+        switch (props.intent) {
+          case IntentType.SelectLink: {
+            try {
+              bell = new URL(linkUrl) && true;
+              q = linkUrl;
+            } catch { /* empty */ }
+
+            break;
+          }
+
+          case IntentType.SelectPage: {
+            try {
+              bell = new URL(fragmentUrl) && true;
+              q = fragmentUrl;
+            } catch { /* empty */ }
+
+            break;
+          }
+
+          default: { /* empty */ }
+        }
+
+        return {
+          bell,
+          q,
+        };
       },
       disabled: false,
     },
     Scrapper: {
-      q: linkUrl || fragmentUrl,
-      bell() {
-        try {
-          new URL(linkUrl);
-          return true;
-        } catch {}
+      analyze() {
+        let bell = false;
+        let q = '';
 
-        try {
-          new URL(fragmentUrl);
-          return true;
-        } catch {}
+        switch (props.intent) {
+          case IntentType.SelectLink: {
+            try {
+              bell = new URL(linkUrl) && true;
+              q = linkUrl;
+            } catch { /* empty */ }
+
+            break;
+          }
+
+          case IntentType.SelectPage: {
+            try {
+              bell = new URL(fragmentUrl) && true;
+              q = fragmentUrl;
+            } catch { /* empty */ }
+
+            break;
+          }
+
+          default: { /* empty */ }
+        }
+
+        return {
+          bell,
+          q,
+        };
       },
       disabled: false,
     },
     Screenshot: {
-      q: '',
-      bell() {
-        return true;
+      analyze() {
+        return {
+          bell: true,
+          q: '',
+        };
       },
       disabled: false,
     },
     Github: {
-      q: linkUrl || fragmentUrl || searchString,
-      bell() {
-        try {
-          const url = new URL(linkUrl);
-          if (['github.com'].includes(url.host)) return true;
-        } catch {}
+      analyze() {
+        let bell = false;
+        let q = searchString;
 
-        try {
-          const url = new URL(fragmentUrl);
-          if (['github.com'].includes(url.host)) return true;
-        } catch {}
+        switch (props.intent) {
+          case IntentType.SelectLink: {
+            try {
+              const url = new URL(linkUrl);
+              if (['github.com'].includes(url.host)) {
+                bell = true;
+                q = linkUrl;
+              }
+            } catch { /* empty */ }
+
+            break;
+          }
+
+          case IntentType.SelectPage: {
+            try {
+              const url = new URL(fragmentUrl);
+              if (['github.com'].includes(url.host)) {
+                bell = true;
+                q = fragmentUrl;
+              }
+            } catch { /* empty */ }
+
+            break;
+          }
+
+          case IntentType.SelectText: {
+            bell = false;
+            q = searchString;
+
+            break;
+          }
+
+          default: { /* empty */ }
+        }
+
+        return {
+          bell,
+          q,
+        };
       },
       disabled: false,
     },
     Telegram: {
-      q: linkUrl || fragmentUrl || searchString,
-      bell() {
-        try {
-          const url = new URL(linkUrl);
-          if (['www.t.me', 't.me', 'telegram.me'].includes(url.host)) { return true; }
-        } catch {}
+      analyze() {
+        let bell = false;
+        let q = searchString;
 
-        try {
-          const url = new URL(fragmentUrl);
-          if (['www.t.me', 't.me', 'telegram.me'].includes(url.host)) { return true; }
-        } catch {}
+        switch (props.intent) {
+          case IntentType.SelectLink: {
+            try {
+              const url = new URL(linkUrl);
+              if (['www.t.me', 't.me', 'telegram.me'].includes(url.host)) {
+                bell = true;
+                q = linkUrl;
+              }
+            } catch { /* empty */ }
+
+            break;
+          }
+
+          case IntentType.SelectPage: {
+            try {
+              const url = new URL(fragmentUrl);
+              if (['www.t.me', 't.me', 'telegram.me'].includes(url.host)) {
+                bell = true;
+                q = fragmentUrl;
+              }
+            } catch { /* empty */ }
+
+            break;
+          }
+
+          case IntentType.SelectText: {
+            bell = false;
+            q = searchString;
+
+            break;
+          }
+
+          default: { /* empty */ }
+        }
+
+        return {
+          bell,
+          q,
+        };
       },
       disabled: false,
     },
     Ruby: {
-      q: linkUrl || searchString || fragmentUrl,
-      bell() {
-        try {
-          const url = new URL(linkUrl);
-          if (['rubygems.org'].includes(url.host)) return true;
-        } catch {}
+      analyze() {
+        let bell = false;
+        let q = searchString;
 
-        try {
-          const url = new URL(fragmentUrl);
-          if (['rubygems.org'].includes(url.host)) return true;
-        } catch {}
+        switch (props.intent) {
+          case IntentType.SelectLink: {
+            try {
+              const url = new URL(linkUrl);
+              if (['rubygems.org'].includes(url.host)) {
+                bell = true;
+                q = linkUrl;
+              }
+            } catch { /* empty */ }
+
+            break;
+          }
+
+          case IntentType.SelectPage: {
+            try {
+              const url = new URL(fragmentUrl);
+              if (['rubygems.org'].includes(url.host)) {
+                bell = true;
+                q = fragmentUrl;
+              }
+            } catch { /* empty */ }
+
+            break;
+          }
+
+          case IntentType.SelectText: {
+            bell = false;
+            q = searchString;
+
+            break;
+          }
+
+          default: { /* empty */ }
+        }
+
+        return {
+          bell,
+          q,
+        };
       },
       disabled: false,
     },
     Javascript: {
-      q: linkUrl || searchString || fragmentUrl,
-      bell() {
-        try {
-          const url = new URL(linkUrl);
-          if (['npmjs.com'].includes(url.host)) return true;
-        } catch {}
+      analyze() {
+        let bell = false;
+        let q = searchString;
 
-        try {
-          const url = new URL(fragmentUrl);
-          if (['npmjs.com'].includes(url.host)) return true;
-        } catch {}
+        switch (props.intent) {
+          case IntentType.SelectLink: {
+            try {
+              const url = new URL(linkUrl);
+              if (['npmjs.com'].includes(url.host)) {
+                bell = true;
+                q = linkUrl;
+              }
+            } catch { /* empty */ }
+
+            break;
+          }
+
+          case IntentType.SelectPage: {
+            try {
+              const url = new URL(fragmentUrl);
+              if (['npmjs.com'].includes(url.host)) {
+                bell = true;
+                q = fragmentUrl;
+              }
+            } catch { /* empty */ }
+
+            break;
+          }
+
+          case IntentType.SelectText: {
+            bell = false;
+            q = searchString;
+
+            break;
+          }
+
+          default: { /* empty */ }
+        }
+
+        return {
+          bell,
+          q,
+        };
       },
       disabled: false,
     },
     Youtube: {
-      q: linkUrl || fragmentUrl || searchString,
-      bell() {
-        try {
-          const url = new URL(linkUrl);
-          if (['youtube.com', 'www.youtube.com'].includes(url.host)) { return true; }
-        } catch {}
+      analyze() {
+        let bell = false;
+        let q = searchString;
 
-        try {
-          const url = new URL(fragmentUrl);
-          if (['youtube.com', 'www.youtube.com'].includes(url.host)) { return true; }
-        } catch {}
+        switch (props.intent) {
+          case IntentType.SelectLink: {
+            try {
+              const url = new URL(linkUrl);
+              if (['youtube.com', 'www.youtube.com'].includes(url.host)) {
+                bell = true;
+                q = linkUrl;
+              }
+            } catch { /* empty */ }
+
+            break;
+          }
+
+          case IntentType.SelectPage: {
+            try {
+              const url = new URL(fragmentUrl);
+              if (['youtube.com', 'www.youtube.com'].includes(url.host)) {
+                bell = true;
+                q = fragmentUrl;
+              }
+            } catch { /* empty */ }
+
+            break;
+          }
+
+          case IntentType.SelectText: {
+            bell = false;
+            q = searchString;
+
+            break;
+          }
+
+          default: { /* empty */ }
+        }
+
+        return {
+          bell,
+          q,
+        };
       },
       disabled: false,
     },
   };
 
   useEffect(() => {
-    const str = (currentTab && SidebarButtonsStates[currentTab].q) || '';
+    const str = (currentTab && SidebarButtonsStates[currentTab].analyze().q) || '';
     setInternalSearchString(str);
   }, [currentTab]);
 

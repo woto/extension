@@ -30,6 +30,7 @@ import {
   EntityActionType,
   newEntity,
   FirstLookupIndex,
+  IntentType,
 } from './Utils';
 
 import SentimentInput from './SentimentInput';
@@ -64,6 +65,7 @@ let renderCount = 0;
 export default function Form(props: {
   isBusy: boolean;
   setIsBusy: Dispatch<SetStateAction<boolean>>;
+  intent: IntentType;
   fragmentUrl: string;
   fragmentHash: FragmentHash;
   linkUrl: string;
@@ -401,6 +403,7 @@ export default function Form(props: {
   return (
     <form onSubmit={onSubmit} style={{ marginBlockEnd: 0 }}>
       <Sidebar
+        intent={props.intent}
         searchString={props.entity.title}
         linkUrl={props.linkUrl}
         imageSrc={props.imageSrc}

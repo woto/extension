@@ -74,8 +74,10 @@ export type FragmentHash = {
 type Feature = 'list' | 'add';
 
 type SidebarButtonState = {
-  bell: () => boolean | undefined,
-  q: string,
+  analyze: () => {
+    bell: boolean,
+    q: string
+  }
   disabled: boolean,
 }
 interface GlobalContextInterface {

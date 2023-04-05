@@ -21,6 +21,13 @@ export const loginUrl = 'https://roastme.ru/auth/login';
 
 // export const imgproxyUrl = 'http://localhost:8080';
 
+export enum IntentType {
+  SelectPage = "select-page",
+  SelectLink = "select-link",
+  SelectText = "select-text",
+  SelectImage = "select-image",
+}
+
 export const GlobalContext = React.createContext<GlobalContextInterface>({
   apiKey: '',
   setApiKey: () => {},

@@ -54,7 +54,7 @@ export default function SlideButton(props: {
       />
 
       <Transition
-        show={props.state.bell() === true}
+        show={props.state.analyze().bell === true}
         appear
         enter="transition-all"
         enterFrom="opacity-0"

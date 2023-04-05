@@ -24,6 +24,7 @@ import {
   appUrl,
   EntityActionType,
   GlobalContext,
+  IntentType,
   newEntity,
   stopPropagation,
 } from './Utils';
@@ -83,6 +84,7 @@ function AppAdd() {
   );
 
   const nodeRef = React.useRef(null);
+  const [intent, setIntent] = useState<IntentType>(IntentType.SelectPage);
   const [fragmentUrl, setFragmentUrl] = useState('');
   const [linkUrl, setLinkUrl] = useState('');
   const [imageSrc, setImageSrc] = useState('');
@@ -145,37 +147,39 @@ function AppAdd() {
     };
   });
 
-  const setPreserveWidget = async () => {
-    // // console.log('sendMessage', 'preserve-widget');
-
-    chrome.runtime.sendMessage({
-      message: 'preserve-widget',
-      fragmentUrl,
-      linkUrl,
-      imageSrc,
-      fragmentHash,
-      searchString,
-      showForm,
-      showWindow,
-      collapseWindow,
-      entity,
-      mentionDate,
-      relevance,
-      sentiment,
-      entities,
-      page,
-      scrollPosition,
-      showDebug,
-      positionX,
-      positionY,
-      operation,
-      pageLanguage,
-    });
-  };
-
   useEffect(() => {
+    const setPreserveWidget = async () => {
+      // // console.log('sendMessage', 'preserve-widget');
+
+      chrome.runtime.sendMessage({
+        message: 'preserve-widget',
+        intent,
+        fragmentUrl,
+        linkUrl,
+        imageSrc,
+        fragmentHash,
+        searchString,
+        showForm,
+        showWindow,
+        collapseWindow,
+        entity,
+        mentionDate,
+        relevance,
+        sentiment,
+        entities,
+        page,
+        scrollPosition,
+        showDebug,
+        positionX,
+        positionY,
+        operation,
+        pageLanguage,
+      });
+    };
+
     setPreserveWidget();
   }, [
+    intent,
     fragmentUrl,
     linkUrl,
     imageSrc,
@@ -266,6 +270,7 @@ function AppAdd() {
       if (message === 'restore-widget') {
         if (showWindow) return sendResponse();
 
+        setIntent(request.intent);
         setPositionX(request.positionX);
         setPositionY(request.positionY);
         setOperation(request.operation);
@@ -392,6 +397,7 @@ function AppAdd() {
 
         selection.removeAllRanges();
 
+        setIntent(menuItemId);
         setFragmentUrl(url!);
         setFragmentHash(fHash!);
         setLinkUrl(request.linkUrl);
@@ -725,6 +731,7 @@ function AppAdd() {
                         mentionDate={mentionDate}
                         setMentionDate={setMentionDate}
                         dispatch={dispatch}
+                        intent={intent}
                         fragmentUrl={fragmentUrl}
                         fragmentHash={fragmentHash!}
                         linkUrl={linkUrl}
