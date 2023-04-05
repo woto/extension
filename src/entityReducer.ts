@@ -21,7 +21,7 @@ export function entityReducer(entity: Entity, action: EntityAction): Entity {
 
     case EntityActionType.APPEND_LOOKUP: {
       const index = entity.lookups.findIndex((lookup) => lookup.index === FirstLookupIndex);
-      if (index !== -1) { return entity; }
+      if (index !== -1 && action.payload.lookup.index === FirstLookupIndex) { return entity; }
 
       const newLookups = [...entity.lookups, action.payload.lookup];
       return { ...entity, lookups: newLookups };

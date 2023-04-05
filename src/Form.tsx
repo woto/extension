@@ -186,7 +186,7 @@ export default function Form(props: {
         // NOTE: temporary fix of the case when saved entity does not have any lookups.
         _dispatch({
           type: EntityActionType.APPEND_LOOKUP,
-          payload: { lookup: newLookup() },
+          payload: { lookup: newLookup(FirstLookupIndex) },
         });
       })
       .catch((reason) => {
