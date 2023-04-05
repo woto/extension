@@ -70,11 +70,12 @@ export default function List(props: {
 
   const [error, setError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [restoreScroll, setRestoreScroll] = useState(true);
 
   const { scrollPosition } = props;
 
   useEffect(() => {
-    if (scrollRef.current) {
+    if (restoreScroll && scrollRef.current) {
       const diff = Math.abs(scrollRef.current.scrollTop - scrollPosition);
       if (diff > 1) {
         scrollRef.current.scrollTop = scrollPosition;
@@ -217,12 +218,14 @@ export default function List(props: {
   const someFunc = (val: any) => {
     props.setScrollPosition(val);
   };
+
   const asyncFunctionDebounced = AwesomeDebouncePromise(someFunc, 50);
 
   const handleScroll = (e: any) => {
     if (props.isBusy) return;
     if (page === 1) return;
 
+    setRestoreScroll(false);
     asyncFunctionDebounced(e.target.scrollTop);
 
     if (
