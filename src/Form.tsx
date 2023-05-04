@@ -255,7 +255,7 @@ export default function Form(props: {
           <span>
             Упоминание
             {' '}
-            <a href={res.url}>{res.title}</a>
+            <a href={`${appUrl}${res.url}`}>{res.title}</a>
             {' '}
             успешно добавлено.
           </span>,
