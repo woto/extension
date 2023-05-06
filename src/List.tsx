@@ -99,7 +99,7 @@ export default function List(props: {
   const abortController = useRef<AbortController>();
 
   const fetchData = useCallback(() => {
-    if (!apiKey) return null;
+    // if (!apiKey) return null;
     setIsBusy(true);
     setError(null);
 
