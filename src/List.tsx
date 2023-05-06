@@ -277,8 +277,8 @@ export default function List(props: {
           >
             Добавить новый объект
           </a>
-          <a href="#:~:text=is">111</a>
-          <a href="#:~:text=in">222</a>
+          {/* <a href="#:~:text=is">111</a> */}
+          {/* <a href="#:~:text=in">222</a> */}
         </div>
       </div>
     </>
