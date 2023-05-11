@@ -1,3 +1,9 @@
+# See https://github.com/woto/hub
+
+---
+
+# Template:
+
 # Chrome Extension TypeScript Starter
 
 ![build](https://github.com/chibat/chrome-extension-typescript-starter/workflows/build/badge.svg)
