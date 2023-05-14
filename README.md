@@ -1,76 +1,68 @@
-# See https://github.com/woto/hub
+# [roastme.ru](https://roastme.ru)
 
----
+"Roastme" project aim to unite developers willing to create. It is list of manually picked news about programming, AI, contries legislations, digital nomands, SaaS instruments, github repositories... with precise enumeration of entities mentioned in this news for faster understanding does this news deserve attention or must be roasted. It helps to discover new things just before you think of.
 
-# Template:
+## Hub project
+https://github.com/woto/hub
+## Google chrome Extenstion (this repo)
+https://github.com/woto/extension
 
-# Chrome Extension TypeScript Starter
+## Context menu
+![Context menu](./docs/images/context_menu.png)
 
-![build](https://github.com/chibat/chrome-extension-typescript-starter/workflows/build/badge.svg)
+## Wikipedia
+![Wikipedia](./docs/images/wikipedia_extractor.png)
 
-Chrome Extension, TypeScript and Visual Studio Code
+## Google Graph
+![Google Graph](./docs/images/google_graph_extractor.png)
 
-## Prerequisites
+## Duck Duck Go
+![Duck Duck Go](./docs/images/duckduckgo_extractor.png)
 
-* [node + npm](https://nodejs.org/) (Current Version)
+## Yandex
+![Yandex](./docs/images/yandex_search_extractor.png)
 
-## Option
+## Google
+![Google](./docs/images/google_custom_search_extractor.png)
 
-* [Visual Studio Code](https://code.visualstudio.com/)
+## RDFa, Microdata, JSON-LD
+![RDFa, Microdata, JSON-LD](./docs/images/iframely_extractor.png)
 
-## Includes the following
+## Scrape
+![Scrape](./docs/images/scrape_extractor.png)
 
-* TypeScript
-* Webpack
-* React
-* Jest
-* Example Code
-    * Chrome Storage
-    * Options Version 2
-    * content script
-    * count up badge number
-    * background
+## Screenshot
+![Screenshot](./docs/images/screenshot_extractor.png)
 
-## Project Structure
+## Github
+![Github](./docs/images/github_extractor.png)
 
-* src/typescript: TypeScript source files
-* src/assets: static files
-* dist: Chrome Extension directory
-* dist/js: Generated JavaScript files
+## Rubygems
+![Github](./docs/images/rubygems_extractor.png)
 
-## Setup
+## NPM
+![NPM](./docs/images/npm_extractor.png)
 
-```
-npm install
-```
+## Youtube
+![Youtube](./docs/images/youtube_extractor.png)
 
-## Import as Visual Studio Code project
+## Telegram
+![Telegram](./docs/images/telegram_extractor.png)
 
-...
+## Raw metadata
+![Raw metadata](./docs/images/raw_metadata_extractor.png)
 
-## Build
+## Sentiment
+![Sentiment](./docs/images/sentiment.png)
 
-```
-npm run build
-```
+## Synonyms
+![Synonyms](./docs/images/synonyms.png)
 
-## Build in watch mode
+## Tags
+![Tags](./docs/images/tags.png)
 
-### terminal
+## Publication date
+![Publication date](./docs/images/publication_date.png)
 
-```
-npm run watch
-```
-
-### Visual Studio Code
-
-Run watch mode.
-
-type `Ctrl + Shift + B`
-
-## Load extension to chrome
-
-Load `dist` directory
-
-## Test
-`npx jest` or `npm run test`
+## Priority
+![Priority](./docs/images/priority.png)
