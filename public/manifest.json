@@ -52,5 +52,8 @@
     "scripting",
     "webNavigation",
     "activeTab"
+  ],
+  "host_permissions": [
+    "http://roastme.lvh.me/*", "http://localhost/*", "https://roastme.ru/*"
   ]
 }
