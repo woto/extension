@@ -1,6 +1,6 @@
 {
   "name": "roastme.ru",
-  "version": "0.0.38",
+  "version": "3.0.2",
   "description": "A companion tool for adding data to roastme.ru",
   "main": "index.js",
   "scripts": {

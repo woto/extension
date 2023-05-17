@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Extension for roastme.ru",
   "description": "A companion tool for adding data to roastme.ru",
-  "version": "0.0.0.38",
+  "version": "3.0.2",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA9hSpFQ5BDgtWhuoEH1ItVbzAhRorPSObj9xkXwy9Phi10Oy70LlwM10F+GQYOWKQahnv06AKP4la+3WFM0TCiTaUbMyb9HYelBDFY2hP5G+21+Ul5jzCT+liEHCbwCe0CWwLbCOwcc/BJwLjed2RXjq8RZn+k+PrLqH9tjOBlHwG7XpIbottjU0KqUgSwUvO/IcHz9crrdbjuB9GUxzM1/TK2IaIY9jl0UhwV4fZ9pS/7oeGcb1yQRU2nMuySdOYulmu0MqAFMlJUTd6VEU/4oNtjIf5s2mTydmXWOVCnHsp12yivmm7JK4fHUAKuX6BUmGCV/mf9IXN4G32Cu0qqwIDAQAB",
   "icons": {
     "16": "icon-16.png",
