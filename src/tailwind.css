@@ -220,7 +220,7 @@ a {
 
 @layer special {
     .c1 {
-        @apply !translate-x-0;
+        @apply translate-x-0;
     }
 
     .c2 {
