@@ -1,6 +1,6 @@
 {
   "name": "roastme.ru",
-  "version": "3.0.2",
+  "version": "3.0.3",
   "description": "A companion tool for adding data to roastme.ru",
   "main": "index.js",
   "scripts": {
@@ -22,6 +22,8 @@
     "@heroicons/react": "^2.0.18",
     "@hookform/resolvers": "^3.1.0",
     "@tailwindcss/forms": "^0.5.3",
+    "@tanstack/react-query": "^4.29.7",
+    "@tanstack/react-query-devtools": "^4.29.7",
     "@webcomponents/webcomponentsjs": "^2.8.0",
     "awesome-debounce-promise": "^2.1.0",
     "axios": "^1.4.0",
@@ -34,7 +36,6 @@
     "react-dom": "^18.2.0",
     "react-draggable": "^4.4.5",
     "react-hook-form": "^7.43.9",
-    "react-query": "^3.39.3",
     "react-use": "^17.4.0",
     "uuid": "^9.0.0",
     "yup": "^1.1.1"
@@ -42,6 +43,7 @@
   "devDependencies": {
     "@types/chrome": "^0.0.236",
     "@types/jest": "^29.5.1",
+    "@types/lodash": "^4.14.194",
     "@types/node": "^20.2.1",
     "@types/react": "^18.2.6",
     "@types/react-dom": "^18.2.4",
@@ -65,7 +67,6 @@
     "postcss-import": "^15.1.0",
     "postcss-loader": "^7.3.0",
     "prettier": "^2.8.8",
-    "react-devtools": "^4.27.7",
     "rimraf": "^5.0.1",
     "style-loader": "^3.3.2",
     "svg-inline-loader": "^0.8.2",
